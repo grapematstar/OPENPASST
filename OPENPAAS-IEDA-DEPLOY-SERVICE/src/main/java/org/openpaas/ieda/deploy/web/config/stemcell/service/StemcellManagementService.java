@@ -366,6 +366,8 @@ public class StemcellManagementService {
                     iaasHypervisor = iaas+"-xen";
                 }
             }
+        } else if(iaas.equalsIgnoreCase("azure")){
+            iaasHypervisor = iaas + "-hyperv";
         }
         return iaasHypervisor;
     }
