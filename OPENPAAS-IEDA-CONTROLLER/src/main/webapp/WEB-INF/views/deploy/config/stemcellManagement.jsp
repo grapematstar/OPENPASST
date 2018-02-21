@@ -218,7 +218,7 @@ function setCommonCode(url, id) {
  * 기능 : setLightCheckbox
  **************************************************************/
 function setLightCheckbox(value){
-    if(value == "AWS" || value == "GOOGLE"){
+    if(value == "AWS" || value == "GOOGLE" || value == "AZURE"){
         if($('.w2ui-msg-body input:radio[name=fileType]:input[value=version]').is(':checked')==true){
             $('.w2ui-msg-body input:checkbox[name=light]').attr("disabled", false);
         }
