@@ -69,7 +69,7 @@ public class BootstrapDeployAsyncService {
                 saveDeployStatus(bootstrapInfo);
 
                 //2. bosh2 실행 
-                ProcessBuilder builder = new ProcessBuilder("bosh2", "create-env", deployFile, "--state="+deployFile.replace(".yml", "")+"-state.json", "--vars-store="+CREDENTIAL_FILE+deployFile.replace(".yml", "")+"-creds.yml");
+                ProcessBuilder builder = new ProcessBuilder("bosh2", "create-env", deployFile, "--state="+deployFile.replace(".yml", "")+"-state.json", "--vars-store="+CREDENTIAL_FILE+dto.getId()+"-creds.yml");
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
                 

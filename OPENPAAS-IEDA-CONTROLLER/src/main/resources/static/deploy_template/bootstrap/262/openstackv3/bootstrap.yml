@@ -125,7 +125,6 @@ instance_groups:
       director_account:
         user: hm
         password: hm-password
-        ca_cert: ((director_ssl.ca))
       resurrector_enabled: true
     ntp: &ntp
       [ntp]
