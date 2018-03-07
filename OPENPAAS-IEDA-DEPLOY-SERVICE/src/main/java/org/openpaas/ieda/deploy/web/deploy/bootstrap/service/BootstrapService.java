@@ -155,7 +155,7 @@ public class BootstrapService {
             //해당 Bosh 릴리즈 버전의 Manifest Template 파일 조회
             ManifestTemplateVO result = commonDeployDao.selectManifetTemplate(vo.getIaasType(), releaseVersion, "BOOTSTRAP", releaseName );
             if(result != null){
-                content = commonDeployService.getManifestInputTemplateStream("bootstrap", result.getTemplateVersion(), vo.getIaasType(), result.getInputTemplate(), vo.getIaasAccount().get("openstackVersion").toString());
+                content = commonDeployService.getManifestInputTemplateStream("bootstrap", result.getTemplateVersion(), vo.getIaasType(), result.getCommonJobTemplate(), vo.getIaasAccount().get("openstackVersion").toString());
             }else {
                 throw new CommonException(message.getMessage("common.badRequest.exception.code", null, Locale.KOREA),
                         message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
@@ -190,6 +190,11 @@ public class BootstrapService {
     ***************************************************/
     public ManifestTemplateVO setOptionManifestTemplateInfo(ManifestTemplateVO result, String iaasType, String openstackVerison){
         ManifestTemplateVO  manifestTemplate = new ManifestTemplateVO();
+        if(!openstackVerison.isEmpty()) {
+            if(openstackVerison.equalsIgnoreCase("v3")){
+                iaasType += "v3";
+            }
+        }
         //base
         if(result.getCommonBaseTemplate() != null  && !(StringUtils.isEmpty( result.getCommonBaseTemplate()) )){
             manifestTemplate.setCommonBaseTemplate( MANIFEST_TEMPLATE_PATH + SEPARATOR + result.getTemplateVersion()  + SEPARATOR  + "common" + SEPARATOR  + result.getCommonBaseTemplate());
@@ -198,14 +203,9 @@ public class BootstrapService {
         }
         //job
         if(result.getCommonJobTemplate() != null && !(StringUtils.isEmpty( result.getCommonJobTemplate()) )){
-            manifestTemplate.setCommonJobTemplate(  MANIFEST_TEMPLATE_PATH + SEPARATOR + result.getTemplateVersion()  + SEPARATOR + "common"+ SEPARATOR  +  result.getCommonJobTemplate() );
+            manifestTemplate.setCommonJobTemplate(  MANIFEST_TEMPLATE_PATH + SEPARATOR + result.getTemplateVersion()  + SEPARATOR + iaasType+ SEPARATOR  +  result.getCommonJobTemplate() );
         }else{
             manifestTemplate.setCommonJobTemplate("");
-        }
-        if(!openstackVerison.isEmpty()) {
-            if(openstackVerison.equalsIgnoreCase("v3")){
-                iaasType += "v3";
-            }
         }
         
         //option etc Template File
@@ -281,7 +281,9 @@ public class BootstrapService {
         items.add(new ReplaceItemDTO("[deploymentName]", vo.getDeploymentName()));
         items.add(new ReplaceItemDTO("[directorName]", vo.getDirectorName()));
         items.add(new ReplaceItemDTO("[boshRelease]", RELEASE_DIR + SEPARATOR + vo.getBoshRelease()));
+        items.add(new ReplaceItemDTO("[boshReleaseVersion]", vo.getBoshRelease().substring(5, 8)));
         items.add(new ReplaceItemDTO("[boshCpiRelease]", RELEASE_DIR + SEPARATOR + vo.getBoshCpiRelease()));
+        items.add(new ReplaceItemDTO("[boshCpiReleaseVersion]", vo.getBoshCpiRelease().substring(27, 29)));
         items.add(new ReplaceItemDTO("[enableSnapshot]", vo.getEnableSnapshots()));
         items.add(new ReplaceItemDTO("[snapshotSchedule]", vo.getSnapshotSchedule()));
         items.add(new ReplaceItemDTO("[ntp]", vo.getNtp()));

@@ -1,18 +1,24 @@
-meta: ~
+---
+name: bosh
 
 releases:
 - name: bosh
-  version: ((meta.bosh-release-version))
-  url: ((meta.bosh-release-url))
-  <<: (( merge ))
+  version: [boshReleaseVersion]
+  url: file:///[boshRelease]
+- name: bosh-openstack-cpi
+  version: [boshCpiReleaseVersion]
+  url: file:///[boshCpiRelease]
 
 resource_pools:
 - name: vms
-  network: private
-  <<: (( merge ))
+  network: public
+  stemcell: 
+    url: file:///[stemcell]
+  cloud_properties: 
+    instance_type: [cloudInstanceType]
   env:
     bosh:
-      password: (( meta.vcap-password ))
+      password: [boshPassword]
 
 disk_pools:
 - name: disks
@@ -22,10 +28,15 @@ networks:
 - name: private
   type: manual
   subnets:
-  - range: (( meta.private-network-range ))
-    gateway: (( meta.private-network-gateway ))
-    static: [(( meta.private-static-ips ))]
-    dns: [(( meta.private-network-dns ))]
+  - range: [subnetRange]
+    gateway: &gateway
+      [subnetGateway]
+    static: [[privateStaticIp]]
+    dns: &dns
+      [[subnetDns]]
+    cloud_properties: {net_id: [subnetId]}
+- name: public
+  type: vip
 
 instance_groups:
 - name: bosh
@@ -42,12 +53,15 @@ instance_groups:
   persistent_disk_pool: disks
   networks:
   - name: private
-    static_ips: [(( meta.private-static-ips ))]
+    static_ips: [[privateStaticIp]]
+    default: [dns, gateway]
+  - name: public
+    static_ips: [[publicStaticIp]]
   properties:
     nats:
-      address: (( meta.private-static-ips ))
+      address: [privateStaticIp]
       user: nats
-      password: ((nats_password))
+      password: nats-password
       tls:
         ca: ((nats_server_tls.ca))
         client_ca:
@@ -66,22 +80,24 @@ instance_groups:
       listen_address: 127.0.0.1
       host: 127.0.0.1
       user: postgres
-      password: ((postgres_password))
+      password: postgres-password
       database: bosh
       adapter: postgres
     blobstore:
-      address: (( meta.private-static-ips ))
+      address: [privateStaticIp]
       port: 25250
       provider: dav
       director:
         user: director
-        password: ((blobstore_director_password))
+        password: director-password
       agent:
         user: agent
-        password: ((blobstore_agent_password))
+        password: agent-password
     director:
+      default_ssh_options:
+        gateway_host: [publicStaticIp]
       address: 127.0.0.1
-      name: (( meta.director-name ))
+      name: [directorName]
       db: *db
       flush_arp: true
       enable_post_deploy: true
@@ -101,91 +117,74 @@ instance_groups:
         local:
           users:
           - name: admin
-            password: ((admin_password))
+            password: admin
           - name: hm
-            password: ((hm_password))
+            password: hm-password
       cpi_job: openstack_cpi
     hm:
       director_account:
         user: hm
-        password: ((hm_password))
+        password: hm-password
         ca_cert: ((director_ssl.ca))
       resurrector_enabled: true
     ntp: &ntp
-    - time1.google.com
-    - time2.google.com
-    - time3.google.com
-    - time4.google.com
+      [ntp]
     agent:
-      mbus: nats://nats:((nats_password))@(( meta.private-static-ips )):4222
+      mbus: nats://nats:nats-password@[privateStaticIp]:4222
     registry:
-      address: (( meta.private-static-ips ))
-      host: (( meta.private-static-ips ))
+      address: [privateStaticIp]
+      host: [privateStaticIp]
       db: # todo remove
         host: 127.0.0.1
         user: postgres
-        password: ((postgres_password))
+        password: postgres-password
         database: bosh
         adapter: postgres
       username: registry
-      password: ((registry_password))
+      password: registry-password
       port: 25777
-      endpoint: http://registry:((registry_password))@(( meta.private-static-ips )):25777
-    <<: (( merge ))
+      endpoint: http://registry:registry-password@[privateStaticIp]:25777
+    openstack: &openstack
+      auth_url: [accessEndpoint]
+      username: [accessUser]
+      api_key: [accessSecret]
+      domain: [domain]
+      project: [project]
+      region: [region]
+      default_key_name: [privateKeyName]
+      default_security_groups: [[defaultSecurityGroups]]
+      human_readable_vm_names: true
 
 cloud_provider:
-  mbus: https://mbus:((mbus_bootstrap_password))@(( meta.private-static-ips )):6868
-  cert: ((mbus_bootstrap_ssl))
+  mbus: https://mbus:mbus-password@[publicStaticIp]:6868
   properties:
-    agent: {mbus: "https://mbus:((mbus_bootstrap_password))@0.0.0.0:6868"}
+    agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
+    openstack: *openstack
   template:
     name: openstack_cpi
     release: bosh-openstack-cpi
   ssh_tunnel:
-    host: (( meta.public-static-ips.[0] ))
+    host: [publicStaticIp]
     port: 22
     user: vcap
-    private_key: (( meta.private-key ))
-  <<: (( merge ))
+    private_key: [privateKeyPath]
+  openstack: *openstack
 
 variables:
-- name: admin_password
-  type: password
-- name: blobstore_director_password
-  type: password
-- name: blobstore_agent_password
-  type: password
-- name: hm_password
-  type: password
-- name: mbus_bootstrap_password
-  type: password
-- name: nats_password
-  type: password
-- name: postgres_password
-  type: password
-- name: registry_password
-  type: password
 - name: default_ca
   type: certificate
   options:
     is_ca: true
     common_name: ca
 
-- name: mbus_bootstrap_ssl
-  type: certificate
-  options:
-    ca: default_ca
-    common_name: (( meta.private-static-ips ))
-    alternative_names: [(( meta.private-static-ips ))]
-
 - name: director_ssl
   type: certificate
   options:
     ca: default_ca
-    common_name: (( meta.private-static-ips ))
-    alternative_names: [(( meta.private-static-ips ))]
+    common_name: [publicStaticIp]
+    alternative_names: [[publicStaticIp]]
 
 - name: nats_ca
   type: certificate
@@ -198,7 +197,7 @@ variables:
   options:
     ca: nats_ca
     common_name: default.nats.bosh-internal
-    alternative_names: [(( meta.private-static-ips ))]
+    alternative_names: [[privateStaticIp]]
     extended_key_usage:
     - server_auth
 

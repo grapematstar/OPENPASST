@@ -35,6 +35,7 @@ public class BootstrapDeployAsyncService {
     final private static String SEPARATOR = System.getProperty("file.separator");
     final private static String DEPLOYMENT_DIR = LocalDirectoryConfiguration.getDeploymentDir() + SEPARATOR;
     final private static String KEY_DIR = LocalDirectoryConfiguration.getLockDir()+SEPARATOR;
+    final private static String CREDENTIAL_FILE = LocalDirectoryConfiguration.getGenerateCredentialDir() + SEPARATOR;
     final private static String MESSAGE_ENDPOINT = "/deploy/bootstrap/install/logs"; 
     private final static Logger LOGGER = LoggerFactory.getLogger(BootstrapDeployAsyncService.class);
     
@@ -67,8 +68,8 @@ public class BootstrapDeployAsyncService {
                 bootstrapInfo.setDeployStatus( deployStatus );
                 saveDeployStatus(bootstrapInfo);
 
-                //2. bosh-init 실행 
-                ProcessBuilder builder = new ProcessBuilder("bosh-init", "deploy", deployFile);
+                //2. bosh2 실행 
+                ProcessBuilder builder = new ProcessBuilder("bosh2", "create-env", deployFile, "--state="+deployFile.replace(".yml", "")+"-state.json", "--vars-store="+CREDENTIAL_FILE+deployFile.replace(".yml", "")+"-creds.yml");
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
                 
