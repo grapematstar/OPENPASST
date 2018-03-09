@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Scanner;
 
 import org.openpaas.ieda.common.api.LocalDirectoryConfiguration;
 import org.openpaas.ieda.deploy.api.director.dto.DirectorInfoDTO;
@@ -23,6 +24,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import scala.sys.process.processInternal;
 
 @Service
 public class BootstrapDeployAsyncService {
@@ -41,7 +44,7 @@ public class BootstrapDeployAsyncService {
     
     /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
-     * @description : bosh-init을 실행하여 Bootstrap 설치 실행
+     * @description : bosh를 실행하여 Bootstrap 설치 실행
      * @title : deployBootstrap
      * @return : void
     *****************************************************************/
@@ -68,11 +71,13 @@ public class BootstrapDeployAsyncService {
                 bootstrapInfo.setDeployStatus( deployStatus );
                 saveDeployStatus(bootstrapInfo);
 
-                //2. bosh2 실행 
-                ProcessBuilder builder = new ProcessBuilder("bosh2", "create-env", deployFile, "--state="+deployFile.replace(".yml", "")+"-state.json", "--vars-store="+CREDENTIAL_FILE+dto.getId()+"-creds.yml");
+                //2. bosh 실행
+                ProcessBuilder builder = new ProcessBuilder("bosh", "create-env", deployFile, 
+                                                            "--state="+deployFile.replace(".yml", "")+"-state.json", 
+                                                            "--vars-store="+CREDENTIAL_FILE+bootstrapInfo.getDeploymentFile().replace(".yml", "")+"-creds.yml", "--tty");
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
-                
+
                 //실행 출력하는 로그를 읽어온다.
                 InputStream inputStream = process.getInputStream();
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
@@ -122,6 +127,7 @@ public class BootstrapDeployAsyncService {
                 }
             }
         }catch(RuntimeException e){
+        
             status = "error";
             DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("배포 중 Exception이 발생하였습니다."));
             if ( bootstrapInfo != null ) {
@@ -134,6 +140,7 @@ public class BootstrapDeployAsyncService {
             saveDeployStatus(bootstrapInfo);
         }catch ( Exception e) {    
             status = "error";
+        	e.printStackTrace();
             DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("배포 중 Exception이 발생하였습니다."));
             if ( bootstrapInfo != null ) {
                 bootstrapInfo.setDeployLog(accumulatedLog);
@@ -147,8 +154,9 @@ public class BootstrapDeployAsyncService {
             try {
                 if(bufferedReader!=null) {
                     bufferedReader.close();
+                    
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 if( LOGGER.isErrorEnabled() ) {
                     LOGGER.error( e.getMessage() );
                 }
@@ -189,4 +197,5 @@ public class BootstrapDeployAsyncService {
     public void deployAsync(BootStrapDeployDTO.Install dto, Principal principal) {
             deployBootstrap(dto, principal);
     }
+    
 }

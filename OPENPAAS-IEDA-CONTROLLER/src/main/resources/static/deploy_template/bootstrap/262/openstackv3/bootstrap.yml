@@ -29,11 +29,9 @@ networks:
   type: manual
   subnets:
   - range: [subnetRange]
-    gateway: &gateway
-      [subnetGateway]
+    gateway: [subnetGateway]
     static: [[privateStaticIp]]
-    dns: &dns
-      [[subnetDns]]
+    dns: [[subnetDns]]
     cloud_properties: {net_id: [subnetId]}
 - name: public
   type: vip
@@ -125,9 +123,10 @@ instance_groups:
       director_account:
         user: hm
         password: hm-password
+        ca_cert: ((director_ssl.ca))
       resurrector_enabled: true
     ntp: &ntp
-      [ntp]
+    - [ntp]
     agent:
       mbus: nats://nats:nats-password@[privateStaticIp]:4222
     registry:
@@ -169,7 +168,6 @@ cloud_provider:
     port: 22
     user: vcap
     private_key: [privateKeyPath]
-  openstack: *openstack
 
 variables:
 - name: default_ca
