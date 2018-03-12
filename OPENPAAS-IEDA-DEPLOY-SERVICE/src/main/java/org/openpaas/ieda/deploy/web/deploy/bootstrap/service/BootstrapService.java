@@ -242,7 +242,6 @@ public class BootstrapService {
     ***************************************************/
     public List<ReplaceItemDTO> makeReplaceItems(BootstrapVO vo) {
         List<ReplaceItemDTO> items = new ArrayList<ReplaceItemDTO>();
-        
         //인프라 환경 설정 정보
         if(vo.getIaasAccount().get("openstackVersion") != null) {
             if(vo.getIaasAccount().get("openstackVersion").toString().equalsIgnoreCase("v3")){
@@ -281,9 +280,7 @@ public class BootstrapService {
         items.add(new ReplaceItemDTO("[deploymentName]", vo.getDeploymentName()));
         items.add(new ReplaceItemDTO("[directorName]", vo.getDirectorName()));
         items.add(new ReplaceItemDTO("[boshRelease]", RELEASE_DIR + SEPARATOR + vo.getBoshRelease()));
-        items.add(new ReplaceItemDTO("[boshReleaseVersion]", vo.getBoshRelease().substring(5, 8)));
         items.add(new ReplaceItemDTO("[boshCpiRelease]", RELEASE_DIR + SEPARATOR + vo.getBoshCpiRelease()));
-        items.add(new ReplaceItemDTO("[boshCpiReleaseVersion]", vo.getBoshCpiRelease().substring(27, 29)));
         items.add(new ReplaceItemDTO("[enableSnapshot]", vo.getEnableSnapshots()));
         items.add(new ReplaceItemDTO("[snapshotSchedule]", vo.getSnapshotSchedule()));
         items.add(new ReplaceItemDTO("[ntp]", vo.getNtp()));

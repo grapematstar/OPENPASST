@@ -4,7 +4,7 @@ name: bosh
 releases:
 - name: bosh
   url: file:///[boshRelease]
-- name: bosh-openstack-cpi
+- name: bosh-aws-cpi
   url: file:///[boshCpiRelease]
 
 resource_pools:
@@ -14,6 +14,10 @@ resource_pools:
     url: file:///[stemcell]
   cloud_properties: 
     instance_type: [cloudInstanceType]
+    ephemeral_disk:
+      type: gp2
+      size: 25_000
+    availability_zone: [availabilityZone]
   env:
     bosh:
       password: [boshPassword]
@@ -21,6 +25,8 @@ resource_pools:
 disk_pools:
 - name: disks
   disk_size: 40960
+  cloud_properties: 
+    type: gp2
 
 networks:
 - name: private
@@ -30,7 +36,8 @@ networks:
     gateway: [subnetGateway]
     static: [[privateStaticIp]]
     dns: [[subnetDns]]
-    cloud_properties: {net_id: [subnetId]}
+    cloud_properties: 
+      subnet: [subnetId]
 - name: public
   type: vip
 
@@ -44,7 +51,7 @@ instance_groups:
   - {name: director, release: bosh}
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
-  - {name: openstack_cpi, release: bosh-openstack-cpi}
+  - {name: aws_cpi, release: bosh-aws-cpi}
   resource_pool: vms
   persistent_disk_pool: disks
   networks:
@@ -116,7 +123,7 @@ instance_groups:
             password: admin
           - name: hm
             password: hm-password
-      cpi_job: openstack_cpi
+      cpi_job: aws_cpi
     hm:
       director_account:
         user: hm
@@ -136,20 +143,19 @@ instance_groups:
         password: postgres-password
         database: bosh
         adapter: postgres
+      http: 
+        user: registry
+        password: registry-password
+        port: 25777
       username: registry
       password: registry-password
       port: 25777
-      endpoint: http://registry:registry-password@[privateStaticIp]:25777
-    openstack: &openstack
-      auth_url: [accessEndpoint]
-      username: [accessUser]
-      api_key: [accessSecret]
-      domain: [domain]
-      project: [project]
-      region: [region]
+    aws: &aws
+      access_key_id: [accessUser]
+      secret_access_key: [accessSecret]
       default_key_name: [privateKeyName]
-      default_security_groups: [[defaultSecurityGroups]]
-      human_readable_vm_names: true
+      default_security_groups: [defaultSecurityGroups]
+      region: [region]
 
 cloud_provider:
   mbus: https://mbus:mbus-password@[publicStaticIp]:6868
@@ -157,10 +163,10 @@ cloud_provider:
     agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
-    openstack: *openstack
-  template:
-    name: openstack_cpi
-    release: bosh-openstack-cpi
+    aws: *aws
+  template: 
+    name: aws_cpi
+    release: bosh-aws-cpi
   ssh_tunnel:
     host: [publicStaticIp]
     port: 22

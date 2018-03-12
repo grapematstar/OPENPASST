@@ -3,8 +3,10 @@ name: bosh
 
 releases:
 - name: bosh
+  version: [boshReleaseVersion]
   url: file:///[boshRelease]
-- name: bosh-openstack-cpi
+- name: bosh-vsphere-cpi
+  version: [boshCpiReleaseVersion]
   url: file:///[boshCpiRelease]
 
 resource_pools:
@@ -13,7 +15,9 @@ resource_pools:
   stemcell: 
     url: file:///[stemcell]
   cloud_properties: 
-    instance_type: [cloudInstanceType]
+    cpu: [resourcePoolCPU]
+    ram: [resourcePoolRAM]
+    disk: [resourcePoolDisk]
   env:
     bosh:
       password: [boshPassword]
@@ -30,21 +34,21 @@ networks:
     gateway: [subnetGateway]
     static: [[privateStaticIp]]
     dns: [[subnetDns]]
-    cloud_properties: {net_id: [subnetId]}
+    cloud_properties: {name: [networkName]}
 - name: public
   type: vip
 
 instance_groups:
 - name: bosh
   instances: 1
-  jobs:
+  jobs: &cpi_job
   - {name: nats, release: bosh}
   - {name: postgres-9.4, release: bosh}
   - {name: blobstore, release: bosh}
   - {name: director, release: bosh}
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
-  - {name: openstack_cpi, release: bosh-openstack-cpi}
+  - {name: vsphere_cpi, release: bosh-vsphere-cpi}
   resource_pool: vms
   persistent_disk_pool: disks
   networks:
@@ -116,7 +120,7 @@ instance_groups:
             password: admin
           - name: hm
             password: hm-password
-      cpi_job: openstack_cpi
+      cpi_job: google_cpi
     hm:
       director_account:
         user: hm
@@ -136,20 +140,16 @@ instance_groups:
         password: postgres-password
         database: bosh
         adapter: postgres
+      http: 
+        user: registry
+        password: registry-password
+        port: 25777
       username: registry
       password: registry-password
       port: 25777
-      endpoint: http://registry:registry-password@[privateStaticIp]:25777
-    openstack: &openstack
-      auth_url: [accessEndpoint]
-      username: [accessUser]
-      api_key: [accessSecret]
-      domain: [domain]
-      project: [project]
-      region: [region]
-      default_key_name: [privateKeyName]
-      default_security_groups: [[defaultSecurityGroups]]
-      human_readable_vm_names: true
+    google: &cpi_conf
+      project: [projectId]
+      json_key: [jsonKey]
 
 cloud_provider:
   mbus: https://mbus:mbus-password@[publicStaticIp]:6868
@@ -157,10 +157,8 @@ cloud_provider:
     agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
-    openstack: *openstack
-  template:
-    name: openstack_cpi
-    release: bosh-openstack-cpi
+    google: *cpi_conf
+  template: *cpi_job
   ssh_tunnel:
     host: [publicStaticIp]
     port: 22
