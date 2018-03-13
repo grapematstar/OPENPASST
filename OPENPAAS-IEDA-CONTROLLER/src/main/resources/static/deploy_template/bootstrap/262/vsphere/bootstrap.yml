@@ -3,10 +3,8 @@ name: bosh
 
 releases:
 - name: bosh
-  version: [boshReleaseVersion]
   url: file:///[boshRelease]
 - name: bosh-vsphere-cpi
-  version: [boshCpiReleaseVersion]
   url: file:///[boshCpiRelease]
 
 resource_pools:
@@ -32,7 +30,6 @@ networks:
   subnets:
   - range: [subnetRange]
     gateway: [subnetGateway]
-    static: [[privateStaticIp]]
     dns: [[subnetDns]]
     cloud_properties: {name: [networkName]}
 - name: public
@@ -41,7 +38,7 @@ networks:
 instance_groups:
 - name: bosh
   instances: 1
-  jobs: &cpi_job
+  jobs: 
   - {name: nats, release: bosh}
   - {name: postgres-9.4, release: bosh}
   - {name: blobstore, release: bosh}
@@ -120,7 +117,7 @@ instance_groups:
             password: admin
           - name: hm
             password: hm-password
-      cpi_job: google_cpi
+      cpi_job: vsphere_cpi
     hm:
       director_account:
         user: hm
@@ -147,23 +144,29 @@ instance_groups:
       username: registry
       password: registry-password
       port: 25777
-    google: &cpi_conf
-      project: [projectId]
-      json_key: [jsonKey]
-
+    vcenter: &vcenter
+      address: [accessEndpoint]
+      user: [accessUser]
+      password: [accessSecret]
+      datacenters:
+      - name: [vCenterName]
+        vm_folder: [vCenterVMFolder]
+        template_folder: [vCenterTemplateFolder]
+        datastore_pattern: [vCenterDatastore]
+        persistent_datastore_pattern: [vCenterPersistentDatastore]
+        disk_path: [vCenterDiskPath]
+        clusters:
+        - [vCenterCluster]: {}
 cloud_provider:
   mbus: https://mbus:mbus-password@[publicStaticIp]:6868
   properties:
     agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
-    google: *cpi_conf
-  template: *cpi_job
-  ssh_tunnel:
-    host: [publicStaticIp]
-    port: 22
-    user: vcap
-    private_key: [privateKeyPath]
+    vcenter: *vcenter
+  template: 
+    name: vsphere_cpi
+    release: bosh-vsphere-cpi
 
 variables:
 - name: default_ca

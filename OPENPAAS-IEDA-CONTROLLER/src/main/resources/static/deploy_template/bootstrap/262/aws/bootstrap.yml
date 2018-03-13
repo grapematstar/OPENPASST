@@ -154,7 +154,7 @@ instance_groups:
       access_key_id: [accessUser]
       secret_access_key: [accessSecret]
       default_key_name: [privateKeyName]
-      default_security_groups: [defaultSecurityGroups]
+      default_security_groups: [[defaultSecurityGroups]]
       region: [region]
 
 cloud_provider:
