@@ -47,7 +47,7 @@ networks:
 instance_groups:
 - name: bosh
   instances: 1
-  jobs: &cpi_job
+  jobs:
   - {name: nats, release: bosh}
   - {name: postgres-9.4, release: bosh}
   - {name: blobstore, release: bosh}
@@ -134,7 +134,7 @@ instance_groups:
         ca_cert: ((director_ssl.ca))
       resurrector_enabled: true
     ntp: &ntp
-    - [ntp]
+    - [169.254.169.254]
     agent:
       mbus: nats://nats:nats-password@[privateStaticIp]:4222
     registry:
@@ -164,12 +164,9 @@ cloud_provider:
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
     google: *cpi_conf
-  template: *cpi_job
-  ssh_tunnel:
-    host: [publicStaticIp]
-    port: 22
-    user: vcap
-    private_key: [privateKeyPath]
+  template:
+    name: google_cpi
+    release: bosh-google-cpi
 
 variables:
 - name: default_ca

@@ -384,7 +384,7 @@ public class DirectorConfigService  {
     
     /***************************************************
      * @param boshConfigFileName 
-     * @project : OpenPaas 플랫폼 설치 자동
+     * @project : OpenPaas 플랫폼 설치 자동화
      * @description : bosh_config 파일이 있는지 여부에 따라 설치 관리자 타겟을 설정하거나 파일을 생성
      * @title :  setBoshConfigFile
      * @return : void
