@@ -30,7 +30,7 @@ private MockMvc mockMvc;
     
     @InjectMocks MainController mockMainController;
     
-    final static String MAIN_VIEW_URL = "/";
+    final static String MAIN_VIEW_URL = "/platform";
     final static String TOP_VIEW_URL = "/top";
     final static String MENU_VIEW_URL = "/menu";
     

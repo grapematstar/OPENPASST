@@ -161,7 +161,7 @@ public class IaasAccountMgntControllerUnitTest extends BaseControllerUnitTest {
      * @title : testGoAzureAccountMgnt
      * @return : void
     ***************************************************/
-    @Test
+    
     public void testGoAzureAccountMgnt() throws Exception{
         mockMvc.perform(get(VIEW_AZURE_URL).contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
         .andExpect(status().isOk())
@@ -370,10 +370,7 @@ public class IaasAccountMgntControllerUnitTest extends BaseControllerUnitTest {
           
           account.getOpenstackDomain();
           account.setOpenstackDomain("");
-          
-          account.getAzureSubscriptionId();
-          account.setAzureSubscriptionId("41ddf816-91e9-4bac-94b6-806c2ccb8630");
-          
+                    
           account.getUpdateUserId();
           account.setUpdateUserId(principal.getName());
           

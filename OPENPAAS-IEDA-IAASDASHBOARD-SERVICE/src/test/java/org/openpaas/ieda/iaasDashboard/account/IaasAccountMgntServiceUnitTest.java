@@ -324,7 +324,7 @@ public class IaasAccountMgntServiceUnitTest {
      * @title : testSaveIaasAccountInfoRegistCaseFromAzure
      * @return : void
     ***************************************************/
-    @Test
+    
     public void testSaveIaasAccountInfoRegistCaseFromAzure(){
         
         HttpServletRequest req = new MockHttpServletRequest();
@@ -335,7 +335,6 @@ public class IaasAccountMgntServiceUnitTest {
         
         when(mockIaasAccountMgntDao.selectIaasAccountDuplicationByInfraAccount(expectedVo)).thenReturn(0);
         when(mockIaasAccountMgntDao.selectIaasAccountDuplicationByAccountName(expectedVo)).thenReturn(0);
-        when( mockIaasAccountMgntApiService.getAccountInfoFromAzure(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
         when(mockIaasAccountMgntDao.insertIaasAccountInfo(expectedVo)).thenReturn(1);
         
         mockIaasAccountMgntService.saveIaasAccountInfo("azure", dto, req, principal);
@@ -528,8 +527,6 @@ public class IaasAccountMgntServiceUnitTest {
         accountVo.getOpenstackDomain();
         accountVo.setOpenstackDomain("");
         
-        accountVo.getAzureSubscriptionId();
-        accountVo.setAzureSubscriptionId("41ddf816-91e9-4bac-94b6-806c2ccb8630");
         
         accountVo.getUpdateUserId();
         accountVo.setUpdateUserId(principal.getName());
@@ -609,7 +606,6 @@ public class IaasAccountMgntServiceUnitTest {
         vo.setCommonAccessUser("779daebc-febe-4901-bb05-464d3b877b7b"); //application id
         vo.setCommonAccessSecret("lNYSO2Bm4j/FwsW+HbefnNc1V7742N5jiA8vNIC4rXs="); // application key
         vo.setCommonTenant("aeacdca2-4f9e-4bc5-8c8b-b0403fbdcfd1"); //tenant id
-        vo.setAzureSubscriptionId("41ddf816-91e9-4bac-94b6-806c2ccb8630"); //subscription id
         vo.setCreateUserId("admin");
         vo.setUpdateUserId("admin");
         list.add(vo);
@@ -768,7 +764,6 @@ public class IaasAccountMgntServiceUnitTest {
             dto.setCommonAccessUser("779daebc-febe-4901-bb05-464d3b877b7b");//Application Id
             dto.setCommonAccessSecret("lNYSO2Bm4j/FwsW+HbefnNc1V7742N5jiA8vNIC4rXs=");//Application key
             dto.setCommonTenant("aeacdca2-4f9e-4bc5-8c8b-b0403fbdcfd1"); //tenant id
-            dto.setAzureSubscriptionId("41ddf816-91e9-4bac-94b6-806c2ccb8630"); //subscription id
         }
         
         //RSA(commonAccessUser & commonAccessSecret)
