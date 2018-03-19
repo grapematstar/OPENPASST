@@ -547,6 +547,7 @@ public class StemcellManagementServiceUnitTest extends BaseDeployControllerUnitT
         StemcellManagementDTO.Regist dto = new StemcellManagementDTO.Regist();
         dto.setStemcellVersion("3261");
         dto.setIaasType("OPENSTACK");
+        dto.setOsName("UBUNTU");
         String resulBaseUrl = mockStemcellService.setStemcellDownLoadBaseUrlByVersionType(dto);
         assertEquals(resulBaseUrl, "https://bosh-jenkins-artifacts.s3.amazonaws.com/bosh-stemcell/openstack");
         

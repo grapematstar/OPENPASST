@@ -50,7 +50,7 @@ public class DirectorConfigurationController extends BaseController {
     @RequestMapping(value="/config/director/add", method=RequestMethod.POST)
     public ResponseEntity<Object> createDirector(@RequestBody @Valid DirectorConfigDTO.Create directorDto, Principal principal) {
         if(LOGGER.isInfoEnabled()){ LOGGER.info("=====================> 설치 관리자 설정 추가 요청"); }
-        String boshConfigFileName = ".bosh_config";
+        String boshConfigFileName = "config";
         service.existCheckCreateDirectorInfo(directorDto,principal,boshConfigFileName);
         
         return new ResponseEntity<>(HttpStatus.CREATED);
