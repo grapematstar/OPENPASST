@@ -71,7 +71,7 @@ public class StemcellManagementDownloadAsyncService {
         if(stemcellFile.exists() && "false".equalsIgnoreCase(dto.getOverlayCheck()) ){
             deleteLockFile(status, dto.getStemcellFileName());//lock 파일 삭제
             throw new CommonException(message.getMessage("common.conflict.exception.code", null, Locale.KOREA),
-                    message.getMessage("common.conflict.file.messag", null, Locale.KOREA), HttpStatus.CONFLICT);
+                    message.getMessage("common.conflict.file.message", null, Locale.KOREA), HttpStatus.CONFLICT);
         }else{//덮어쓰기 가능.
             try {
                 FileUtils.moveFile(tmpFile,stemcellFile);
@@ -82,7 +82,7 @@ public class StemcellManagementDownloadAsyncService {
                 
                 LOGGER.error(e.getMessage());
                 throw new CommonException(message.getMessage("common.conflict.exception.code", null, Locale.KOREA),
-                        message.getMessage("common.conflict.file.messag", null, Locale.KOREA), HttpStatus.CONFLICT);
+                        message.getMessage("common.conflict.file.message", null, Locale.KOREA), HttpStatus.CONFLICT);
             }finally{
                 deleteLockFile("done",result.getStemcellFileName());
                 messagingTemplate.convertAndSendToUser(principal.getName() ,MESSAGE_ENDPOINT, dto.getId()+"/done");

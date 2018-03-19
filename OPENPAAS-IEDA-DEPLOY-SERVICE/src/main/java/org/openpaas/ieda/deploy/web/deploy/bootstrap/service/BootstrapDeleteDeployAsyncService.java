@@ -35,13 +35,14 @@ public class BootstrapDeleteDeployAsyncService{
     
     final private static String SEPARATOR = System.getProperty("file.separator");
     final private static String DEPLOYMENT_DIR = LocalDirectoryConfiguration.getDeploymentDir() + SEPARATOR;
+    final private static String CREDENTIAL_FILE = LocalDirectoryConfiguration.getGenerateCredentialDir() + SEPARATOR;
     final private static String LOCK_DIR=LocalDirectoryConfiguration.getLockDir();
     final private static String MESSAGE_ENDPOINT = "/deploy/bootstrap/delete/logs"; 
     private final static Logger LOGGER = LoggerFactory.getLogger(BootstrapDeleteDeployAsyncService.class);
     
     /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
-     * @description : bosh-init을 실행하여 해당 플랫폼 삭제 요청
+     * @description : bosh를 실행하여 해당 플랫폼 삭제 요청
      * @title : deleteBootstrapDeploy
      * @return : void
     *****************************************************************/
@@ -58,8 +59,8 @@ public class BootstrapDeleteDeployAsyncService{
         BufferedReader bufferedReader = null;
 
         try {
-            String deloyStateFile = DEPLOYMENT_DIR +vo.getDeploymentFile().split(".yml")[0] + "-state.json";
-            File stateFile = new File(deloyStateFile);
+            String deployStateFile = DEPLOYMENT_DIR +vo.getDeploymentFile().split(".yml")[0] + "-state.json";
+            File stateFile = new File(deployStateFile);
             if ( !stateFile.exists() ) {
                 status = "done";
                 resultMessage = "BOOTSTRAP 삭제가 완료되었습니다.";
@@ -70,7 +71,9 @@ public class BootstrapDeleteDeployAsyncService{
                 String deployFile = DEPLOYMENT_DIR + vo.getDeploymentFile();
                 File file = new File(deployFile);
                 if( file.exists() ){
-                    ProcessBuilder builder = new ProcessBuilder("bosh-init", "delete", deployFile);
+                    ProcessBuilder builder = new ProcessBuilder("bosh", "delete-env", deployFile, 
+                                                                "--state="+deployStateFile, 
+                                                                "--vars-store="+CREDENTIAL_FILE+vo.getDeploymentFile().split(".yml")[0]+"-creds.yml", "--tty");
                     builder.redirectErrorStream(true);
                     Process process = builder.start();
                     
