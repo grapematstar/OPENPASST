@@ -94,6 +94,10 @@ public class IaasConfigMgntService{
         vo.setVsphereVcenterPersistentDatastore(dto.getVsphereVcenterPersistentDatastore());
         vo.setVsphereVcenterDiskPath(dto.getVsphereVcenterDiskPath());
         vo.setVsphereVcenterCluster(dto.getVsphereVcenterCluster());
+        vo.setAzureResourceGroup(dto.getAzureResourceGroup());
+        vo.setAzureStorageAccountName(dto.getAzureStorageAccountName());
+        vo.setAzureSshPublicKey(dto.getAzureSshPublicKey());
+        vo.setAzurePrivateKey(dto.getAzurePrivateKey());
         vo.setUpdateUserId(principal.getName());
         if( StringUtils.isEmpty(dto.getId())){
             dao.insertIaasConfigInfo(vo);

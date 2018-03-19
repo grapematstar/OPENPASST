@@ -2,13 +2,11 @@ package org.openpaas.ieda.deploy.web.deploy.bootstrap.service;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Scanner;
 
 import org.openpaas.ieda.common.api.LocalDirectoryConfiguration;
 import org.openpaas.ieda.deploy.api.director.dto.DirectorInfoDTO;
@@ -24,8 +22,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import scala.sys.process.processInternal;
 
 @Service
 public class BootstrapDeployAsyncService {

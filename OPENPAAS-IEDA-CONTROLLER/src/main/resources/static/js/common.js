@@ -340,7 +340,9 @@ function gbConverter(value){
                          }
                      }
                  }
+                 if(iaas == "aws"){
                  setDefaultAwsRegion();
+                 }
              }
              $('#setAccountList').html(result);
          },
@@ -408,9 +410,9 @@ function setAccountInfo(val, iaas){
         return;
     }
     $('#doSearch').attr('disabled', false);
-    if(iaas == "aws"){
+    if(iaas == "aws")
     	setDefaultAwsRegion();
-    }
+    
     setDefaultIaasAccount("noPopup", iaas);
 }
  

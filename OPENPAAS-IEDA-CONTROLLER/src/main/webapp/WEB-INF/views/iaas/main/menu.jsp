@@ -60,6 +60,7 @@
                        </sec:authorize>
                        <li><a href="javascript:goPage('<c:url value="/iaasMgnt/aws"/>', 'AWS MANAGEMENT');">AWS 관리</a></li>
                        <li><a href="javascript:goPage('<c:url value="/iaasMgnt/openstack"/>', 'Openstack MANAGEMENT');">Openstack 관리</a></li>
+                       <li><a href="javascript:goPage('<c:url value="/iaasMgnt/azure"/>', 'Azure MANAGEMENT');">Azure 관리</a></li>
                     </ul>
                 </li>
             </sec:authorize>

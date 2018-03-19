@@ -85,8 +85,11 @@ public class CommonDeployService{
         if(itr.hasNext()) {
             BufferedOutputStream stream = null;
             MultipartFile mpf = request.getFile(itr.next());
+            String keyFilePath = SSH_DIR + SEPARATOR + mpf.getOriginalFilename();
+            if(!keyFilePath.toString().toLowerCase().endsWith(".pem") && !keyFilePath.toString().toLowerCase().endsWith(".pub")){
+            	keyFilePath ="";
+            }
             try {
-                String keyFilePath = SSH_DIR + SEPARATOR + mpf.getOriginalFilename();
                 byte[] bytes = mpf.getBytes();
                 File isKeyFile = new File(keyFilePath);
                 stream = new BufferedOutputStream(new FileOutputStream(isKeyFile));
@@ -101,7 +104,6 @@ public class CommonDeployService{
                 Set<PosixFilePermission> pfp = new HashSet<PosixFilePermission>();
                 pfp.add(PosixFilePermission.OWNER_READ);
                 Files.setPosixFilePermissions(Paths.get(keyFilePath), pfp);
-                
             } catch (IOException e) {
                 throw new CommonException(message.getMessage("common.internalServerError.exception.code", null, Locale.KOREA),
                         message.getMessage("common.internalServerError.message", null, Locale.KOREA), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -114,6 +116,7 @@ public class CommonDeployService{
                     throw new CommonException(message.getMessage("common.internalServerError.exception.code", null, Locale.KOREA),
                             message.getMessage("common.internalServerError.message", null, Locale.KOREA), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
+            
             }
         }
     }
@@ -137,8 +140,8 @@ public class CommonDeployService{
                     if(file.getName().toLowerCase().endsWith(".pub") ||  file.getName().toLowerCase().endsWith(".pem")){
                         continue;
                     }
-                }else{
-                    if(!file.getName().toLowerCase().endsWith(".pem")) {
+                }else {
+                    if(file.getName().toLowerCase().endsWith(".pem")) {
                         continue;
                     }
                 }
