@@ -129,7 +129,7 @@ public class DirectorConfigService  {
 
     /***************************************************
      * @param boshConfigFileName 
-     * @project : OpenPaas 플랫폼 설치 자동화
+     * @project : OpenPaas 플랫폼 설치 자동
      * @description : 설치관리자 추가 정보 확인
      * @title :  existcreateDirectorInfo
      * @return : void
@@ -405,9 +405,10 @@ public class DirectorConfigService  {
                 Map<String, Object> object = (Map<String, Object>)yaml.load(input);
                 
                 if ( directorConfig.getDefaultYn().equalsIgnoreCase("Y")) {
-                    object.put("url", directorLink);
-                    object.put("alias", directorConfig.getDirectorName());
-                    object.put("ca_cert", "");
+                    object.put("target", directorLink);
+                    object.put("target_name", directorConfig.getDirectorName());
+                    object.put("target_version", directorConfig.getDirectorVersion());
+                    object.put("target_uuid", directorConfig.getDirectorUuid());
                 }
                 
                 Map<String, String> certMap = (Map<String,String>)object.get("ca_cert");
@@ -525,8 +526,7 @@ public class DirectorConfigService  {
     public String getBoshConfigLocation(String boshConfigFileName) {
         String homeDir = System.getProperty("user.home"); //User's home directory
         String fileSeperator = System.getProperty("file.separator");//File separator ("/" on UNIX)
-        String boshConfDir = ".bosh";
-        String boshConfigFile = homeDir + fileSeperator + boshConfDir + boshConfigFileName; //
+        String boshConfigFile = homeDir + fileSeperator + boshConfigFileName; //
         return boshConfigFile;
     }
     
