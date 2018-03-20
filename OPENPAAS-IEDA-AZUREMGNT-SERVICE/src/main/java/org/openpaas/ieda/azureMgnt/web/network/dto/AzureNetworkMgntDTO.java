@@ -1,4 +1,4 @@
-package org.openpaas.ieda.azureMgnt.network.dto;
+package org.openpaas.ieda.azureMgnt.web.network.dto;
 
 import javax.validation.constraints.NotNull;
 

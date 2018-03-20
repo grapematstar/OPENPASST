@@ -1,4 +1,4 @@
-package org.openpaas.ieda.azureMgnt.resourceGroup.service;
+package org.openpaas.ieda.azureMgnt.web.resourceGroup.service;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.openpaas.ieda.azureMgnt.resourceGroup.dao.AzureResourceGroupMgntVO;
-import org.openpaas.ieda.azureMgnt.resourceGroup.dto.AzureResourceGroupMgntDTO;
+import org.openpaas.ieda.azureMgnt.web.resourceGroup.dao.AzureResourceGroupMgntVO;
+import org.openpaas.ieda.azureMgnt.web.resourceGroup.dto.AzureResourceGroupMgntDTO;
 import org.openpaas.ieda.common.exception.CommonException;
 import org.openpaas.ieda.iaasDashboard.web.account.dao.IaasAccountMgntVO;
 import org.openpaas.ieda.iaasDashboard.web.common.service.CommonIaasService;
