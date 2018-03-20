@@ -1,5 +1,8 @@
 package org.openpaas.ieda.awsMgnt.web.natGateway.dto;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class AwsNatGatewayMgntDTO {
 	private Integer accountId; // 계정 아이디
     private Integer recid;
