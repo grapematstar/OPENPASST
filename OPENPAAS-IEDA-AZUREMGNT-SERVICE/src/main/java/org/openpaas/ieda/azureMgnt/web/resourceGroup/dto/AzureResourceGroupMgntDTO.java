@@ -1,4 +1,4 @@
-package org.openpaas.ieda.azureMgnt.resourceGroup.dto;
+package org.openpaas.ieda.azureMgnt.web.resourceGroup.dto;
 
 import javax.validation.constraints.NotNull;
 

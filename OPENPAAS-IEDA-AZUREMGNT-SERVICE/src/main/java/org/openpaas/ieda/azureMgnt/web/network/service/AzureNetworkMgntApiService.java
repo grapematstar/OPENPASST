@@ -1,4 +1,4 @@
-package org.openpaas.ieda.azureMgnt.network.service;
+package org.openpaas.ieda.azureMgnt.web.network.service;
 
 import java.util.HashMap;
 import java.util.List;

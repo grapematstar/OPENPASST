@@ -1,11 +1,11 @@
-package org.openpaas.ieda.azureMgnt.network.service;
+package org.openpaas.ieda.azureMgnt.web.network.service;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openpaas.ieda.azureMgnt.network.dao.AzureNetworkMgntVO;
-import org.openpaas.ieda.azureMgnt.network.dto.AzureNetworkMgntDTO;
+import org.openpaas.ieda.azureMgnt.web.network.dao.AzureNetworkMgntVO;
+import org.openpaas.ieda.azureMgnt.web.network.dto.AzureNetworkMgntDTO;
 import org.openpaas.ieda.iaasDashboard.web.account.dao.IaasAccountMgntVO;
 import org.openpaas.ieda.iaasDashboard.web.common.service.CommonIaasService;
 import org.springframework.beans.factory.annotation.Autowired;

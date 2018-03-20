@@ -9,7 +9,7 @@
   </parent>
   
   
-  <groupId>org.openpaas.ieda.azuremgnt</groupId>
+  <groupId>org.openpaas.ieda.azureMgnt</groupId>
   <artifactId>OPENPAAS-IEDA-AZUREMGNT-SERVICE</artifactId>
   <packaging>jar</packaging>
   <name>OPENPAAS-IEDA-AZUREMGNT-SERVICE</name>

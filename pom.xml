@@ -16,6 +16,7 @@
     
     <modules>
         <module>OPENPAAS-IEDA-CONTROLLER</module>
+        <module>OPENPAAS-IEDA-COMMON-SERVICE</module>
         <module>OPENPAAS-IEDA-DEPLOY-SERVICE</module>
         <module>OPENPAAS-IEDA-AWSMGNT-SERVICE</module>
         <module>OPENPAAS-IEDA-OPENSTACKMGNT-SERVICE</module>
