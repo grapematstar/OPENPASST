@@ -18,6 +18,7 @@
         <result property="updateDate" column ="update_date"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+        <result property="deploymentFile" column="deployment_file"/>
     </resultMap>
 
     <select id="selectDirectorConfig" resultMap="directorConfigVo">
@@ -42,24 +43,27 @@
     
     <select id="selectDirectorConfigByDefaultYn" resultMap="directorConfigVo">
       /**ieda.deploy.config.setting.selectDirectorConfigByDefaultYn**/
-        Select 
-            ieda_director_config_seq
-            ,create_date
-            ,current_deployment 
-            ,default_yn
-            ,director_cpi 
-            ,director_name 
-            ,director_port 
-            ,director_url 
-            ,director_uuid 
-            ,director_version 
-            ,update_date
-            ,user_id
-            ,user_password 
-         From 
-               ieda_director_config
-        Where 
-            default_Yn = #{defaultYn}
+        select 
+            deployment_file,
+            ieda_director_config_seq, 
+            ieda_director_config.create_date, 
+            current_deployment, 
+            default_yn, 
+            director_cpi, 
+            ieda_director_config.director_name, 
+            director_port, 
+            director_url, 
+            director_uuid, 
+            director_version, 
+            ieda_director_config.update_date, 
+            user_id, 
+            user_password
+        From 
+            ieda_director_config
+        join
+            ieda_bootstrap
+        on ieda_director_config.director_name = ieda_bootstrap.director_name 
+            and default_yn = #{defaultYn}
     </select>
     
     <select id="selectDirectorConfigBySeq" resultMap="directorConfigVo">
@@ -105,6 +109,7 @@
         Where 
             director_url=#{directorUrl}    
     </select>
+    
     
     <insert id="insertDirector">
       /**ieda.deploy.config.setting.insertDirector**/

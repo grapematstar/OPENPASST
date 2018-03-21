@@ -1,5 +1,6 @@
 package org.openpaas.ieda.deploy.web.config.setting.service;
 
+import java.io.BufferedReader;
 import java.io.File
 ;
 import java.io.FileInputStream;
@@ -7,8 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.StringWriter;
+import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.HashMap;
@@ -18,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.openpaas.ieda.common.api.LocalDirectoryConfiguration;
 import org.openpaas.ieda.common.exception.CommonException;
 import org.openpaas.ieda.common.web.security.SessionInfoDTO;
 import org.openpaas.ieda.deploy.api.director.dto.DirectorInfoDTO;
@@ -26,6 +31,9 @@ import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigDAO;
 import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigVO;
 import org.openpaas.ieda.deploy.web.config.setting.dto.DirectorConfigDTO;
 import org.openpaas.ieda.deploy.web.config.setting.dto.DirectorConfigDTO.Update;
+import org.openpaas.ieda.deploy.web.deploy.bootstrap.dao.BootstrapDAO;
+import org.openpaas.ieda.deploy.web.deploy.bootstrap.dao.BootstrapVO;
+import org.openpaas.ieda.deploy.web.deploy.bootstrap.dto.BootStrapDeployDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +48,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DirectorConfigService  {
     
     @Autowired private DirectorConfigDAO dao;
+    
+    final private static String SEPARATOR = System.getProperty("file.separator");
+    final private static String CREDENTIAL_DIR = LocalDirectoryConfiguration.getGenerateCredentialDir() + SEPARATOR;
     private final static Logger LOGGER = LoggerFactory.getLogger(DirectorConfigService.class);
     
     /***************************************************
@@ -345,26 +356,26 @@ public class DirectorConfigService  {
     }
     
     /***************************************************
-    * @param principal 
+     * @param principal 
      * @param boshConfigFileName 
      * @project : Paas 플랫폼 설치 자동화
-    * @description : 기본 설치 관리자 설정
-    * @title : setDefaultDirectorInfo
-    * @return : DirectorConfigVO
-    ***************************************************/
+     * @description : 기본 설치 관리자 설정
+     * @title : setDefaultDirectorInfo
+     * @return : DirectorConfigVO
+     ***************************************************/
     public DirectorConfigVO setDefaultDirectorInfo(DirectorConfigVO directorConfig, DirectorInfoDTO info, Principal principal, String boshConfigFileName){
         
         //3. 기존 기본관리자의 상태를 N으로 바꾸고 새로운 기본 관리자를 셋팅한다.
         DirectorConfigVO oldDefaultDiretor = dao.selectDirectorConfigByDefaultYn("Y");
         //4. 세션 정보를 가져온다.
         SessionInfoDTO sessionInfo = new SessionInfoDTO(principal);
-                
+        
         if (oldDefaultDiretor != null) {
             oldDefaultDiretor.setDefaultYn("N");
             oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
             dao.updateDirector(oldDefaultDiretor);
         }
-        
+        //5. 새로운 기본관리자의 정보를 셋팅한다.
         directorConfig.setDefaultYn("Y");
         directorConfig.setDirectorName(info.getName());
         directorConfig.setDirectorUuid(info.getUuid());
@@ -375,8 +386,30 @@ public class DirectorConfigService  {
         directorConfig.setDirectorVersion(info.getVersion());
         directorConfig.setUpdateUserId(sessionInfo.getUserId());
         
-        setBoshConfigFile(directorConfig, boshConfigFileName);
         dao.updateDirector(directorConfig);
+        
+        //6. bosh-env 환경설정 정보를 업데이트 한다.
+        directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
+        try{
+            String boshConfigFile= CREDENTIAL_DIR+directorConfig.getDeploymentFile().replaceAll(".yml", "-creds.yml");
+            InputStream input = new FileInputStream(new File( boshConfigFile));
+            Yaml yaml = new Yaml();
+            //파일을 로드하여 Map<String, Object>에 parse한다.
+            Map<String, Object> object = (Map<String, Object>)yaml.load(input);
+            Map<String, String> certMap = (Map<String,String>)object.get("director_ssl");
+            //bosh-env를 실행한다.
+            ProcessBuilder builder = new ProcessBuilder("bosh", "alias-env", directorConfig.getDirectorName(),
+                                                         "-e", directorConfig.getDirectorUrl(), "--ca-cert="+certMap.get("ca"));
+            builder.redirectOutput(Redirect.INHERIT);
+            builder.redirectError(Redirect.INHERIT);
+            builder.start();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+           
+        }
+        
+        //setBoshConfigFile(directorConfig, boshConfigFileName);
         
         return directorConfig;
     }
@@ -541,4 +574,5 @@ public class DirectorConfigService  {
         File file = new File(getBoshConfigLocation(boshConfigFileName));
         return file.exists();
     }
+    
 }
