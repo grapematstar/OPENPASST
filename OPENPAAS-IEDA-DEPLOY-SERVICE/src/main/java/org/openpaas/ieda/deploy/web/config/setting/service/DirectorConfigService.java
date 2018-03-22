@@ -34,6 +34,7 @@ import org.openpaas.ieda.deploy.web.config.setting.dto.DirectorConfigDTO.Update;
 import org.openpaas.ieda.deploy.web.deploy.bootstrap.dao.BootstrapDAO;
 import org.openpaas.ieda.deploy.web.deploy.bootstrap.dao.BootstrapVO;
 import org.openpaas.ieda.deploy.web.deploy.bootstrap.dto.BootStrapDeployDTO;
+import org.owasp.esapi.crypto.PlainText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class DirectorConfigService  {
     
     @Autowired private DirectorConfigDAO dao;
     
+    final private static String BASE_DIR = System.getProperty("user.home");
     final private static String SEPARATOR = System.getProperty("file.separator");
     final private static String CREDENTIAL_DIR = LocalDirectoryConfiguration.getGenerateCredentialDir() + SEPARATOR;
     private final static Logger LOGGER = LoggerFactory.getLogger(DirectorConfigService.class);
@@ -356,24 +358,24 @@ public class DirectorConfigService  {
     }
     
     /***************************************************
-     * @param principal 
-     * @param boshConfigFileName 
-     * @project : Paas 플랫폼 설치 자동화
-     * @description : 기본 설치 관리자 설정
-     * @title : setDefaultDirectorInfo
-     * @return : DirectorConfigVO
-     ***************************************************/
+    * @param principal 
+    * @param boshConfigFileName 
+    * @project : Paas 플랫폼 설치 자동화
+    * @description : 기본 설치 관리자 설정
+    * @title : setDefaultDirectorInfo
+    * @return : DirectorConfigVO
+    ***************************************************/
+    @SuppressWarnings("unchecked")
     public DirectorConfigVO setDefaultDirectorInfo(DirectorConfigVO directorConfig, DirectorInfoDTO info, Principal principal, String boshConfigFileName){
         
-        //3. 기존 기본관리자의 상태를 N으로 바꾸고 새로운 기본 관리자를 셋팅한다.
+        //3. 기존 기본관리자의 정보를 불러온다.
         DirectorConfigVO oldDefaultDiretor = dao.selectDirectorConfigByDefaultYn("Y");
         //4. 세션 정보를 가져온다.
         SessionInfoDTO sessionInfo = new SessionInfoDTO(principal);
-        
         if (oldDefaultDiretor != null) {
             oldDefaultDiretor.setDefaultYn("N");
             oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
-            dao.updateDirector(oldDefaultDiretor);
+            //dao.updateDirector(oldDefaultDiretor);
         }
         //5. 새로운 기본관리자의 정보를 셋팅한다.
         directorConfig.setDefaultYn("Y");
@@ -386,29 +388,75 @@ public class DirectorConfigService  {
         directorConfig.setDirectorVersion(info.getVersion());
         directorConfig.setUpdateUserId(sessionInfo.getUserId());
         
-        dao.updateDirector(directorConfig);
+        //dao.updateDirector(directorConfig);
         
         //6. bosh-env 환경설정 정보를 업데이트 한다.
-        directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
+        //directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
+        OutputStreamWriter fileWriter = null;
         try{
-            String boshConfigFile= CREDENTIAL_DIR+directorConfig.getDeploymentFile().replaceAll(".yml", "-creds.yml");
-            InputStream input = new FileInputStream(new File( boshConfigFile));
+            String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getDeploymentFile().replaceAll(".yml", "-creds.yml");
+            InputStream input = new FileInputStream(new File( boshCredentialFile));
             Yaml yaml = new Yaml();
-            //파일을 로드하여 Map<String, Object>에 parse한다.
+            //7. 파일을 로드하여 Map<String, Object>에 parse한다.
             Map<String, Object> object = (Map<String, Object>)yaml.load(input);
             Map<String, String> certMap = (Map<String,String>)object.get("director_ssl");
-            //bosh-env를 실행한다.
+            //8. bosh alias-env를 실행한다.
             ProcessBuilder builder = new ProcessBuilder("bosh", "alias-env", directorConfig.getDirectorName(),
                                                          "-e", directorConfig.getDirectorUrl(), "--ca-cert="+certMap.get("ca"));
             builder.redirectOutput(Redirect.INHERIT);
             builder.redirectError(Redirect.INHERIT);
             builder.start();
-        }catch(Exception e){
+            Thread.sleep(2000);
+            //9. bosh-env에 로그인
+            String boshConfigFile = BASE_DIR+SEPARATOR+".bosh"+SEPARATOR+"config";
+            //해당 경로에 파일이 있을경우
+            input = new FileInputStream(new File(boshConfigFile));
+            Map<String, Object> boshEnv = (Map<String, Object>)yaml.load(input);
+            List<Map<String, Object>> envMap = (List<Map<String, Object>>) boshEnv.get("environments");
+            for(int i=0;i<envMap.size();i++){
+                if(envMap.get(i).get("url").equals(directorConfig.getDirectorUrl())){
+                    envMap.get(i).put("username",directorConfig.getUserId());
+                    envMap.get(i).put("password", directorConfig.getUserPassword());
+                }
+            }
+            //10. bosh config 파일을 출력하기 위한  FileWriter 객체 생성
+            fileWriter = new OutputStreamWriter(new FileOutputStream(boshConfigFile),"UTF-8");
+            //11. StringWriter 객체 생성
+            StringWriter stringWriter = new StringWriter();
+            yaml.dump(boshEnv, stringWriter);
+            fileWriter.write(stringWriter.toString());
+            // stemcell 조회 > httpstatus > 조건 200 이 아닐경우 Exception >> database update
+//            if(){
+//                oldDefaultDiretor.setDefaultYn("Y");
+//                oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
+//                dao.updateDirector(oldDefaultDiretor);
+//                dao.deleteDirecotr(directorConfig.getIedaDirectorConfigSeq());
+//            }
+            //해당 경로에 파일이 없을 경우 --> exception
+        } catch (IOException e) {
+        	e.printStackTrace();
+            throw new CommonException("taretDirector.director.exception",
+                    "설치관리자 타겟 설정 중 오류 발생하였습니다.", HttpStatus.NOT_FOUND);
+        } catch (NullPointerException e){
+        	e.printStackTrace();
+            throw new CommonException("notfound.directorFile.exception",
+                    "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
+        } catch (ClassCastException e){
             e.printStackTrace();
-        }finally{
-           
+            throw new CommonException("classCastException.directorFile.exception",
+                    "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(fileWriter != null) {
+                    fileWriter.close();
+                }
+            } catch (IOException e) {
+                throw new CommonException("taretDirector.director.exception",
+                        "읽어오는중 오류가 발생했습니다!", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
-        
         //setBoshConfigFile(directorConfig, boshConfigFileName);
         
         return directorConfig;
