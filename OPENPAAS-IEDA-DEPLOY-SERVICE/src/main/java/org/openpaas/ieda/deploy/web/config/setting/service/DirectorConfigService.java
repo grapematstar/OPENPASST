@@ -425,13 +425,15 @@ public class DirectorConfigService  {
             StringWriter stringWriter = new StringWriter();
             yaml.dump(boshEnv, stringWriter);
             fileWriter.write(stringWriter.toString());
+            
+            boolean flag = isExistBoshEnvLogin(directorConfig.getDirectorUrl(), directorConfig.getDirectorPort(), directorConfig.getUserId(), directorConfig.getUserPassword());
             // stemcell 조회 > httpstatus > 조건 200 이 아닐경우 Exception >> database update
-//            if(){
-//                oldDefaultDiretor.setDefaultYn("Y");
-//                oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
-//                dao.updateDirector(oldDefaultDiretor);
-//                dao.deleteDirecotr(directorConfig.getIedaDirectorConfigSeq());
-//            }
+            if(flag){
+                oldDefaultDiretor.setDefaultYn("Y");
+                oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
+                dao.updateDirector(oldDefaultDiretor);
+                dao.deleteDirecotr(directorConfig.getIedaDirectorConfigSeq());
+            }
             //해당 경로에 파일이 없을 경우 --> exception
         } catch (IOException e) {
         	e.printStackTrace();
@@ -623,4 +625,25 @@ public class DirectorConfigService  {
         return file.exists();
     }
     
+    /****************************************************************
+     * @project : Paas 플랫폼 설치 자동화
+     * @description : bosh-env 로그인 판별
+     * @title : isExistBoshEnvLogin
+     * @return : boolean
+    *****************************************************************/
+    public boolean isExistBoshEnvLogin(String directorUrl, int port, String userId, String password){
+    	boolean flag = true;
+        try {
+            HttpClient client = DirectorRestHelper.getHttpClient(port);
+            GetMethod get = new GetMethod(DirectorRestHelper.getStemcellsURI(directorUrl, port)); 
+            get = (GetMethod)DirectorRestHelper.setAuthorization(userId, password, (HttpMethodBase)get); 
+            int result = client.executeMethod(get);
+            
+        } catch (RuntimeException e) {
+            if( LOGGER.isErrorEnabled() ){ LOGGER.error( e.getMessage() );}
+        } catch (Exception e) {
+            return false;
+        }
+        return flag;
+    }
 }
