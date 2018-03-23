@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -367,7 +368,6 @@ public class DirectorConfigService  {
     ***************************************************/
     @SuppressWarnings("unchecked")
     public DirectorConfigVO setDefaultDirectorInfo(DirectorConfigVO directorConfig, DirectorInfoDTO info, Principal principal, String boshConfigFileName){
-        
         //3. 기존 기본관리자의 정보를 불러온다.
         DirectorConfigVO oldDefaultDiretor = dao.selectDirectorConfigByDefaultYn("Y");
         //4. 세션 정보를 가져온다.
@@ -375,7 +375,6 @@ public class DirectorConfigService  {
         if (oldDefaultDiretor != null) {
             oldDefaultDiretor.setDefaultYn("N");
             oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
-            //dao.updateDirector(oldDefaultDiretor);
         }
         //5. 새로운 기본관리자의 정보를 셋팅한다.
         directorConfig.setDefaultYn("Y");
@@ -387,11 +386,7 @@ public class DirectorConfigService  {
         directorConfig.setDirectorCpi(info.getCpi());
         directorConfig.setDirectorVersion(info.getVersion());
         directorConfig.setUpdateUserId(sessionInfo.getUserId());
-        
-        //dao.updateDirector(directorConfig);
-        
         //6. bosh-env 환경설정 정보를 업데이트 한다.
-        //directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
         OutputStreamWriter fileWriter = null;
         try{
             String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getDeploymentFile().replaceAll(".yml", "-creds.yml");
@@ -403,13 +398,10 @@ public class DirectorConfigService  {
             //8. bosh alias-env를 실행한다.
             ProcessBuilder builder = new ProcessBuilder("bosh", "alias-env", directorConfig.getDirectorName(),
                                                          "-e", directorConfig.getDirectorUrl(), "--ca-cert="+certMap.get("ca"));
-            builder.redirectOutput(Redirect.INHERIT);
-            builder.redirectError(Redirect.INHERIT);
             builder.start();
             Thread.sleep(2000);
             //9. bosh-env에 로그인
             String boshConfigFile = BASE_DIR+SEPARATOR+".bosh"+SEPARATOR+"config";
-            //해당 경로에 파일이 있을경우
             input = new FileInputStream(new File(boshConfigFile));
             Map<String, Object> boshEnv = (Map<String, Object>)yaml.load(input);
             List<Map<String, Object>> envMap = (List<Map<String, Object>>) boshEnv.get("environments");
@@ -426,28 +418,39 @@ public class DirectorConfigService  {
             yaml.dump(boshEnv, stringWriter);
             fileWriter.write(stringWriter.toString());
             
-            boolean flag = isExistBoshEnvLogin(directorConfig.getDirectorUrl(), directorConfig.getDirectorPort(), directorConfig.getUserId(), directorConfig.getUserPassword());
-            // stemcell 조회 > httpstatus > 조건 200 이 아닐경우 Exception >> database update
-            if(flag){
+            int statusResult = isExistBoshEnvLogin(directorConfig.getDirectorUrl(), 
+                                                   directorConfig.getDirectorPort(), 
+                                                   directorConfig.getUserId(), 
+                                                   directorConfig.getUserPassword());
+            String httpStatus = String.valueOf(statusResult);
+            // stemcell 조회 > httpStatus > 조건 200 이 아닐경우 Exception >> database update
+            if(httpStatus.equals("200")){
+                dao.updateDirector(oldDefaultDiretor);
+                dao.updateDirector(directorConfig);
+            }else{
                 oldDefaultDiretor.setDefaultYn("Y");
                 oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
                 dao.updateDirector(oldDefaultDiretor);
-                dao.deleteDirecotr(directorConfig.getIedaDirectorConfigSeq());
+                throw new CommonException("unAuthorized.director.exception",
+                        "실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
             }
-            //해당 경로에 파일이 없을 경우 --> exception
         } catch (IOException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             throw new CommonException("taretDirector.director.exception",
                     "설치관리자 타겟 설정 중 오류 발생하였습니다.", HttpStatus.NOT_FOUND);
         } catch (NullPointerException e){
-        	e.printStackTrace();
+            e.printStackTrace();
             throw new CommonException("notfound.directorFile.exception",
                     "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
         } catch (ClassCastException e){
             e.printStackTrace();
             throw new CommonException("classCastException.directorFile.exception",
                     "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
-        } catch(Exception e) {
+        } catch(HttpStatusCodeException e) {
+            e.printStackTrace();
+            throw new CommonException("unAuthorized.director.exception",
+                    "실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -460,7 +463,6 @@ public class DirectorConfigService  {
             }
         }
         //setBoshConfigFile(directorConfig, boshConfigFileName);
-        
         return directorConfig;
     }
 
@@ -631,19 +633,18 @@ public class DirectorConfigService  {
      * @title : isExistBoshEnvLogin
      * @return : boolean
     *****************************************************************/
-    public boolean isExistBoshEnvLogin(String directorUrl, int port, String userId, String password){
-    	boolean flag = true;
+    public int isExistBoshEnvLogin(String directorUrl, int port, String userId, String password){
+        int statusResult = 0;
         try {
             HttpClient client = DirectorRestHelper.getHttpClient(port);
             GetMethod get = new GetMethod(DirectorRestHelper.getStemcellsURI(directorUrl, port)); 
             get = (GetMethod)DirectorRestHelper.setAuthorization(userId, password, (HttpMethodBase)get); 
-            int result = client.executeMethod(get);
-            
+            statusResult = client.executeMethod(get);
         } catch (RuntimeException e) {
             if( LOGGER.isErrorEnabled() ){ LOGGER.error( e.getMessage() );}
         } catch (Exception e) {
-            return false;
+            if( LOGGER.isErrorEnabled() ){ LOGGER.error( e.getMessage() );}
         }
-        return flag;
+        return statusResult;
     }
 }
