@@ -25,6 +25,8 @@ public class DirectorConfigDTO {
         @NotNull
         private Integer directorPort; //포트번호
         
+        private String deploymentFile; //bootstrapId
+        
         public Integer getIedaDirectorConfigSeq() {
             return iedaDirectorConfigSeq;
         }
@@ -64,7 +66,14 @@ public class DirectorConfigDTO {
         public void setDirectorPort(Integer directorPort) {
             this.directorPort = directorPort;
         }
+        
+        public String getDeploymentFile() {
+            return deploymentFile;
+        }
 
+        public void setDeploymentFile(String deploymentFile) {
+            this.deploymentFile = deploymentFile;
+        }
 
     }
     
