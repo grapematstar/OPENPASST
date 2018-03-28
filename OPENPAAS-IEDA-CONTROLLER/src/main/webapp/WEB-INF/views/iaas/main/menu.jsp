@@ -64,8 +64,8 @@
                     </ul>
                 </li>
             </sec:authorize>
-              <li><a href="javascript:goWindow('<c:url value="/platform"/>', 'IEDA-WEB');"><i class="fa fa-fw fa-cog"></i>클라우드 플랫폼 설치</a></li>
-              <li><a href="javascript:goWindow('<c:url value="/hbFlatform"/>', 'HB-IEDA-WEB');"><i class="fa fa-fw fa-cogs"></i> 이종 클라우드 플랫폼 설치</a></li>
+              <li><a href="javascript:goWindow('<c:url value="/platform"/>', 'IEDA-WEB');"><i class="fa fa-fw fa-cog"></i>PaaS-TA 설치</a></li>
+              <li><a href="javascript:goWindow('<c:url value="/hbFlatform"/>', 'HB-IEDA-WEB');"><i class="fa fa-fw fa-cogs"></i> 이기종 PaaS-TA 설치</a></li>
         </ul>
     </div>
 </div>

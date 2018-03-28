@@ -13,31 +13,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.core.Application;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openpaas.ieda.common.exception.CommonException;
 import org.openpaas.ieda.deploy.api.director.dto.DirectorInfoDTO;
 import org.openpaas.ieda.deploy.web.common.base.BaseDeployControllerUnitTest;
 import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigDAO;
 import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigVO;
 import org.openpaas.ieda.deploy.web.config.setting.dto.DirectorConfigDTO;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
-@SpringApplicationConfiguration(classes = {Application.class})
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     
     private Principal principal = null;
@@ -67,7 +53,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testGetDefaultDirector
     * @return : void
     ***************************************************/
-    @Test
     public void testGetDefaultDirectorResultNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigByDefaultYn(anyString())).thenReturn(null);
         DirectorConfigVO resultVo = mockDirectorConfigService.getDefaultDirector();
@@ -80,7 +65,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testGetDefaultDirector
     * @return : void
     ***************************************************/
-    @Test
     public void testGetDefaultDirector(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigByDefaultYn(anyString())).thenReturn(expectVo);
@@ -99,7 +83,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testListDirector
     * @return : void
     ***************************************************/
-    @Test
     public void testListDirector(){
         List<DirectorConfigVO> expectList = setListDirector();
         when(mockDirectorConfigDAO.selectDirectorConfig()).thenReturn(expectList);
@@ -120,7 +103,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testExistCreateDirectorInfo
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void testExistCreateDirectorInfo(){
         List<DirectorConfigVO> expectList = setListDirector();
         DirectorConfigDTO.Create dto = setDirectorConfigInfo();
@@ -134,7 +116,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testCreateDirectorLoginFail
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void testCreateDirectorLoginFail(){
         List<DirectorConfigVO> expectList = new ArrayList<DirectorConfigVO>();
         DirectorConfigDTO.Create dto = setDirectorConfigInfo();
@@ -148,7 +129,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
      * @title : testInsertDirectorInfo
      * @return : void
     *****************************************************************/
-    @Test
     public void testInsertDirectorInfo(){
         DirectorConfigDTO.Create dto = setDirectorConfigInfo();
         DirectorInfoDTO apiDto = setDirectorInfoDTO();
@@ -162,7 +142,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testGetDirectorConfig
     * @return : void
     ***************************************************/
-    @Test
     public void testGetDirectorConfig(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(expectVo);
@@ -175,7 +154,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testGetDirectorConfigResultNull
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void testGetDirectorConfigResultNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(null);
         mockDirectorConfigService.getDirectorConfig(1);
@@ -187,7 +165,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : UpdateDirectorinfoResultNull
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void UpdateDirectorinfoResultNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(null);
         DirectorConfigDTO.Update dto = updateDirectorConfigInfo();
@@ -200,7 +177,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : existCheckUpdateDirectorinfoLoginFail
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void existCheckUpdateDirectorinfoLoginFail(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(expectVo);
@@ -214,7 +190,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testUpdateDirectorinfo
     * @return : void
     ***************************************************/
-    @Test
     public void testUpdateDirectorinfo(){
         DirectorConfigDTO.Update dto = updateDirectorConfigInfo();
         DirectorConfigVO vo = setDirectorInfo();
@@ -227,7 +202,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testDeleteDirectorConfigResultNull
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void testDeleteDirectorConfigResultNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(null);
         mockDirectorConfigService.deleteDirectorConfig(1, BOSHCONFIGTESTFILE);
@@ -239,7 +213,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : deleteDirectorConfigFileNotFound
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void deleteDirectorConfigFileNotFound(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(expectVo);
@@ -252,7 +225,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : deleteDirectorConfigNullPoint
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void deleteDirectorConfigNullPoint() throws Exception{
         OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(BOSHCONFIGTESTFILEPATH),"UTF-8");
         fileWriter.write("1");
@@ -268,7 +240,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testDeleteDirectorConfig
     * @return : void
     ***************************************************/
-    @Test
     public void testDeleteDirectorConfig() throws Exception{
         testInsertDirectorInfo();
         DirectorConfigVO expectVo = setDirectorInfo();
@@ -282,7 +253,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testExistCheckSetDefaultDirectorInfoValueNull
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void testExistCheckSetDefaultDirectorInfoValueNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(null);
         mockDirectorConfigService.existCheckSetDefaultDirectorInfo(1, principal, BOSHCONFIGTESTFILE);
@@ -294,7 +264,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testExistCheckSetDefaultDirectorInfoLoginFail
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void testExistCheckSetDefaultDirectorInfoLoginFail(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(expectVo);
@@ -307,7 +276,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testSetDefaultDirectorInfo
     * @return : void
     ***************************************************/
-    @Test
     public void testSetDefaultDirectorInfo(){
         DirectorConfigVO expectVo = setDirectorInfo();
         DirectorInfoDTO apiDto =  setDirectorInfoDTO();
@@ -322,7 +290,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testFileExistSetBoshConfigFile
     * @return : void
     ***************************************************/
-    @Test
     public void testFileExistSetBoshConfigFile(){
         testInsertDirectorInfo();
         DirectorConfigVO vo = setDirectorInfo();
@@ -335,7 +302,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testSetBoshConfigFileNullPoint
     * @return : void
     ***************************************************/
-    @Test(expected=CommonException.class)
     public void testSetBoshConfigFileNullPoint() throws Exception{
         OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(BOSHCONFIGTESTFILEPATH),"UTF-8");
         fileWriter.write("1");
@@ -349,7 +315,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testFileNotExistSetBoshConfigFile
     * @return : void
     ***************************************************/
-    @Test 
     public void testFileNotExistSetBoshConfigFile(){
         DirectorConfigVO vo = setDirectorInfo();
         mockDirectorConfigService.setBoshConfigFile(vo, BOSHCONFIGTESTFILE);
@@ -361,7 +326,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testFileNotExistSetBoshConfigFile
     * @return : void
     ***************************************************/
-    @Test(expected=NullPointerException.class)
     public void testFileNotExistSetBoshConfigFileDefault(){
         DirectorConfigVO vo = setDirectorInfo2();
         mockDirectorConfigService.setBoshConfigFile(vo, BOSHCONFIGTESTFILE);

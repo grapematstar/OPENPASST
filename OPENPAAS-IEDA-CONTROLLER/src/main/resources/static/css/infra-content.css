@@ -23,7 +23,7 @@
 
 
 /*리소스 사용량 */  
-#main .iaasTotalResourceUsageDiv {background-color: #183354;width: 100%;display: block;float: left;border-radius: 10px;padding: 10px 30px;}
+#main .iaasTotalResourceUsageDiv {background-color: #296473;width: 100%;display: block;float: left;border-radius: 10px;padding: 10px 30px;}
 #main .iaasTotalResourceUsageDiv > ul:nth-of-type(1) {display: block;margin: 0 auto;width: 100%;}
 #main .iaasTotalResourceUsageDiv > ul:nth-of-type(1) > li {display: inline-block;width: 30%;margin:20px 0;} 
 #main .iaasTotalResourceUsageDiv > ul > li > ul > li { display: inline-block; color: #fff;  font-weight: bolder; width:30% }
@@ -32,7 +32,7 @@
 #main .iaasTotalResourceUsageDiv .totalResourceUsage-ul-Div  > li:nth-of-type(2) {vertical-align: middle;font-size: 50px;width: 68%;}
 #main .iaasTotalResourceUsageDiv .totalResourceUsage-ul-Div  > li:nth-of-type(2) > span { display:inline-block; }
 #iaasResourceUsageWrap { display: block;float: left; width:100% }
-#iaasResourceUsageWrap .iaasResourceUsageDiv { background-color:#fff; width: 415px; float:left; border-radius: 10px; height: 453px; border: 2px solid; margin-right: 70px !important;cursor:pointer;}    
+#iaasResourceUsageWrap .iaasResourceUsageDiv { background-color:#fff; width: 405px; float:left; border-radius: 10px; height: 453px; border: 2px solid; margin-right: 70px !important;cursor:pointer;}    
 #iaasResourceUsageWrap .iaasResourceUsageDiv > ul { text-overflow: ellipsis;overflow: hidden;height: 100%; }
 #iaasResourceUsageWrap .iaasResourceUsageDiv > ul > li:nth-of-type(1) { border-bottom: 1px dashed #979797 }
 #iaasResourceUsageWrap .iaasResourceUsageDiv > ul > li > ul { margin:60px 20px 10px 20px }
@@ -52,7 +52,7 @@
 #instanceUsageWrap .account-sp,  #networkUsageWrap .account-sp, #volumeUsageWrap .account-sp, #billingUsageWrap .account-sp { display:inline-block; width:200px; vertical-align:super; font-weight:bold; font-size:16px; }
 #instanceUsageWrap .progress,  #networkUsageWrap .progress,  #volumeUsageWrap .progress, #billingUsageWrap .progress { display:inline-block; width:60%; margin-bottom:0; height:30px }
 #instanceUsageWrap .panel-body, #networkUsageWrap .panel-body, #volumeUsageWrap .panel-body, #billingUsageWrap .panel-body { padding:0; height:150px; }
-.instanceUsage, .networkUsage, .volumeUsage, .billingUsage {  float:left; width:70%; border-right:1px solid #337ab7; padding:15px; height:100%; }
+.instanceUsage, .networkUsage, .volumeUsage, .billingUsage {  float:left; width:70%; border-right:1px solid #bababa; padding:15px; height:100%; }
 #instanceUsageWrap .summary-st, #networkUsageWrap .summary-st, #volumeUsageWrap .summary-st, #billingUsageWrap .summary-st {
 	font-size: 20px; font-weight: bold; color: #4b4b4b; 
 }

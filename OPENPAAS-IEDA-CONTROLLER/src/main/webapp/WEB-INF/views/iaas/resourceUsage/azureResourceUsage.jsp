@@ -170,7 +170,7 @@ $( window ).resize(function() {
         <div class="title fl">Azure 인스턴스 사용량 정보</div>
         <div id="instanceUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary">
+                <div class="panel panel-default">
                     <div class="panel-heading" style="position:relative"><b>Azure 인스턴스 사용량</b><img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="instanceUsage"></div>
@@ -187,7 +187,7 @@ $( window ).resize(function() {
         <div class="title fl">Azure 네트워크 사용량 정보</div>
         <div id="networkUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary" style="position:relative;">
+                <div class="panel panel-default" style="position:relative;">
                     <div class="panel-heading" style="position:relative"><b>Azure 네트워크 사용량</b>(기준: Virtual Networks) <img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="networkUsage"></div>
@@ -204,7 +204,7 @@ $( window ).resize(function() {
         <div class="title fl">Azure 볼륨 사용량 정보</div>
         <div id="volumeUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary">
+                <div class="panel panel-default">
                     <div class="panel-heading" style="position:relative"><b>Azure 볼륨 사용량</b><img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="volumeUsage"></div>
@@ -221,7 +221,7 @@ $( window ).resize(function() {
         <div class="title fl">Azure 과금 사용량 정보</div>
         <div id="billingUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary">
+                <div class="panel panel-default">
                     <div class="panel-heading" style="position:relative"><b>Azure 과금 사용량</b><img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="billingUsage"></div>
