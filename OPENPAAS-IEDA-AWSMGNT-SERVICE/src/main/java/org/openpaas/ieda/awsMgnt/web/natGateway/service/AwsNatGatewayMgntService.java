@@ -21,8 +21,8 @@ import com.amazonaws.services.ec2.model.NatGateway;
 import com.amazonaws.services.ec2.model.Subnet;
 @Service
 public class AwsNatGatewayMgntService {
-	@Autowired AwsNatGatewayMgntApiService awsNatGatewayMgntApiService;
-	@Autowired CommonIaasService commonIaasService;
+    @Autowired AwsNatGatewayMgntApiService awsNatGatewayMgntApiService;
+    @Autowired CommonIaasService commonIaasService;
     @Autowired MessageSource message;
     
     /***************************************************
@@ -36,32 +36,27 @@ public class AwsNatGatewayMgntService {
         Region region = getAwsRegionInfo(regionName);
         List<NatGateway> apiAwsNatGwList = awsNatGatewayMgntApiService.getAwsNatGatewayInfoListApiFromAws(vo, region.getName());
         List<AwsNatGatewayMgntVO> awsNatGatewayList = new ArrayList<AwsNatGatewayMgntVO>();
-        if(apiAwsNatGwList.size()!= 0){
-	        for ( int i=0; i<apiAwsNatGwList.size(); i++ ){
-	        	NatGateway natGateway = apiAwsNatGwList.get(i);
-	            AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
-	            awsNatGatewayVO.setNatGatewayId(natGateway.getNatGatewayId());
-	            awsNatGatewayVO.setState(natGateway.getState());
-	            if(natGateway.getNatGatewayAddresses().get(0).getPublicIp() !=null){
-	            awsNatGatewayVO.setPublicIp(natGateway.getNatGatewayAddresses().get(0).getPublicIp());
-	            }else{
-	            	awsNatGatewayVO.setPublicIp(" - ");
-	            }
-	            awsNatGatewayVO.setPrivateIp(natGateway.getNatGatewayAddresses().get(0).getPrivateIp());
-	            awsNatGatewayVO.setNetworkInterfaceId(natGateway.getNatGatewayAddresses().get(0).getNetworkInterfaceId());
-	            awsNatGatewayVO.setAllocationId(natGateway.getNatGatewayAddresses().get(0).getAllocationId());
-	            awsNatGatewayVO.setCreatedTime(natGateway.getCreateTime().toString());
-	            awsNatGatewayVO.setSubnetId(natGateway.getSubnetId().toString());
-	            awsNatGatewayVO.setVpcId(natGateway.getVpcId().toString());
-	            awsNatGatewayVO.setRecid(i);
-	            awsNatGatewayVO.setAccountId(accountId);
-	            awsNatGatewayList.add(awsNatGatewayVO);
-	        }
-        }else{
-        	AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
-        	 awsNatGatewayVO.setNatGatewayId("-");
-        	 awsNatGatewayVO.setState("-");
-        	 awsNatGatewayList.add(awsNatGatewayVO);
+        if(apiAwsNatGwList !=null && apiAwsNatGwList.size()!= 0){
+            for ( int i=0; i<apiAwsNatGwList.size(); i++ ){
+                NatGateway natGateway = apiAwsNatGwList.get(i);
+                AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
+                awsNatGatewayVO.setNatGatewayId(natGateway.getNatGatewayId());
+                awsNatGatewayVO.setState(natGateway.getState());
+                if(natGateway.getNatGatewayAddresses().get(0).getPublicIp() !=null){
+                awsNatGatewayVO.setPublicIp(natGateway.getNatGatewayAddresses().get(0).getPublicIp());
+                }else{
+                    awsNatGatewayVO.setPublicIp(" - ");
+                }
+                awsNatGatewayVO.setPrivateIp(natGateway.getNatGatewayAddresses().get(0).getPrivateIp());
+                awsNatGatewayVO.setNetworkInterfaceId(natGateway.getNatGatewayAddresses().get(0).getNetworkInterfaceId());
+                awsNatGatewayVO.setAllocationId(natGateway.getNatGatewayAddresses().get(0).getAllocationId());
+                awsNatGatewayVO.setCreatedTime(natGateway.getCreateTime().toString());
+                awsNatGatewayVO.setSubnetId(natGateway.getSubnetId().toString());
+                awsNatGatewayVO.setVpcId(natGateway.getVpcId().toString());
+                awsNatGatewayVO.setRecid(i);
+                awsNatGatewayVO.setAccountId(accountId);
+                awsNatGatewayList.add(awsNatGatewayVO);
+            }
         }
         return awsNatGatewayList;
     }
@@ -76,24 +71,27 @@ public class AwsNatGatewayMgntService {
     IaasAccountMgntVO vo =  getAwsAccountInfo(principal, accountId);
     Region region = getAwsRegionInfo(regionName);
     List<Subnet> apiAwsSubnetList = awsNatGatewayMgntApiService.getAwsSubnetInfoListApiFromAws(vo, region.getName());
+    
     List<AwsNatGatewayMgntVO> awsSubnetList = new ArrayList<AwsNatGatewayMgntVO>();
-    for ( int i=0; i<apiAwsSubnetList.size(); i++ ){
-    	Subnet subnet = apiAwsSubnetList.get(i);
-        AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
-        awsNatGatewayVO.setSubnetId(subnet.getSubnetId().toString());
-        awsNatGatewayVO.setVpcId(subnet.getVpcId().toString());
-        if(subnet.getTags().size() != 0){
-        	String result = "";
-        	for(int j=0; j<subnet.getTags().size(); j++){
-        	result += subnet.getTags().get(j).getValue().toString();
-        	}
-        	awsNatGatewayVO.setNameTag(result);
-        }else{
-        	awsNatGatewayVO.setNameTag("  -  ");
-        }
-        awsNatGatewayVO.setRecid(i);
-        awsNatGatewayVO.setAccountId(accountId);
-        awsSubnetList.add(awsNatGatewayVO);
+    if(apiAwsSubnetList !=null && apiAwsSubnetList.size()!= 0){
+	    for ( int i=0; i<apiAwsSubnetList.size(); i++ ){
+	        Subnet subnet = apiAwsSubnetList.get(i);
+	        AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
+	        awsNatGatewayVO.setSubnetId(subnet.getSubnetId().toString());
+	        awsNatGatewayVO.setVpcId(subnet.getVpcId().toString());
+	        if(subnet.getTags().size() != 0){
+	            String result = "";
+	            for(int j=0; j<subnet.getTags().size(); j++){
+	            result += subnet.getTags().get(j).getValue().toString();
+	            }
+	            awsNatGatewayVO.setNameTag(result);
+	        }else{
+	            awsNatGatewayVO.setNameTag("");
+	        }
+	        awsNatGatewayVO.setRecid(i);
+	        awsNatGatewayVO.setAccountId(accountId);
+	        awsSubnetList.add(awsNatGatewayVO);
+	    }
     }
     return awsSubnetList;
 }
@@ -105,27 +103,33 @@ public class AwsNatGatewayMgntService {
      * @return : List<AwsNatGatewayMgntVO>
      ***************************************************/
     public List<AwsNatGatewayMgntVO> getAwsEipAllocationIdList( int accountId, String regionName, Principal principal ) {
-    	IaasAccountMgntVO vo =  getAwsAccountInfo(principal, accountId);
+        IaasAccountMgntVO vo =  getAwsAccountInfo(principal, accountId);
         Region region = getAwsRegionInfo(regionName);
         List<Address> apiAddressList = awsNatGatewayMgntApiService.getAwsEipAllocationIdListApiFromAws(vo, region.getName());
+        List<NatGateway> apiAwsNatGwList = awsNatGatewayMgntApiService.getAwsNatGatewayInfoListApiFromAws(vo, region.getName());
         List<AwsNatGatewayMgntVO> awsEipAllocationIdList = new ArrayList<AwsNatGatewayMgntVO>();
+        if(apiAddressList !=null && apiAddressList.size()!= 0){
 	        for ( int i=0; i<apiAddressList.size(); i++ ){
-	        	Address address = apiAddressList.get(i);
-	        	AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
-	        	if(apiAddressList.size() !=0){
-	        	awsNatGatewayVO.setPublicIp(address.getPublicIp());
-	        	awsNatGatewayVO.setAllocationId(address.getAllocationId());
-	        	}
-	        	awsNatGatewayVO.setRecid(i);
-	            awsNatGatewayVO.setAccountId(accountId);
-	            awsEipAllocationIdList.add(awsNatGatewayVO);
+                Address address = apiAddressList.get(i);
+                AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
+                for(int j=0; j<apiAwsNatGwList.size(); j++){
+                	if(!apiAwsNatGwList.get(j).getState().equals("pending")){
+                		
+                	/*for(int k=0; k<apiAwsNatGwList.get(j).getNatGatewayAddresses().size();k++){
+                	String apiAddress = apiAwsNatGwList.get(j).getNatGatewayAddresses().get(k).getAllocationId();
+                	if(!apiAddress.equals("null") && !apiAddress.equals(address.getAllocationId())){*/
+		               
+		                awsNatGatewayVO.setPublicIp(address.getPublicIp());
+		                awsNatGatewayVO.setAllocationId(address.getAllocationId());
+		              /* }
+                      }*/
+                    }
+                }
+                awsNatGatewayVO.setRecid(i);
+                awsNatGatewayVO.setAccountId(accountId);
+                awsEipAllocationIdList.add(awsNatGatewayVO);
 	        }
-	        /*if (apiAddressList.size() == 0){
-	        	AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
-        		awsNatGatewayVO.setPublicIp("No results found. Please create an Elastic IP.");
-	        	awsEipAllocationIdList.add(awsNatGatewayVO);
-        	}*/
-        
+        }
         return awsEipAllocationIdList;
     }
     
@@ -139,7 +143,7 @@ public class AwsNatGatewayMgntService {
     public void allocateNewElasticIp(AwsNatGatewayMgntDTO dto, Principal principal){
     
     IaasAccountMgntVO vo =  getAwsAccountInfo(principal,dto.getAccountId());
-     Region region = getAwsRegionInfo(dto.getRegion());
+    Region region = getAwsRegionInfo(dto.getRegion());
     awsNatGatewayMgntApiService.allocateNewElasticIpFromAws(vo, region);
    
     
@@ -155,7 +159,7 @@ public class AwsNatGatewayMgntService {
          IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
          Region region = getAwsRegionInfo(dto.getRegion());
          try{
-        	 awsNatGatewayMgntApiService.createAwsNatGatewayApiFromAws(vo, region.getName(),dto);
+             awsNatGatewayMgntApiService.createAwsNatGatewayApiFromAws(vo, region.getName(),dto);
          }catch (Exception e) {
              throw new CommonException(
                      message.getMessage("common.badRequest.exception.code", null, Locale.KOREA), message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);

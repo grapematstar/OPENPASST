@@ -10,20 +10,15 @@ import org.springframework.stereotype.Service;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.regions.Region;
-import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.AllocateAddressRequest;
-import com.amazonaws.services.ec2.model.AllocateAddressResult;
 import com.amazonaws.services.ec2.model.CreateNatGatewayRequest;
 import com.amazonaws.services.ec2.model.DescribeNatGatewaysRequest;
-import com.amazonaws.services.ec2.model.DescribeSubnetsRequest;
-import com.amazonaws.services.ec2.model.DomainType;
 import com.amazonaws.services.ec2.model.NatGateway;
 import com.amazonaws.services.ec2.model.Subnet;
 import com.amazonaws.services.ec2.model.Vpc;
-import com.amazonaws.services.opsworks.model.ElasticIp;
 
 @Service
 public class AwsNatGatewayMgntApiService {

@@ -1,6 +1,6 @@
 <%
 /* =================================================================
- * 작성일 : 2018.03.00
+ * 작성일 : 2018.03.15
  * 작성자 : 이정윤
  * 상세설명 : AWS 관리 화면
  * =================================================================
@@ -47,9 +47,6 @@ $(function() {
                    ],
         onSelect: function(event) {
             event.onComplete = function() {
-               /*  var accountId =  w2ui.aws_natGatewayGrid.get(event.recid).accountId;
-                var natGatewayId = w2ui.aws_natGatewayGrid.get(event.recid).natGatewayId;
-                doSearchnatGatewayDetail(accountId, natGatewayId); */
             }
         },
         onUnselect: function(event) {
@@ -251,8 +248,9 @@ function setAwsSubnetIdList(){
                            result += data[i].subnetId;
                            result += "  |  ";
                            result += data[i].vpcId;
+                           if(data[i].nameTag!=null){
                            result += "  |  ";
-                           result += data[i].nameTag;
+                           result += data[i].nameTag;}
                            result += "</option>"; 
                    }
                }
@@ -286,9 +284,13 @@ function setAwsEipAllocationIdList(){
                if(data != null){
                    for(var i=0; i<data.length; i++){
                            result += "<option value='" + data[i].allocationId + "' >";
+                           if(data[i].allocationId !=null){
                            result += data[i].allocationId;
+                           }
+                           if(data[i].publicIp !=null){
                            result += "  |  ";
                            result += data[i].publicIp;
+                           }
                            result += "</option>"; 
                    }
                }

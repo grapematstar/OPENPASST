@@ -14,6 +14,7 @@ public class AwsRouteTableMgntDTO {
     private String privateGatewayId; //
     private String subnetId; //
     private String vpcId;
+    private String associationId;
     private String propagationId;
     private boolean mainYN;
     private boolean propagatedYN;
@@ -77,6 +78,12 @@ public class AwsRouteTableMgntDTO {
 	}
 	public void setVpcId(String vpcId) {
 		this.vpcId = vpcId;
+	}
+	public String getAssociationId() {
+		return associationId;
+	}
+	public void setAssociationId(String associationId) {
+		this.associationId = associationId;
 	}
 	public String getPropagationId() {
 		return propagationId;

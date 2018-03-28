@@ -137,7 +137,7 @@ function unhover(event, val){
                         </ul>
                     </li>
                 </sec:authorize>
-                <sec:authorize access="hasAuthority('AWS_ELASTIC_IP_MENU')">
+                <sec:authorize access="hasAuthority('AWS_NAT_GATEWAY_MENU')">
                     <li class="awsMgntDiv" onmouseover="hover(this,'elasticIP_c2');" onmouseout="unhover(this,'elasticIP_c1');" onclick="javascript:goPage('<c:url value="/awsMgnt/vpc/list/natGateway"/>', 'NAT Gateway');">
                         <ul>
                             <li class="aws-li"><span class="aws-li-span1">NAT Gateway</span></li>
@@ -149,8 +149,8 @@ function unhover(event, val){
                         </ul>
                     </li>
                 </sec:authorize>
-                 <sec:authorize access="hasAuthority('AWS_ELASTIC_IP_MENU')">
-                    <li class="awsMgntDiv" onmouseover="hover(this,'elasticIP_c2');" onmouseout="unhover(this,'elasticIP_c1');" onclick="javascript:goPage('<c:url value="/awsMgnt/vpc/list/routeTable"/>', 'Route Tables');">
+                 <sec:authorize access="hasAuthority('AWS_ROUTE_TABLE_MENU')">
+                    <li class="awsMgntDiv" onmouseover="hover(this,'elasticIP_c2');" onmouseout="unhover(this,'elasticIP_c1');" onclick="javascript:goPage('<c:url value="/awsMgnt/routeTable"/>', 'Route Tables');">
                         <ul>
                             <li class="aws-li"><span class="aws-li-span1">Route Tables</span></li>
                             <li>

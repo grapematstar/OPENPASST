@@ -1,5 +1,8 @@
 package org.openpaas.ieda.awsMgnt.web.routeTable.dao;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class AwsRouteTableMgntVO {
 	private Integer accountId; // 계정 아이디
     private Integer recid;
@@ -7,6 +10,7 @@ public class AwsRouteTableMgntVO {
     private String nameTag;
     private String routeTableId; //route Table ID
     private String destinationIpv4CidrBlock; //destination CIDR Block
+    private String ipv6CidrBlock; //IPv6 CIDR Block 
     private String targetId;
     private String privateGatewayId; //
     private String subnetId; //
@@ -53,6 +57,12 @@ public class AwsRouteTableMgntVO {
 	}
 	public void setDestinationIpv4CidrBlock(String destinationIpv4CidrBlock) {
 		this.destinationIpv4CidrBlock = destinationIpv4CidrBlock;
+	}
+	public String getIpv6CidrBlock() {
+		return ipv6CidrBlock;
+	}
+	public void setIpv6CidrBlock(String ipv6CidrBlock) {
+		this.ipv6CidrBlock = ipv6CidrBlock;
 	}
 	public String getTargetId() {
 		return targetId;
