@@ -312,6 +312,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
         DirectorConfigVO expectVo = setDirectorInfo();
         DirectorInfoDTO apiDto =  setDirectorInfoDTO();
         when(mockDirectorConfigDAO.selectDirectorConfigByDefaultYn(anyString())).thenReturn(expectVo);
+        
         mockDirectorConfigService.setDefaultDirectorInfo(expectVo, apiDto, principal, BOSHCONFIGTESTFILE);
     }
     

@@ -21,6 +21,7 @@ public class DirectorConfigVO {
     private String createUserId; //생성 사용자
     private String updateUserId;//수정 사용자 
     private boolean connect;//기본 설치관리자 클라이언트 요청 여부
+    private String deploymentFile;//Bootstrap_deployment_File Name
     
     public Integer getIedaDirectorConfigSeq() {
         return iedaDirectorConfigSeq;
@@ -169,6 +170,12 @@ public class DirectorConfigVO {
         } else {
             return new Date(updateDate.getTime());
         }
+    }
+    public String getDeploymentFile() {
+        return deploymentFile;
+    }
+    public void setDeploymentFile(String deploymentFile) {
+        this.deploymentFile = deploymentFile;
     }
     
 }
