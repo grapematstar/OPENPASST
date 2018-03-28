@@ -150,16 +150,18 @@ public class AwsRouteTableMgntService {
     	 Region region = getAwsRegionInfo(regionName);
          List<Subnet> apiAwsSubnetList = awsRouteTableMgntApiService.getAwsSubnetInfoListApiFromAws(vo,region.getName());
          
-          //List<RouteTable> apiAwsRouteTableList = awsRouteTableMgntApiService.getAwsRouteTableListApiFromAws(vo,region.getName());
+         // List<RouteTable> apiAwsRouteTableList = awsRouteTableMgntApiService.getAwsRouteTableListApiFromAws(vo,region.getName());
           //List<String> theRouteTables = new ArrayList<String>();
           //RouteTable routeTable = apiAwsRouteTableList.get(0);
          //String theRouteTableId = routeTable.getAssociations().get(0).getRouteTableId();
          //String associatedSubnetId = routeTable.getAssociations().get(0).getSubnetId();
+         List<RouteTable> apiAwsRouteTableList = awsRouteTableMgntApiService.getAwsRouteTableListApiFromAws(vo,region.getName());
+         List<String> theRouteTables = new ArrayList<String>();	
          List<AwsRouteTableMgntVO> list = new ArrayList<AwsRouteTableMgntVO>();
-
-         for (int i=0; i<apiAwsSubnetList.size(); i++ ){
+         
+			for (int i=0; i<apiAwsSubnetList.size(); i++ ){
      	 String subnetVpcId = apiAwsSubnetList.get(i).getVpcId().toString();
-    	 
+     	
         	 if( subnetVpcId.equals(vpcId)){
         		 List<String> subnetVpcIds = new ArrayList<String>();
         		 subnetVpcIds.add(subnetVpcId);
@@ -175,17 +177,25 @@ public class AwsRouteTableMgntService {
 	        				 awsRTmgntVo.setIpv6CidrBlock(ipv6Block);
         				 } 
         			 }else if(vp6size == 0){
-        				awsRTmgntVo.setIpv6CidrBlock(" - ");
-        		 }   
-        			// for(int h=0; h<apiAwsRouteTableList.size(); h++){
-        			//	 RouteTable routeTable = apiAwsRouteTableList.get(h);
-        			// if(routeTable.getAssociations().get(h).getSubnetId().equals(apiAwsSubnetList.get(i).getSubnetId())){
-        			// awsRTmgntVo.setRouteTableId(routeTable.getAssociations().get(h).getRouteTableId());
-        			 //}
-        			// }
-	    			 awsRTmgntVo.setRecid(j);
-		             awsRTmgntVo.setAccountId(accountId);
-		             list.add(awsRTmgntVo);
+        				awsRTmgntVo.setIpv6CidrBlock("-");
+        		     }
+        			
+        			 
+        			 int y =1;
+        			for(int h=0; h<apiAwsRouteTableList.size(); h++){
+	        			RouteTable routeTable = apiAwsRouteTableList.get(h);
+	        			if(routeTable.getVpcId().equals(apiAwsSubnetList.get(i).getVpcId())){
+	        				if(routeTable.getAssociations().size() != 0 ){
+	        					theRouteTables.add(routeTable.getRouteTableId());
+	        					y++;
+	        				}
+	        			}
+        			 }if(y!=1){
+        			 awsRTmgntVo.setRouteTableId(theRouteTables.get(y-2));
+        			 }
+        			 awsRTmgntVo.setRecid(j);
+        			 awsRTmgntVo.setAccountId(accountId);
+        			 list.add(awsRTmgntVo);
         		 }
         	 }
         }

@@ -150,7 +150,7 @@ $(function() {
     });
     
     
-    $('#aws_subnetAssociationGrid').w2grid({
+    /* $('#aws_subnetAssociationGrid').w2grid({
         name: 'aws_subnetAssociationGrid',
         method: 'GET',
         msgAJAXerror : 'AWS 계정을 확인해주세요.',
@@ -189,7 +189,7 @@ $(function() {
             }
         }, onError:function(evnet){
         }
-    });
+    }); */
     
      
     
@@ -277,6 +277,81 @@ $(function() {
 
 
 /********************************************************
+ * 설명 : 추가 그리드 및 폼 값 초기화
+ *********************************************************/
+var config = {
+         layouti: {
+             name: 'layouti',
+             padding: 4,
+             panels: [
+                 { type: 'left', size: '70%', minSize: 300},
+                 { type: 'main', minSize: 300}
+             ]
+         },
+         grid: {
+             method: 'GET',
+             msgAJAXerror: 'OPENSTACK 계정을 확인해주세요.',
+             header: '<b>라우터 인터페이스 목록</b>',
+             style: 'text-align: center',
+             show: {
+                 selectColumn: true,
+                 footer: true
+             },
+             name: 'aws_subnetAssociationGrid',
+             columns: [
+                 { field: 'recid', caption: 'Recid', hidden: true},
+                 { field: 'accountId', caption: 'accountId', hidden: true},
+                 { field: 'subnetId', caption: 'subnetId', size: '153px', style: 'text-align: center'},
+                 { field: 'destinationIpv4CidrBlock', caption: 'IP4 CIDR', size: '153px', style: 'text-align: center', render : function(record){
+                     if(record.destinationIpv4CidrBlock == ""){
+                         return "-";
+                     }else{
+                         return record.destinationIpv4CidrBlock;
+                     }
+                 }},
+                 { field: 'ip6CidrBlock', caption: 'IP6 CIDR', size: '153px', style: 'text-align: center', render : function(record){
+                     if(record.ip6CidrBlock == ""){
+                         return "-";
+                     }else{
+                         return record.ip6CidrBlock;
+                     }
+                 }},
+                 { field: 'routeTableId', caption: 'RouteTable ID',  size: '153px', style: 'text-align: center', render : function(record){
+                     if(record.routeTableId == ""){
+                         return "-";
+                     }else{
+                         return record.routeTableId;
+                     }
+                 }}
+             ],
+             onLoad: function(event){
+                 event.onComplete = function(){
+                     $('#w2ui-popup #dddBtn').attr('disabled', true);
+                 
+                 
+                 }
+             },
+             onSelect: function(event) {
+                 event.onComplete = function() {
+                     $('#w2ui-popup #dddBtn').attr('disabled', false);
+                 }
+             },
+             onUnselect: function(event) {
+                 event.onComplete = function(){
+                     $('#w2ui-popup #dddBtn').attr('disabled', true);
+                 }
+             },
+             onError: function(event){
+                 // comple
+             }
+         }
+         }
+$(function () {
+    // initialization in memory
+    $().w2layout(config.layouti);
+    $().w2grid(config.grid);
+});
+/********************************************************
  * 설명 : Route Table 목록 조회 Function
  * 기능 : doSearch
  *********************************************************/
@@ -316,7 +391,7 @@ function doSearchSubnetDetail(accountId, routeTableId){
  * 설명 : Route Table 해당VPC에 대한 Subnet Assoication List 조회 Function 
  * 기능 : doSearchRouteDetail
  *********************************************************/
-function doSearchSubnetAssociationDetail(){
+/* function doSearchSubnetAssociationDetail(){
 	w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
 	var region = $("select[name='region']").val();
 	var accountId = $("select[name='accountId']").val();
@@ -325,7 +400,7 @@ function doSearchSubnetAssociationDetail(){
     w2ui['aws_subnetAssociationGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/subnet/'/>"+accountId+"/"+region+"/"+vpcId);
     w2utils.unlock($("#layout_layout_panel_main"));
 }
-
+ */
 
 /********************************************************
  * 설명 : Route Table 생성
@@ -522,20 +597,20 @@ function subnetAssociation() {
     var selected = w2ui['aws_routeTableGrid'].getSelection();
     var record = w2ui['aws_routeTableGrid'].get(selected);
     w2popup.open({
-        title   : "<b>AWS Route Add </b>",
-        width   : 700,
+        title   : "<b> Edit Subnet Association </b>",
+        width   : 900,
         height  : 500,
         modal   : true,
         body    : "<div id='subnetAssociationPopupDiv' style='position: absolute; width:99%; height:95%; margin:5px 0;'></div>",
         buttons : $("#subnetAssociationPopupBtnDiv").html(),
         onOpen : function(event){
             event.onComplete = function(){
-            	console.log(accountId+ region + vpcId+ "TEST MMMMMMMMMM111"+record.vpcId+"TEST 111");
+            	console.log(accountId+ region + record.vpcId+ "TEST MMMMMMMMMM111"+record.routeTableId+"TEST 111");
             	$('.w2ui-popup #subnetAssociationPopupDiv').w2render('layouti');
             	w2ui.layouti.content('left', w2ui.aws_subnetAssociationGrid);
 			    w2ui['aws_subnetAssociationGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/subnet/'/>"+accountId+"/"+region+"/"+record.vpcId);
-            	console.log(accountId+ region + vpcId+ "TEST MMMMMMMMMM");
-			    doSearchSubnetAssociationDetail();
+            	console.log(accountId+ region + record.vpcId+ "TEST MMMMMMMMMM"+record.routeTableId+"TEST 222");
+			    //doSearchSubnetAssociationDetail();
             }                   
         },onClose:function(event){
             //initsetting();
