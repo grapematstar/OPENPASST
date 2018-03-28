@@ -386,11 +386,11 @@ function getLoggregatorRelease(){
  * 기능 : setDisabledMonitoring
  *********************************************************/
 function setDisabledMonitoring(val){
-    if( !checkEmpty(val) && val != "undefined/undefined"){
+    if( !checkEmpty(val) || val != "undefined/undefined"){
         var cfReleaseName = val.split("/")[0];
         var cfReleaseVersion = val.split("/")[1];
         //paasta-controller v2.0.0 이상 PaaS-TA 모니터링 지원 checkbox
-        if( cfReleaseName.indexOf("paasta-controller") > -1 && compare(cfReleaseVersion, "2.0") > -1 ){
+        if( cfReleaseName.indexOf("paasta-controller") > -1 && ( compare(cfReleaseVersion, "2.0") > -1 || compare(cfReleaseVersion, "3.0") > -1 || compare(cfReleaseVersion, "3.1") > -1) ){
             $('.w2ui-msg-body #paastaMonitoring').attr('disabled',false);
         }else{
             if( $(".w2ui-msg-body input:checkbox[name='paastaMonitoring']").is(":checked")){
@@ -410,16 +410,21 @@ function setDisabledMonitoring(val){
 function setInputDisplay(val){
     var name = val.split("/")[0];
     var version = val.split("/")[1];
-    if( Number(version) >= 272 || (name.indexOf("paasta-controller") > -1 && compare(version, "3.0") > -1)){
+    if( Number(version) >= 272 || (name.indexOf("paasta-controller") > -1 && compare(version, "3.0") > -1 ) || (name.indexOf("paasta-controller") > -1 && compare(version, "3.1") > -1 )){
         //핑거프린트 자동 입력
         $(".w2ui-msg-body #fingerprint").css("display", "none");
         $(".w2ui-msg-body #deaDiskmbDiv").css("display", "none");
         $(".w2ui-msg-body #deaMemorymbDiv").css("display", "none");
         $(".w2ui-msg-body #loggregator").css("display", "block");
+        if( Number(version) == "3.1" || Number(version) == "287" ){
+        	$(".w2ui-msg-body #loggregator").css("display", "none");
+        	$(".w2ui-msg-body #loggregator").val("");
+        }
         $(".w2ui-msg-body input[name='appSshFingerprint']").val("");
         $(".w2ui-msg-body input[name='deaMemoryMB']").val("");
         $(".w2ui-msg-body input[name='deaDiskMB']").val("");
-    }else{
+    } 
+    else{
         if( diegoUse == "true" ){
             $(".w2ui-msg-body #fingerprint").css("display", "block");
         }
@@ -428,6 +433,7 @@ function setInputDisplay(val){
         $(".w2ui-msg-body #deaMemorymbDiv").css("display", "block");
     }
     getLoggregatorRelease();
+    
 }
 
 /********************************************************
@@ -1243,6 +1249,7 @@ function jobPopupComplete(){
  * 기능 : settingCfJobs
  *********************************************************/
 function settingCfJobs(){
+	console.log("1");
     var release_version = defaultInfo.releaseVersion;
     release_version = settingReleaseVersion(release_version);
     $.ajax({
@@ -1250,6 +1257,7 @@ function settingCfJobs(){
         url : "/deploy/cf/install/save/job/list/"+release_version+"/"+'DEPLOY_TYPE_CF',
         contentType : "application/json",
         success : function(data, status) {
+        	console.log(data);
             if( !checkEmpty(data) ){
                 var div = "";
                 var html = "";
@@ -1296,6 +1304,8 @@ function settingReleaseVersion( version ){
         releaseVersion = "272";
     }else if( version == "2.0" ){
         releaseVersion = "247"
+    } else if(version == "3.1"){
+    	releaseVersion = "287";
     }
     return releaseVersion;
 }
@@ -1355,9 +1365,9 @@ function instanceControl(e){
          }else{
 //              $(e).val("1");
          }
-	     if( $(e).parent().find("p").length == 0 ){
-	         $(e).parent().append("<p>0부터 3까지 숫자만 입력 가능 합니다.</p>");
-	     }
+         if( $(e).parent().find("p").length == 0 ){
+             $(e).parent().append("<p>0부터 3까지 숫자만 입력 가능 합니다.</p>");
+         }
      }
 }
 

@@ -85,11 +85,8 @@ public class CommonDeployService{
         if(itr.hasNext()) {
             BufferedOutputStream stream = null;
             MultipartFile mpf = request.getFile(itr.next());
-            String keyFilePath = SSH_DIR + SEPARATOR + mpf.getOriginalFilename();
-            if(!keyFilePath.toString().toLowerCase().endsWith(".pem") && !keyFilePath.toString().toLowerCase().endsWith(".pub")){
-            	keyFilePath ="";
-            }
             try {
+                String keyFilePath = SSH_DIR + SEPARATOR + mpf.getOriginalFilename();
                 byte[] bytes = mpf.getBytes();
                 File isKeyFile = new File(keyFilePath);
                 stream = new BufferedOutputStream(new FileOutputStream(isKeyFile));
@@ -104,6 +101,7 @@ public class CommonDeployService{
                 Set<PosixFilePermission> pfp = new HashSet<PosixFilePermission>();
                 pfp.add(PosixFilePermission.OWNER_READ);
                 Files.setPosixFilePermissions(Paths.get(keyFilePath), pfp);
+                
             } catch (IOException e) {
                 throw new CommonException(message.getMessage("common.internalServerError.exception.code", null, Locale.KOREA),
                         message.getMessage("common.internalServerError.message", null, Locale.KOREA), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,7 +114,6 @@ public class CommonDeployService{
                     throw new CommonException(message.getMessage("common.internalServerError.exception.code", null, Locale.KOREA),
                             message.getMessage("common.internalServerError.message", null, Locale.KOREA), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-            
             }
         }
     }
@@ -140,8 +137,8 @@ public class CommonDeployService{
                     if(file.getName().toLowerCase().endsWith(".pub") ||  file.getName().toLowerCase().endsWith(".pem")){
                         continue;
                     }
-                }else {
-                    if(file.getName().toLowerCase().endsWith(".pem")) {
+                }else{
+                    if(!file.getName().toLowerCase().endsWith(".pem")) {
                         continue;
                     }
                 }
@@ -229,10 +226,10 @@ public class CommonDeployService{
         String generateCerts = "";
         String platform = dto.getPlatform().toLowerCase();
         Integer releaseVersion = 0;
-        if(!platform.equals("diego") && (!dto.getVersion().equals("2.0") && !dto.getVersion().equals("3.0"))){
+        if(!platform.equals("diego") && (!dto.getVersion().equals("2.0") && !dto.getVersion().equals("3.0") && !dto.getVersion().equals("3.1"))){
             releaseVersion = Integer.parseInt(dto.getVersion());
         }
-        if( (platform.equals("cf") && releaseVersion < 272 && !dto.getVersion().equals("3.0"))  
+        if( (platform.equals("cf") && releaseVersion < 272 && !dto.getVersion().equals("3.0") && !dto.getVersion().equals("3.1"))  
                 || ( platform.equals("diego") && maxVersion.compareTo(version) > 0 ) ) {
             generateCerts = GENERATE_CERTS_DIR + SEPARATOR + "generate-certs_v1" + SEPARATOR + "generate-certs";
         } else {
@@ -254,7 +251,7 @@ public class CommonDeployService{
                 ProcessBuilder builder = new ProcessBuilder();
                 List<String> cmd = new ArrayList<String>();
                 cmd.add(generateCerts);
-                if( (platform.equals("cf") && releaseVersion < 272 && !dto.getVersion().equals("3.0")) || ( platform.equals("diego") && maxVersion.compareTo(version) > 0 ) ) {
+                if( (platform.equals("cf") && releaseVersion < 272 && !dto.getVersion().equals("3.0") && !dto.getVersion().equals("3.1")) || ( platform.equals("diego") && maxVersion.compareTo(version) > 0 ) ) {
                     cmd.add(GENERATE_CERTS_DIR + SEPARATOR + "generate-certs_v1");
                 }else {
                     cmd.add(GENERATE_CERTS_DIR + SEPARATOR + "generate-certs_v2");
@@ -318,7 +315,7 @@ public class CommonDeployService{
     public String setCreateKeyCodeNumber( String platform, String releaseVersion ) {
         String code ="";
         int cfReleaseVersion = 0;
-        if(!platform.equalsIgnoreCase("diego") && (!releaseVersion.equals("2.0") && !releaseVersion.equals("3.0"))){
+        if(!platform.equalsIgnoreCase("diego") && (!releaseVersion.equals("2.0") && !releaseVersion.equals("3.0") && !releaseVersion.equals("3.1") )){
             cfReleaseVersion = Integer.parseInt(releaseVersion);
             if( (platform.equalsIgnoreCase("cf") && cfReleaseVersion >= 272) || platform.equalsIgnoreCase("cfdiego")) {
                 code = "3";
@@ -330,7 +327,7 @@ public class CommonDeployService{
         } else if( platform.equalsIgnoreCase("cfdiego") ){
             code = "3";
         } else {
-            if( ( platform.equalsIgnoreCase("cf") || platform.equalsIgnoreCase("diego") ) && releaseVersion.equals("3.0") ) {
+            if( ( platform.equalsIgnoreCase("cf") || platform.equalsIgnoreCase("diego") ) && releaseVersion.equals("3.0") || releaseVersion.equals("3.1") ) {
                 code = "3";
             }else {
                 code = "1";
