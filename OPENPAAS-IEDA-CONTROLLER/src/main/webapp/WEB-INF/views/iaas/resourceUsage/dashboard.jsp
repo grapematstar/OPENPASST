@@ -81,10 +81,10 @@ function settingResourceUsageData(data){
               $("."+data[i].iaasType.toLowerCase()+"-network").html( openstackNetwork + " 개" );
               $("."+data[i].iaasType.toLowerCase()+"-volume").html( openstackVolume + "GB" );
           }else if( (data[i].iaasType).toUpperCase() == 'AZURE' ){
-        	  azureInstance +=  data[i].instance;
-        	  azureNetwork += data[i].network;
-        	  azureVolume += data[i].volume;
-        	  azureBilling += data[i].billing;
+              azureInstance +=  data[i].instance;
+              azureNetwork += data[i].network;
+              azureVolume += data[i].volume;
+              azureBilling += data[i].billing;
               $("."+data[i].iaasType.toLowerCase()+"-instance").html( azureInstance +" VM(s)" );
               $("."+data[i].iaasType.toLowerCase()+"-network").html( azureNetwork + " 개" );
               $("."+data[i].iaasType.toLowerCase()+"-volume").html( azureVolume + "GB" );
@@ -180,7 +180,7 @@ $( window ).resize(function() {
                 </ul>
             </div>
         
-        	<div class="iaasResourceUsageDiv" onclick="javascript:goPage('<c:url value="/iaasMgnt/resourceUsage/azure"/>', 'Azure 리소스 사용량 조회');">
+            <div class="iaasResourceUsageDiv" onclick="javascript:goPage('<c:url value="/iaasMgnt/resourceUsage/azure"/>', 'Azure 리소스 사용량 조회');">
                 <ul>
                     <li>
                         <ul style="margin-top:-30px">

@@ -178,7 +178,7 @@ $( window ).resize(function() {
         <div class="title fl">AWS 인스턴스 사용량 정보</div>
         <div id="instanceUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary">
+                <div class="panel panel-default">
                     <div class="panel-heading" style="position:relative"><b>AWS 인스턴스 사용량</b><img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="instanceUsage"></div>
@@ -195,7 +195,7 @@ $( window ).resize(function() {
         <div class="title fl">AWS 네트워크 사용량 정보</div>
         <div id="networkUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary" style="position:relative;">
+                <div class="panel panel-default" style="position:relative;">
                     <div class="panel-heading" style="position:relative"><b>AWS 네트워크 사용량</b>(기준: VPC) <img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="networkUsage"></div>
@@ -212,7 +212,7 @@ $( window ).resize(function() {
         <div class="title fl">AWS 볼륨 사용량 정보</div>
         <div id="volumeUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary">
+                <div class="panel panel-default">
                     <div class="panel-heading" style="position:relative"><b>AWS 볼륨 사용량</b><img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="volumeUsage"></div>
