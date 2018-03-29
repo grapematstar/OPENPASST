@@ -69,7 +69,6 @@
     <select id="selectDirectorConfigBySeq" resultMap="directorConfigVo">
       /**ieda.deploy.config.setting.selectDirectorConfigBySeq**/
         select 
-            deployment_file,
             ieda_director_config_seq, 
             ieda_director_config.create_date, 
             current_deployment, 
@@ -85,11 +84,7 @@
             user_password
         From 
             ieda_director_config
-        join
-            ieda_bootstrap
-        on
-            ieda_director_config.director_name = ieda_bootstrap.director_name
-        and 
+        where 
             ieda_director_config_seq=#{seq}
     </select>
     

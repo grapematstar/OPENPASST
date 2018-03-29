@@ -117,15 +117,15 @@ $(function() {
                  yes_text     : "확인",
                  no_text      : "취소",
                  yes_callBack : function(envent){
-                	 w2ui['config_directorGrid'].lock("기본관리자 설정 중입니다.", {
-                		 spinner: true, opacity : 1
-                	 });
-                	 registDefault(record.iedaDirectorConfigSeq, record.directorName);
-                	 w2ui['config_directorGrid'].reset();
+                     w2ui['config_directorGrid'].lock("기본관리자 설정 중입니다.", {
+                         spinner: true, opacity : 1
+                     });
+                     registDefault(record.iedaDirectorConfigSeq, record.directorName);
+                     w2ui['config_directorGrid'].reset();
                  },
                  no_callBack  : function(envent){
-                	 w2ui['config_directorGrid'].reset();
-                	 doSearch();
+                     w2ui['config_directorGrid'].reset();
+                     doSearch();
                  }
              });
          }
@@ -133,13 +133,13 @@ $(function() {
 });
      
  /********************************************************
-  * 설명 :  설정 관리자 추가 버튼
+  * 설명 :  설정관리자 추가 버튼
   *********************************************************/
 $("#addSetting").click(function(){
     w2popup.open({
         title   : "<b>설치관리자 설정추가</b>",
-        width   : 550,
-        height  : 322,
+        width   : 600,
+        height  : 350,
         modal   : true,
         body    : $("#regPopupDiv").html(),
         buttons : $("#regPopupBtnDiv").html(),
@@ -266,6 +266,7 @@ function registDirectorConfig(){
             directorPort : parseInt($(".w2ui-msg-body input[name='port']").val()),
             userId : $(".w2ui-msg-body input[name='user']").val(),
             userPassword : $(".w2ui-msg-body input[name='pwd']").val(),
+            credentialFile : $(".w2ui-msg-body input[name='credsKeyFileName']").val()
         }),
         success : function(data, status) {
             
@@ -292,8 +293,8 @@ function registDirectorConfig(){
 function updateDirectorConfigPopup(record) {
              w2popup.open({
                 title     : "<b>설치관리자 정보수정</b>",
-                width     : 550,
-                height    : 340,
+                width     : 600,
+                height    : 350,
                 modal     : true,
                 body      : $("#regPopupDiv").html(),
                 buttons   : $("#updatePopupBtnDiv").html(),
@@ -306,6 +307,8 @@ function updateDirectorConfigPopup(record) {
                         $(".w2ui-msg-body input[name='port']").attr("disabled", true);
                         $(".w2ui-msg-body input[name='user']").val(record.userId);
                         $(".w2ui-msg-body input[name='pwd']").val("");
+                        $(".w2ui-msg-body input[name='ip']").val();
+                        $(".w2ui-msg-body input[name='credsKeyFileName']").attr("disabled", true);
                     }
                 },onClose : function(event){
                     w2ui['config_directorGrid'].reset();
@@ -382,6 +385,14 @@ function clearMainPage() {
     $().w2destroy('config_directorGrid');
 }
 
+/******************************************************************
+ * 기능 : setCredentialKeyPath
+ * 설명: 공통 File upload Input
+ ***************************************************************** */
+function setCredentialKeyPath(fileInput){
+    var file = fileInput.files;
+    $(".w2ui-msg-body #credsKeyFileName").val(file[0].name);
+}
 </script>
 
 <div id="main">
@@ -402,7 +413,7 @@ function clearMainPage() {
         <span id="addSetting" class="btn btn-primary" style="width:130px" >설정 추가</span>
         </sec:authorize>
         <sec:authorize access="hasAuthority('CONFIG_DIRECTOR_UPDATE')">
-        <span id="updateSetting" class="btn btn-info" style="width:130px" >설정 수정</span>
+        <!-- <span id="updateSetting" class="btn btn-info" style="width:130px" >설정 수정</span> -->
         </sec:authorize>
         <sec:authorize access="hasAuthority('CONFIG_DIRECTOR_DELETE')">
         <span id="deleteSetting" class="btn btn-danger" style="width:130px" >설정 삭제</span>
@@ -419,35 +430,45 @@ function clearMainPage() {
     <form id="settingForm">
         <input name="seq" type="hidden"/>
         <div class="w2ui-page page-0">
-	        <div class="panel panel-info" style="margin-top:5px;">
-	            <div class="panel-heading"><b>설치관리자 정보</b></div>
-	            <div class="panel-body" style="overflow-y:auto;height:185px;">
-	                <div class="w2ui-field">
-	                    <label style="width:30%;text-align: left;padding-left: 20px;">디렉터 IP</label>
-	                    <div style="width: 70%;">
-	                        <input name="ip" type="text" maxlength="100" style="width: 250px" placeholder="xxx.xx.xx.xxx" />
-	                    </div>
-	                </div>
-	                <div class="w2ui-field">
-	                    <label style="width:30%;text-align: left;padding-left: 20px;">포트번호</label>
-	                    <div style="width: 70%;">
-	                        <input name="port" type="number" maxlength="100" style="width: 250px" placeholder="25555" />
-	                    </div>
-	                </div>
-	                <div class="w2ui-field">
-	                    <label style="width:30%;text-align: left;padding-left: 20px;">계정</label>
-	                    <div style="width: 70%">
-	                        <input name="user" type="text" maxlength="100" style="width: 250px"  placeholder="admin" />
-	                    </div>
-	                </div>
-	                <div class="w2ui-field">
-	                    <label style="width:30%;text-align: left;padding-left: 20px;">비밀번호</label>
-	                    <div style="width: 70%;">
-	                        <input name="pwd" type="password" maxlength="100" style="width: 250px"   placeholder="admin" />
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
+            <div class="panel panel-info" style="margin-top:5px;">
+                <div class="panel-heading"><b>설치관리자 정보</b></div>
+                <div class="panel-body" style="overflow-y:auto;height:200px;">
+                    <div class="w2ui-field">
+                        <label style="width:30%;text-align: left;padding-left: 20px;">디렉터 IP</label>
+                        <div style="width: 70%;">
+                            <input name="ip" type="text" maxlength="100" style="width: 250px" placeholder="xxx.xx.xx.xxx" />
+                        </div>
+                    </div>
+                    <div class="w2ui-field">
+                        <label style="width:30%;text-align: left;padding-left: 20px;">포트번호</label>
+                        <div style="width: 70%;">
+                            <input name="port" type="number" maxlength="100" style="width: 250px" placeholder="25555" />
+                        </div>
+                    </div>
+                    <div class="w2ui-field">
+                        <label style="width:30%;text-align: left;padding-left: 20px;">계정</label>
+                        <div style="width: 70%">
+                            <input name="user" type="text" maxlength="100" style="width: 250px"  placeholder="admin" />
+                        </div>
+                    </div>
+                    <div class="w2ui-field">
+                        <label style="width:30%;text-align: left;padding-left: 20px;">비밀번호</label>
+                        <div style="width: 70%;">
+                            <input name="pwd" type="password" maxlength="100" style="width: 250px"   placeholder="admin" />
+                        </div>
+                    </div>
+                    <div class="w2ui-field">
+                        <label style="width:30%;text-align: left; padding-left: 20px;">Credential File 등록</label>
+                        <div id="credsKeyPathDiv" style="width: 65%; left: 120px;">
+                            <div id="credsKeyPathFileDiv">
+                                <input type="text" id="credsKeyFileName" name="credsKeyFileName" style="width: 250px;" readonly onclick="openBrowse();" placeholder="설치된 Credential File을 선택하세요"/>
+                                <a href="#" id="browse" onclick="openBrowse();"><span id="BrowseBtn">Browse</span></a>
+                                <input type="file" name="keyPathFile" onchange="setCredentialKeyPath(this);" style="display:none"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>    
 </div>
@@ -502,6 +523,12 @@ $(function() {
                 }, sqlInjection :   function(){
                     return $(".w2ui-msg-body input[name='pwd']").val();
                 }
+            },  credsKeyFileName: {
+                required: function(){
+                    return checkEmpty( $(".w2ui-msg-body input[name='credsKeyFileName']").val() );
+                }, sqlInjection :   function(){
+                    return $(".w2ui-msg-body input[name='credsKeyFileName']").val();
+                }
             }
         }, messages: {
             ip: { 
@@ -516,6 +543,9 @@ $(function() {
                 ,sqlInjection : text_injection_msg
             }, pwd: { 
                 required:  "비밀번호"+text_required_msg
+                ,sqlInjection : text_injection_msg
+            }, credsKeyFileName: {
+                required:  "Key 값"+text_required_msg
                 ,sqlInjection : text_injection_msg
             }
         }, unhighlight: function(element) {
