@@ -66,7 +66,7 @@ public class BootstrapDeployAsyncService {
                 String deployStatus = message.getMessage("common.deploy.status.processing", null, Locale.KOREA);
                 bootstrapInfo.setDeployStatus( deployStatus );
                 saveDeployStatus(bootstrapInfo);
-
+                setProcessBuilderBoshCreateCmd();
                 //2. bosh 실행
                 ProcessBuilder builder = new ProcessBuilder("bosh", "create-env", deployFile, 
                                                             "--state="+deployFile.replace(".yml", "")+"-state.json", 
@@ -168,7 +168,12 @@ public class BootstrapDeployAsyncService {
         }
     }
     
-    /****************************************************************
+    private void setProcessBuilderBoshCreateCmd() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/****************************************************************
      * @project : Paas 플랫폼 설치 자동화
      * @description : 설치 상태를 설정하여 저장
      * @title : saveDeployStatus

@@ -343,7 +343,6 @@ public class BootstrapService {
             fis = new FileInputStream(new File(jsonKeyPath));
             rd = new BufferedReader(new InputStreamReader(fis,"UTF-8"));
             String line = null;
-            //jsonKey.append("|+").append("\n").append("    ");
             while((line = rd.readLine()) != null) {
                 jsonKey.append(line);
             }

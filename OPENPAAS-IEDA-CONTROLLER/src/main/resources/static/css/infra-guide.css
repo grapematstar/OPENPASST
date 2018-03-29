@@ -14,7 +14,7 @@ input.radio{vertical-align:middle}
 #layout_layout_panel_top { z-index:9999 }
 .fullBox {width: 100%; height: 100%; }
 
-#layout_layout_panel_main { display: block;left: 248px;top: 72px;width:1620px; height: 900px; }
+#layout_layout_panel_main { display: block;left: 256px;top: 72px;width:1599px; height: 900px; }
 /* 왼쪽 메뉴*/
 #left{  
     float:left;
