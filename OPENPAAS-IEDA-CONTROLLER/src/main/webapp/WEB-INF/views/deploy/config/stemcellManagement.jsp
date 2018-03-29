@@ -634,12 +634,12 @@ function initView() {
                        </div>
                    </div>
                    <div class="w2ui-field" >
-                       <label style="width:30%;text-align: left;padding-left: 20px;">IaaS 유형</label>
+                       <label style="width:30%;text-align: left; padding-left: 20px;">IaaS 유형</label>
                        <div style="width: 70%" id="iaasListDiv">
                        </div>
                    </div>
                    <div class="w2ui-field">
-                       <label style="width:30%;text-align: left;padding-left: 20px;">OS 유형</label>
+                       <label style="width:30%;text-align: left; padding-left: 20px;">OS 유형</label>
                        <div style="width: 70%" id="osListDiv">
                        </div>
                    </div>
@@ -657,30 +657,30 @@ function initView() {
                <div class="panel-body" style="">
                     <div class="w2ui-field" style="margin: 8px 0px 0px 0px;" >
                         <input type="radio" id="fileTypLocal" name="fileType" value="file" style="float:left; margin-left:15px;" onchange='setRegistType(this.value);'/>
-                        <label for="fileTypLocal" style="width:25.5%;text-align: left;" >&nbsp;&nbsp;로컬에서 선택</label>
-                        <div>
+                        <label for="fileTypLocal" style="width:25%;text-align: left;" >&nbsp;&nbsp;로컬에서 선택</label>
+                        <div style="width:70%;" >
                             <span>
                             <input type="file" name="stemcellPathFile[]"  id="stemcellPathFile" onchange="setstemcellFilePath(this);" hidden="true"/>
-                            <input type="text" id="stemcellPathFileName"  name="stemcellPathFileName" style="width:53%;" readonly  onClick="openBrowse();" placeholder="업로드할 stemcell 파일을 선택하세요."/>
+                            <input type="text" style="width:60%;" id="stemcellPathFileName"  name="stemcellPathFileName" readonly  onClick="openBrowse();" placeholder="업로드할 stemcell 파일을 선택하세요."/>
                             <span class="btn btn-primary" id = "browser" onClick="openBrowse();" disabled style="height: 25px; padding: 1px 7px 7px 6px;">Browse </span>&nbsp;&nbsp;&nbsp;
                             </span>
                         </div>
                     </div>
                     <div class="w2ui-field" style="margin: 8px 0px 0px 0px;">
                          <input type="radio" name="fileType" id="fileTypeUrl" style="float:left; margin-left:15px;" value="url" onchange="setRegistType(this.value);"/>
-                         <label  for="fileTypeUrl" style="width:25.5%;text-align: left;" >
+                         <label for="fileTypeUrl" style="width:25%;text-align: left;" >
                             &nbsp;&nbsp;스템셀 Url
                             <span class="glyphicon glyphicon glyphicon-question-sign stemcell-info" style="cursor:pointer;font-size: 14px;color: #157ad0;" data-toggle="popover"  data-trigger="click" data-html="true" title="<b>공개 스템셀 참조 사이트</b>"></span>
                          </label>
-                         <div>
-                             <input type="text" id="stemcellPathUrl" name="stemcellPathUrl" style="width:53%;" readonly placeholder="스템셀 다운로드 Url을 입력 하세요."/>
+                         <div style="width:70%;">
+                             <input type="text" style="width:60%;" id="stemcellPathUrl" name="stemcellPathUrl" readonly placeholder="스템셀 다운로드 Url을 입력 하세요."/>
                          </div>
                     </div>
                     <div class="w2ui-field" style="margin: 8px 0px 0px 0px;">
                         <input type="radio" name="fileType" id="fileTypeVersion" value="version" style="float:left; margin-left:15px;" onchange='setRegistType(this.value);' />
-                        <label for="fileTypeVersion" style="width:25.5%; text-align: left;">&nbsp;&nbsp;스템셀 Version</label>
-                        <div>
-                            <input type="text" id="stemcellPathVersion"   name="stemcellPathVersion" style="width:53%;" readonly placeholder="스템셀 다운로드 버전을 입력 하세요."/>
+                        <label for="fileTypeVersion" style="width:25%; text-align: left;">&nbsp;&nbsp;스템셀 Version</label>
+                        <div style="width:70%;">
+                            <input type="text" id="stemcellPathVersion"   name="stemcellPathVersion" style="width:60%;" readonly placeholder="스템셀 다운로드 버전을 입력 하세요."/>
                             <span id="lightVerChk">
                                 <label style="position: absolute; margin-left: 10px;" >
                                    <input name="light" type="checkbox" value="true" disabled />&nbsp;Light 유형

@@ -605,15 +605,15 @@ $( window ).resize(function() {
                     </div>
                 </div>
                 <div class="w2ui-field">
-                    <label style="text-align: left;width:36%;font-size:11px;" class="control-label"></label>
-                    <div id="keyPathDiv" style="margin-left:130px;position:relative;" >
+                  <label style="text-align: left;font-size:11px;" class="control-label"></label>
+                  <div id="keyPathDiv" style="position:relative; width: 65%; left:220px;">
                         <div id="keyPathFileDiv" hidden="true">
-                            <input type="text" id="keyPathFileName" name="keyPathFileName" style="width:45%;" readonly  onClick="openBrowse();" placeholder="업로드할 Key 파일을 선택하세요."/>
+                            <input type="text" id="keyPathFileName" name="keyPathFileName" style="width:55%;" readonly  onClick="openBrowse();" placeholder="업로드할 Key 파일을 선택하세요."/>
                             <a href="#" id="browse" onClick="openBrowse();"><span id="BrowseBtn">Browse</span></a>
                             <input type="file" name="keyPathFile" onchange="setPrivateKeyPathFileName(this);" style="display:none;"/>
                         </div>
                         <div id="keyPathListDiv">
-                            <select name="keyPathList"  id="commonKeypairPathList" onchange="setPrivateKeyPath(this.value);" class="form-control select-control" style="width:63%"></select>
+                            <select name="keyPathList"  id="commonKeypairPathList" onchange="setPrivateKeyPath(this.value);" class="form-control select-control" style="width:55%"></select>
                         </div>
                     </div>
                     <input name="commonKeypairPath" type="hidden" />
