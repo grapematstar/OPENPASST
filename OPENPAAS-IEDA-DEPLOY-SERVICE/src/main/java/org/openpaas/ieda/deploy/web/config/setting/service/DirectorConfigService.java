@@ -728,7 +728,15 @@ public class DirectorConfigService  {
                     "실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } 
+        } try {
+            if(fileWriter != null) {
+                fileWriter.close();
+            }
+        } catch (IOException e) {
+            throw new CommonException("taretDirector.director.exception",
+                    "읽어오는 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return flag;
     }
+    
 }
