@@ -74,13 +74,12 @@
 
 $(function() {
 	var pstyle = 'background-color: #edf0ef; overflow-y: hidden;';
-    var tstyle = 'background-color: #297cbe; overflow-y: hidden;';
     $('#layout').w2layout({
         name: 'layout',
         panels: [
              { type: 'top', style: pstyle, size: 71}
-            ,{ type: 'left', style: pstyle, size:235}
-            ,{ type: 'main', style: pstyle, size:1620}
+            ,{ type: 'left', style: pstyle, size:256}
+            ,{ type: 'main', style: pstyle, size:1599}
         ],  onError: function(event) {
         }        , onResize : function(event) {
             $(".w2ui-panel-content").css("overflow-y", "auto");
