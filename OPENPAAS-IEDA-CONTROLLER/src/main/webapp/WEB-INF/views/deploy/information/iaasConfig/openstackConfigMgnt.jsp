@@ -506,6 +506,10 @@ $(window).resize(function() {
                         access="hasAuthority('INFO_IAASCONFIG_VSPHERE_LIST')">
                         <li><a href="javascript:goPage('<c:url value="/info/iaasConfig/vSphere"/>', 'vSphere 관리');">vSphere</a></li>
                     </sec:authorize>
+                    <sec:authorize access="hasAuthority('INFO_IAASCONFIG_AZURE_LIST')">
+                        <li><a href="javascript:goPage('<c:url value="/info/iaasConfig/azure"/>', 'vSphere 관리');">Azure</a></li>
+                    </sec:authorize>
+                    
                 </ul>
             </div>
         </div>
@@ -537,7 +541,7 @@ $(window).resize(function() {
           <div class="panel-heading">
               <b>Openstack 환경 설정 정보</b>
           </div>
-          <div class="panel-body" style="padding: 20px 10px; height: 330px; overflow-y: auto;">
+          <div class="panel-body" style="padding: 20px 10px; height: 335px; overflow-y: auto;">
               <input type="hidden" name="configId" />
               <div class="w2ui-field">
                   <label style="width: 36%; text-align: left; padding-left: 20px;">Openstack 환경 설정 별칭</label>
@@ -584,15 +588,15 @@ $(window).resize(function() {
                   </div>
               </div>
               <div class="w2ui-field">
-                  <label style="text-align: left;width:36%;font-size:11px;" class="control-label"></label>
-                  <div id="keyPathDiv" style="margin-left:130px;position:relative;" >
+                  <label style="text-align: left;font-size:11px;" class="control-label"></label>
+                  <div id="keyPathDiv" style="position:relative; width: 65%; left:220px;">
                       <div id="keyPathFileDiv" hidden="true">
-                          <input type="text" id="keyPathFileName" name="keyPathFileName" style="width:45%;" readonly  onClick="openBrowse();" placeholder="업로드할 Key 파일을 선택하세요."/>
+                          <input type="text" id="keyPathFileName" name="keyPathFileName" style="width:55%;" readonly  onClick="openBrowse();" placeholder="업로드할 Key 파일을 선택하세요."/>
                           <a href="#" id="browse" onClick="openBrowse();"><span id="BrowseBtn">Browse</span></a>
                           <input type="file" name="keyPathFile" onchange="setPrivateKeyPathFileName(this);" style="display:none;"/>
                       </div>
                       <div id="keyPathListDiv">
-                          <select name="keyPathList"  id="commonKeypairPathList" onchange="setPrivateKeyPath(this.value);" class="form-control select-control" style="width:63%"></select>
+                          <select name="keyPathList"  id="commonKeypairPathList" onchange="setPrivateKeyPath(this.value);" class="form-control select-control" style="width:55%"></select>
                       </div>
                   </div>
                   <input name="commonKeypairPath" type="hidden" />

@@ -35,7 +35,7 @@
 <div id="left">
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
-           <li class="active"><a href="javascript:goPage('<c:url value="/iaasMgnt/main/dashboard"/>', 'Dashboard');" style="font-weight:600; font-size:20px;"><i class="fa fa-fw fa-home"></i> Dashboard</a></li>
+           <li class="active"><a href="javascript:goPage('<c:url value="/iaasMgnt/main/dashboard"/>', 'Dashboard');" style="font-weight:600; font-size:20px;"><i class="fa fa-fw fa-home"></i> 플랫폼 설치 관리</a></li>
            <li>
               <a href="javascript:;" data-toggle="collapse" data-target="#adminMgnt" ><i class="fa fa-fw fa fa-user"></i> 플랫폼 관리자 관리 <i class="fa fa-fw fa-caret-down"></i></a>
               <ul id="adminMgnt" class="collapse">
@@ -53,7 +53,7 @@
            
            <sec:authorize access="hasAuthority('IAAS_MANAGEMENT_MENU')">
                <li>
-                   <a href="javascript:;" data-toggle="collapse" data-target="#infraMgnt" ><i class="fa fa-fw fa-cloud"></i> 인프라 관리 <i class="fa fa-fw fa-caret-down"></i></a>
+                   <a href="javascript:;" data-toggle="collapse" data-target="#infraMgnt" ><i class="fa fa-fw fa-cloud"></i> 인프라 환경 관리 <i class="fa fa-fw fa-caret-down"></i></a>
                    <ul id="infraMgnt" class="collapse">
                        <sec:authorize access="hasAuthority('IAAS_ACCOUNT_MENU')">
                            <li><a href="javascript:goPage('<c:url value="/iaasMgnt/account"/>', 'ACCOUNT');">인프라 계정 관리</a></li>
@@ -64,8 +64,8 @@
                     </ul>
                 </li>
             </sec:authorize>
-              <li><a href="javascript:goWindow('<c:url value="/platform"/>', 'IEDA-WEB');"><i class="fa fa-fw fa-cog"></i>PaaS-TA 설치</a></li>
-              <li><a href="javascript:goWindow('<c:url value="/hbFlatform"/>', 'HB-IEDA-WEB');"><i class="fa fa-fw fa-cogs"></i> 이기종 PaaS-TA 설치</a></li>
+              <li><a href="javascript:goWindow('<c:url value="/platform"/>', 'IEDA-WEB');"><i class="fa fa-fw fa-cog"></i>PaaS-TA 설치 자동화</a></li>
+              <li><a href="javascript:goWindow('<c:url value="/hbFlatform"/>', 'HB-IEDA-WEB');"><i class="fa fa-fw fa-cogs"></i> 이기종 PaaS-TA 설치 자동화</a></li>
         </ul>
     </div>
 </div>
