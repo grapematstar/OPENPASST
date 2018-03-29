@@ -196,14 +196,13 @@ public class DirectorConfigService  {
         director.setUpdateUserId(sessionInfo.getUserId());
         
         //기존에 기본 관리자가 존재한다면 N/ 존재하지않는다면 기본 관리자로 설정
+        
         DirectorConfigVO directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
         
         director.setDefaultYn((directorConfig == null ) ? "Y":"N");
         
         if( director.getDefaultYn().equalsIgnoreCase("Y") ) {
             boshEnvLoginSequence(director);
-        }else{
-            
         }
 
         //입력된 설치관리자 정보를 데이터베이스에 저장한다.
