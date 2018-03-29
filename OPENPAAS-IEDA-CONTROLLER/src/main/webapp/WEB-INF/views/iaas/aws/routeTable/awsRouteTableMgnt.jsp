@@ -609,8 +609,12 @@ function subnetAssociation() {
             	$('.w2ui-popup #subnetAssociationPopupDiv').w2render('layouti');
             	w2ui.layouti.content('left', w2ui.aws_subnetAssociationGrid);
 			    w2ui['aws_subnetAssociationGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/subnet/'/>"+accountId+"/"+region+"/"+record.vpcId);
-            	console.log(accountId+ region + record.vpcId+ "TEST MMMMMMMMMM"+record.routeTableId+"TEST 222");
+			    //var rtId = record.routTableId;
+			    //var rtbId = document.querySelector("#aws_subnetAssociationGrid tr td:nth-child(5) div").innerHTML; 
+			    //$("#aws_subnetAssociationGrid tr td:nth-child(1) div").attr("checked",true)
+			    console.log(accountId+ region + record.vpcId+ "TEST MMMMMMMMMM"+record.routeTableId+"TEST 222");
 			    //doSearchSubnetAssociationDetail();
+	            w2ui['layouti'].content('main', $('#subnetAssociationsPopupDiv').html());
             }                   
         },onClose:function(event){
             //initsetting();
@@ -826,23 +830,20 @@ td {
      <button class="btn" id="popClose"  onclick="w2popup.close();">취소</button>
 </div>
 
-<!-- AWS AssociationSubnet 팝업 Div-->
-<!-- <div id="subnetAssociationPopupDiv" hidden="true">
-<form id="awsSubnetAssociationForm" action="POST" style="padding:5px 0 5px 0;margin:0;">
+<!-- AWS subnetAssociationsPopupDiv Subnet 팝업 Div-->
+ <div id="subnetAssociationsPopupDiv" hidden="true">
+<form id="awsSubnetAssociationForm" action="POST" style="padding:0px 0 5px 0;margin:0;">
    
-         <div class="panel panel-info" style="height: 330px; margin-top: 7px;"> 
+         <div class="panel panel-info" style="height: 330px; margin-top: 0px;"> 
            <div class="panel-heading"><b>AWS Subnet Association 수정 </b></div>
 		</div>   
-            <div id="aws_subnetAssociationGrid" style="width:650px;height:350px"></div>
            <label style="margin-top:5px; width:100%;">Associate 할 Subnet을 선택하고 확인을 누르세요.</label> 
-     
-    
+     <span id="associateBtn" class="btn btn-primary" style="width:100px" onclick="$('#awsSubnetAssociationForm').submit();">확인</span>
+     <span id="disassociateBtn" onclick="awsDisassociateSubnet();" class="btn btn-danger" style="width:100px" >해제</span>
+     <span id="popClose" class="btn btn-info" style="width:100px"  onclick="w2popup.close();">닫기</span>
 </form>
-</div> -->
-<div id="subnetAssociationPopupBtnDiv" hidden="true">
-     <button class="btn btn-primary" id="registBtn" onclick="$('#awsSubnetAssociationForm').submit();">확인</button>
-     <button class="btn" id="popClose"  onclick="w2popup.close();">취소</button>
-</div>
+</div> 
+
 
 
 
