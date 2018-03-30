@@ -31,7 +31,7 @@ public class AwsNatGatewayMgntController {
      * @title : goAwsNatGatewayMgnt
      * @return : String
     *****************************************************************/
-    @RequestMapping(value="/awsMgnt/vpc/list/natGateway", method=RequestMethod.GET)
+    @RequestMapping(value="/awsMgnt/natGateway", method=RequestMethod.GET)
     public String goAwsNatGatewayMgnt(){
         return "iaas/aws/natGateway/awsNatGatewayMgnt";
     }
@@ -42,7 +42,7 @@ public class AwsNatGatewayMgntController {
      * @title : getAwsNatGatewayInfoList
      * @return : ResponseEntity<HashMap<String, Object>>
      ***************************************************/
-     @RequestMapping(value="/awsMgnt/vpc/list/natGateway/list/{accountId}/{region}", method=RequestMethod.GET)
+     @RequestMapping(value="/awsMgnt/natGateway/list/{accountId}/{region}", method=RequestMethod.GET)
      @ResponseBody
      public ResponseEntity<HashMap<String, Object>> getAwsNatGatewayInfoList(@PathVariable("accountId") int accountId, @PathVariable("region") String region, Principal principal){
          if (LOG.isInfoEnabled()) {
@@ -64,7 +64,7 @@ public class AwsNatGatewayMgntController {
       * @title : getAwsSubnetList
       * @return : ResponseEntity<AwsNatGatewayMgntVO> 
       ***************************************************/
-      @RequestMapping(value="/awsMgnt/vpc/list/natGateway/subnetIdList/{accountId}/{region}", method=RequestMethod.GET)
+      @RequestMapping(value="/awsMgnt/natGateway/list/subnetIdList/{accountId}/{region}", method=RequestMethod.GET)
       @ResponseBody
       public ResponseEntity<List<AwsNatGatewayMgntVO>> getAwsSubnetList(@PathVariable("accountId") int accountId, @PathVariable("region") String region,  Principal principal){
           if (LOG.isInfoEnabled()) {
@@ -80,7 +80,7 @@ public class AwsNatGatewayMgntController {
        * @title : getAwsEipAllocationIdList
        * @return : ResponseEntity<AwsNatGatewayMgntVO> 
        ***************************************************/
-      @RequestMapping(value="/awsMgnt/vpc/list/natGateway/eipAllocationIdList/{accountId}/{region}", method=RequestMethod.GET)
+      @RequestMapping(value="/awsMgnt/natGateway/list/eipAllocationIdList/{accountId}/{region}", method=RequestMethod.GET)
       @ResponseBody
       public ResponseEntity<List<AwsNatGatewayMgntVO>> getAwsEipAllocationIdList(@PathVariable("accountId") int accountId, @PathVariable("region") String region,  Principal principal){
       if (LOG.isInfoEnabled()) {
@@ -97,7 +97,7 @@ public class AwsNatGatewayMgntController {
        * @title : saveElasticIpInfo
        * @return : ResponseEntity<?>
        ***************************************************/
-      @RequestMapping(value="/awsMgnt/vpc/list/elasictIp/save", method=RequestMethod.POST)
+      @RequestMapping(value="/awsMgnt/natGateway/list/elasictIp/save", method=RequestMethod.POST)
       @ResponseBody
       public ResponseEntity<?> allocateNewElasticIp(@RequestBody AwsNatGatewayMgntDTO dto,  Principal principal){
     	  if (LOG.isInfoEnabled()) {
@@ -113,7 +113,7 @@ public class AwsNatGatewayMgntController {
        * @title : saveAwsNatGatewayInfo
        * @return : ResponseEntity<?>
        ***************************************************/
-       @RequestMapping(value="/awsMgnt/vpc/list/natGateway/save", method=RequestMethod.POST)
+       @RequestMapping(value="/awsMgnt/natGateway/save", method=RequestMethod.POST)
        @ResponseBody
        public ResponseEntity<?> saveAwsNatGatewayInfo(@RequestBody AwsNatGatewayMgntDTO dto, Principal principal){
            if (LOG.isInfoEnabled()) {

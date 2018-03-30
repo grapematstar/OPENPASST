@@ -138,7 +138,7 @@ function unhover(event, val){
                     </li>
                 </sec:authorize>
                 <sec:authorize access="hasAuthority('AWS_NAT_GATEWAY_MENU')">
-                    <li class="awsMgntDiv" onmouseover="hover(this,'elasticIP_c2');" onmouseout="unhover(this,'elasticIP_c1');" onclick="javascript:goPage('<c:url value="/awsMgnt/vpc/list/natGateway"/>', 'NAT Gateway');">
+                    <li class="awsMgntDiv" onmouseover="hover(this,'elasticIP_c2');" onmouseout="unhover(this,'elasticIP_c1');" onclick="javascript:goPage('<c:url value="/awsMgnt/natGateway"/>', 'NAT Gateway');">
                         <ul>
                             <li class="aws-li"><span class="aws-li-span1">NAT Gateway</span></li>
                             <li>

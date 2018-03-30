@@ -71,7 +71,6 @@ $(function() {
         }
     });
     
-    
     $('#aws_routeGrid').w2grid({
         name: 'aws_routeGrid',
         method: 'GET',
@@ -93,14 +92,10 @@ $(function() {
                    ],
         onSelect: function(event) {
             event.onComplete = function() {
-            	//var accountId =  w2ui.aws_routeGrid.get(event.recid).accountId;
-                //var routeTableId = w2ui.aws_routeGrid.get(event.recid).routeTableId;
-                //editRouteInfo(accountId,routeTableId);
             }
         },
         onUnselect: function(event) {
             event.onComplete = function() {
-                
             }
         },
            onLoad:function(event){
@@ -117,36 +112,38 @@ $(function() {
         method: 'GET',
         msgAJAXerror : 'AWS 계정을 확인해주세요.',
         header: '<b>Associated Subnets 목록</b>',
+        selectType : 'row',
         multiSelect: false,
         show: {  
         	    selectColumn: false,
                 footer: true},
         style: 'text-align: center',
         columns    : [
-                     {field: 'recid',     caption: 'recid', hidden: true}
+                     {field: 'recid',     caption: 'recid',  size: '40px', style: 'text-align:center'}
                    , {field: 'accountId',     caption: 'accountId', hidden: true}
-                   , {field: 'subnetId', caption: 'subnetId', size: '30%', style: 'text-align:center'}
-                   , {field: 'destinationIpv4CidrBlock', caption: 'IPv4 CIDR', size: '30%', style: 'text-align:center'}
-                   , {field: 'ipv6CidrBlock', caption: 'IPv6 CIDR', size: '30%', style: 'text-align:center'}
-                   , {field: 'routeTableId',     caption: 'RouteTableId', size: '30%', style: 'text-align:center'}
+                   , {field: 'subnetId', caption: 'subnetId', size: '150px', style: 'text-align:center'}
+                   , {field: 'destinationIpv4CidrBlock', caption: 'IPv4 CIDR', size: '150px', style: 'text-align:center'}
+                   , {field: 'ipv6CidrBlock', caption: 'IPv6', size: '40px', style: 'text-align:center'}
+                   , {field: 'routeTableId',     caption: 'RouteTableId', size: '150px', style: 'text-align:center'}
                    ],
-        onSelect: function(event) {
-            event.onComplete = function() {
-            	
-            }
-        },
-        onUnselect: function(event) {
-            event.onComplete = function() {
-                
-            }
-        },
-           onLoad:function(event){
-            if(event.xhr.status == 403){
-                location.href = "/abuse";
-                event.preventDefault();
-            }
-        }, onError:function(evnet){
-        }
+                   onLoad: function(event){
+                       event.onComplete = function(){
+                           $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', true);
+                       }
+                   },
+                   onSelect: function(event) {
+                       event.onComplete = function() {
+                           $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', false);
+                       }
+                   },
+                   onUnselect: function(event) {
+                       event.onComplete = function(){
+                           $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', true);
+                       }
+                   },
+                   onError: function(event){
+                       // comple
+                   }
     });
     
     
@@ -154,44 +151,58 @@ $(function() {
         name: 'aws_subnetAssociationGrid',
         method: 'GET',
         msgAJAXerror : 'AWS 계정을 확인해주세요.',
-        header: '<b>Subnets 목록</b>',
-        multiSelect: true,
+        header: '<b> Association 가능 한 Subnets 목록</b>',
+        selectType : 'row',
+        multiSelect: false,
         show: {  
-        	    selectColumn: true,
+        	    selectColumn: false,
                 footer: true},
         style: 'text-align: center',
-        columns    : [
-                     {field: 'recid',     caption: 'recid', hidden: true}
-                   , {field: 'accountId',     caption: 'accountId', hidden: true}
-                   , {field: 'subnetId', caption: 'subnetId', size: '150px', style: 'text-align:center'}
-                   , {field: 'destinationIpv4CidrBlock', caption: 'IPv4 CIDR', size: '150px', style: 'text-align:center'}
-                   , {field: 'ipv6CidrBlock', caption: 'IPv6 CIDR', size: '150px', style: 'text-align:center'}
-                   , {field: 'routeTableId',     caption: 'RouteTableId', size: '150px', style: 'text-align:center'}
-                   ],
-        onSelect: function(event) {
-            event.onComplete = function() {
-            	//var accountId =  w2ui.aws_subnetGrid.get(event.recid).accountId;
-                //var subnetId = w2ui.aws_subnetGrid.get(event.recid).subnetId;
-                //associateSubnet(accountId,subnetId);
+        columns: [
+            { field: 'recid', caption: 'Recid', hidden: true},
+            { field: 'accountId', caption: 'accountId', hidden: true},
+            { field: 'subnetId', caption: 'Subnet ID', size: '150px', style: 'text-align: center'},
+            { field: 'destinationIpv4CidrBlock', caption: 'IPv4 CIDR', size: '150px', style: 'text-align: center', render : function(record){
+                if(record.destinationIpv4CidrBlock == ""){
+                    return "-";
+                }else{
+                    return record.destinationIpv4CidrBlock;
+                }
+            }},
+            { field: 'ipv6CidrBlock', caption: 'IPv6', size: '40px', style: 'text-align: center', render : function(record){
+                if(record.ipv6CidrBlock == ""){
+                    return "-";
+                }else{
+                    return record.ipv6CidrBlock;
+                }
+            }},
+            { field: 'routeTableId', caption: 'RouteTable ID',  size: '120px', style: 'text-align: center', render : function(record){
+                if(record.routeTableId == ""){
+                    return "-";
+                }else{
+                    return record.routeTableId;
+                }
+            }}
+            ],
+            onLoad: function(event){
+                event.onComplete = function(){
+                    $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', true);
+                }
+            },
+            onSelect: function(event) {
+                event.onComplete = function() {
+                    $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', false);
+                }
+            },
+            onUnselect: function(event) {
+                event.onComplete = function(){
+                    $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', true);
+                }
+            },
+            onError: function(event){
+                // comple
             }
-        },
-        onUnselect: function(event) {
-            event.onComplete = function() {
-                
-            }
-        },
-           onLoad:function(event){
-        	   
-        	
-            if(event.xhr.status == 403){
-                location.href = "/abuse";
-                event.preventDefault();
-            }
-        }, onError:function(evnet){
-        }
-    }); */
-    
-     
+    });  */
     
     /*************************** *****************************
      * 설명 :  AWS Route Table Create 팝업 화면
@@ -239,39 +250,6 @@ $(function() {
         });
     }); 
     
-    /*************************** *****************************
-     * 설명 :  AWS Subnet Association 팝업 화면
-     *********************************************************/
-/*     $("#subnetAssociationBtn").click(function(){
-        if($("#subnetAssociationBtn").attr('disabled') == "disabled") return;
-        var region = $("select[name='region']").val();
-		var accountId = $("select[name='accountId']").val();
-       // var selected = w2ui['aws_routeTableGrid'].getSelection();
-       // var record = w2ui['aws_routeTableGrid'].get(selected);
-        w2popup.open({
-            title   : "<b>AWS Route Add </b>",
-            width   : 700,
-            height  : 500,
-            modal   : true,
-            body    : "<div id='#subnetAssociationPopupDiv' style='position: absolute; width:99%; height:95%; margin:5px 0;'></div>",
-            buttons : $("#subnetAssociationPopupBtnDiv").html(),
-            onOpen : function(event){
-                event.onComplete = function(){
-                	$('.w2ui-popup #subnetAssociationPopupDiv').w2render('layouti');
-                	w2ui.layouti.content('left', w2ui.aws_subnetAssociationGrid);
-					//show selected colum effects nth-child number show=6 hide=5
-					var vpcId= document.querySelector("#aws_routeTableGrid .w2ui-selected td:nth-child(5) div").innerHTML; 
-				    w2ui['aws_subnetAssociationGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/subnet/'/>"+accountId+"/"+region+"/"+vpcId);
-                	console.log(accoutId+ region + vpcId+ "TEST MMMMMMMMMM");
-				    doSearchSubnetAssociationDetail();
-                }                   
-            },onClose:function(event){
-                //initsetting();
-                //doSearch();
-            }
-        });
-    });  */ 
-    
     
 });
 
@@ -284,66 +262,67 @@ var config = {
              name: 'layouti',
              padding: 4,
              panels: [
-                 { type: 'left', size: '70%', minSize: 300},
-                 { type: 'main', minSize: 300}
+                 { type: 'left', size: '480px', minSize: 300},
+                 { type: 'main', size: '450px',minSize: 300}
              ]
          },
          grid: {
+        	 name: 'aws_subnetAssociationGrid',
              method: 'GET',
-             msgAJAXerror: 'OPENSTACK 계정을 확인해주세요.',
-             header: '<b>라우터 인터페이스 목록</b>',
+             msgAJAXerror : 'AWS 계정을 확인해주세요.',
+             header: '<b> Association 가능 한 Subnets 목록</b>',
+             selectType : 'row',
+             recid   : 'recid',
+             multiSelect: false,
+             show: {  
+             	    selectColumn: false,
+                    footer: true},
              style: 'text-align: center',
-             show: {
-                 selectColumn: true,
-                 footer: true
-             },
-             name: 'aws_subnetAssociationGrid',
              columns: [
-                 { field: 'recid', caption: 'Recid', hidden: true},
+                 { field: 'recid', caption: 'Recid',  size: '40px', style: 'text-align: center'},
                  { field: 'accountId', caption: 'accountId', hidden: true},
-                 { field: 'subnetId', caption: 'subnetId', size: '153px', style: 'text-align: center'},
-                 { field: 'destinationIpv4CidrBlock', caption: 'IP4 CIDR', size: '153px', style: 'text-align: center', render : function(record){
+                 { field: 'subnetId', caption: 'Subnet ID', size: '150px', style: 'text-align: center'},
+                 { field: 'destinationIpv4CidrBlock', caption: 'IPv4 CIDR', size: '150px', style: 'text-align: center', render : function(record){
                      if(record.destinationIpv4CidrBlock == ""){
                          return "-";
                      }else{
                          return record.destinationIpv4CidrBlock;
                      }
                  }},
-                 { field: 'ip6CidrBlock', caption: 'IP6 CIDR', size: '153px', style: 'text-align: center', render : function(record){
-                     if(record.ip6CidrBlock == ""){
+                 { field: 'ipv6CidrBlock', caption: 'IPv6', size: '40px', style: 'text-align: center', render : function(record){
+                     if(record.ipv6CidrBlock == ""){
                          return "-";
                      }else{
-                         return record.ip6CidrBlock;
+                         return record.ipv6CidrBlock;
                      }
                  }},
-                 { field: 'routeTableId', caption: 'RouteTable ID',  size: '153px', style: 'text-align: center', render : function(record){
+                 { field: 'routeTableId', caption: 'RouteTable ID',  size: '120px', style: 'text-align: center', render : function(record){
                      if(record.routeTableId == ""){
                          return "-";
                      }else{
                          return record.routeTableId;
                      }
                  }}
-             ],
-             onLoad: function(event){
-                 event.onComplete = function(){
-                     $('#w2ui-popup #dddBtn').attr('disabled', true);
-                 
-                 
+                 ],
+                 onLoad: function(event){
+                     event.onComplete = function(){
+                         $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', true);
+                     }
+                 },
+                 onSelect: function(event) {
+                     event.onComplete = function() {
+                         $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', false);
+                     }
+                 },
+                 onUnselect: function(event) {
+                     event.onComplete = function(){
+                         $('#w2ui-popup #deleteInterfaceBtn').attr('disabled', true);
+                     }
+                 },
+                 onError: function(event){
+                     // comple
                  }
-             },
-             onSelect: function(event) {
-                 event.onComplete = function() {
-                     $('#w2ui-popup #dddBtn').attr('disabled', false);
-                 }
-             },
-             onUnselect: function(event) {
-                 event.onComplete = function(){
-                     $('#w2ui-popup #dddBtn').attr('disabled', true);
-                 }
-             },
-             onError: function(event){
-                 // comple
-             }
+        	 
          }
          }
 $(function () {
@@ -376,7 +355,7 @@ function doSearchRouteDetail(accountId, routeTableId){
 
 /********************************************************
  * 설명 : Route Table 해당 Subnet List 조회 Function 
- * 기능 : doSearchRouteDetail
+ * 기능 : doSearchSubnetDetail
  *********************************************************/
 function doSearchSubnetDetail(accountId, routeTableId){
 	w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
@@ -389,7 +368,7 @@ function doSearchSubnetDetail(accountId, routeTableId){
 
 /********************************************************
  * 설명 : Route Table 해당VPC에 대한 Subnet Assoication List 조회 Function 
- * 기능 : doSearchRouteDetail
+ * 기능 : doSearchSubnetAssociationDetail
  *********************************************************/
 /* function doSearchSubnetAssociationDetail(){
 	w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
@@ -451,7 +430,6 @@ function awsRouteCreate(){
             destinationIpv4CidrBlock : $(".w2ui-msg-body input[name='destinationIpv4CidrBlock']").val(),
             targetId : $(".w2ui-msg-body select[name='targetId']").val()
             }
-    console.log(routeInfo.routeTableId+"AAAAA111"+routeInfo.destinationIpv4CidrBlock+routeInfo.targetId+"AAAAAAAAAAAAAA");
 $.ajax({
     type : "POST",
     url : "/awsMgnt/routeTable/route/add",
@@ -459,11 +437,9 @@ $.ajax({
     async : true,
     data : JSON.stringify(routeInfo),
     success : function(status) {
-    	console.log(routeInfo.routeTableId+"BBBBBBB");
     	w2utils.unlock($("#layout_layout_panel_main"));
     	w2popup.unlock();
     	w2popup.close();    
-    	//doSearchRouteDetail(routeInfo.accountId, routeInfo.routeTableId);
         
     },
     error : function(request, status, error) {
@@ -598,23 +574,22 @@ function subnetAssociation() {
     var record = w2ui['aws_routeTableGrid'].get(selected);
     w2popup.open({
         title   : "<b> Edit Subnet Association </b>",
-        width   : 900,
-        height  : 500,
+        width   : 1000,
+        height  : 550,
         modal   : true,
         body    : "<div id='subnetAssociationPopupDiv' style='position: absolute; width:99%; height:95%; margin:5px 0;'></div>",
         buttons : $("#subnetAssociationPopupBtnDiv").html(),
         onOpen : function(event){
             event.onComplete = function(){
-            	console.log(accountId+ region + record.vpcId+ "TEST MMMMMMMMMM111"+record.routeTableId+"TEST 111");
             	$('.w2ui-popup #subnetAssociationPopupDiv').w2render('layouti');
-            	w2ui.layouti.content('left', w2ui.aws_subnetAssociationGrid);
-			    w2ui['aws_subnetAssociationGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/subnet/'/>"+accountId+"/"+region+"/"+record.vpcId);
-			    //var rtId = record.routTableId;
-			    //var rtbId = document.querySelector("#aws_subnetAssociationGrid tr td:nth-child(5) div").innerHTML; 
-			    //$("#aws_subnetAssociationGrid tr td:nth-child(1) div").attr("checked",true)
-			    console.log(accountId+ region + record.vpcId+ "TEST MMMMMMMMMM"+record.routeTableId+"TEST 222");
+            	//w2ui.layouti.content('left', $('#subnetAssocitaionAvaliablePopupDiv').html());
+            	 w2ui.layouti.content('left', w2ui.aws_subnetAssociationGrid);
+            	w2ui['aws_subnetAssociationGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/subnet/'/>"+accountId+"/"+region+"/"+record.vpcId);
 			    //doSearchSubnetAssociationDetail();
 	            w2ui['layouti'].content('main', $('#subnetAssociationsPopupDiv').html());
+	            //doSearchSubnetDetail(accountId,record.routeTableId);
+	           
+	            // w2ui['aws_subnetGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/subnet/'/>"+accountId+"/"+region+"/"+record.routeTableId+"/"+record.vpcId);
             }                   
         },onClose:function(event){
             //initsetting();
@@ -723,48 +698,28 @@ td {
             </li>
         </ul>
     </div>
+
     <div class="pdt20">
         <div class="title fl">AWS Route Table 목록</div>
         <div class="fr"> 
-            <span id="addBtn" class="btn btn-primary" style="width:120px">생성</span>
-            <span id="subnetAssociationBtn" class="btn  btn-warning" onclick="subnetAssociation()" style="left: 20px;" > Edit Subnet Associations </span>
+         <%-- <sec:authorize access="hasAuthority('AWS_ROUTE_TABLE_CREATE')"> --%>
+            <span id="addBtn" class="btn btn-primary" style="width:140px">라우트 테이블 생성</span>
+            <span id="addRouteBtn" class="btn btn-info"  onclick="" style="width:140px" > Route 추가 </span>
+            <span id="subnetAssociationBtn" class="btn  btn-warning" onclick="subnetAssociation()" style="left: 20px;" > Subnet Associations 수정 </span>
         </div>
     </div>
     <div id="aws_routeTableGrid" style="width:100%; height:305px"></div>
    
     <div style="margin-top:20px;">
     <div class="title fl">Routes 정보</div>
-    <div class="w2ui-field">  
-        <div style="width:420px; padding-left: 20px;">
-        <%-- <sec:authorize access="hasAuthority('AWS_ROUTE_TABLE_ADD_ROUTE')"> --%>
-         <button style="border:1px solid grey;" class="btn" id="addRouteBtn" onclick="" style="left: 20px;" > Add </button>
-        <%-- </sec:authorize> --%>
-        </div>          
-    </div>
     <div id="aws_routeGrid" style="width:100%; height:150px"></div>
     </div>
     
-    <div style="margin-top:20px;">
+    <!-- <div style="margin-top:20px;">
     <div class="title fl">Explicitly Associated Subnets 정보</div>
-    <div class="w2ui-field">  
-        <div style="width:420px; padding-left: 20px;">
-        <%-- <sec:authorize access="hasAuthority('AWS_ROUTE_TABLE_ADD_ROUTE')"> --%>
-         <!-- <button style="border:1px solid grey;" class="btn" id="subnetAssociationBtn" onclick="doSearchSubnetAssociationDetail()" style="left: 20px;" > Edit Subnet Associations </button> -->
-		<!-- <button style="border:1px solid grey;" class="btn" id="subnetAssociationBtn" onclick="" style="left: 20px;" > Edit </button>        -->
-<%-- </sec:authorize> --%>
-        </div>          
-    </div>
     <div class="showSubnets"id="aws_subnetGrid" style="width:100%; height:150px"></div>
-    
-    <!-- <label class="selectSubnets" style="width:100%;">Associate 할 Subnet을 선택하고 확인을 누르세요.</label>
-    <div class="selectSubnets"  id="aws_subnetAssociationGrid" style="width:100%; height:300px"></div> -->
-    
-    </div>
-    
+    </div> -->
 </div>
-
-
- 
 
 <!-- AWS Route Table Create 팝업 Div-->
 <div id="registPopupDiv" hidden="true">
@@ -831,21 +786,24 @@ td {
 </div>
 
 <!-- AWS subnetAssociationsPopupDiv Subnet 팝업 Div-->
- <div id="subnetAssociationsPopupDiv" hidden="true">
-<form id="awsSubnetAssociationForm" action="POST" style="padding:0px 0 5px 0;margin:0;">
-   
-         <div class="panel panel-info" style="height: 330px; margin-top: 0px;"> 
-           <div class="panel-heading"><b>AWS Subnet Association 수정 </b></div>
-		</div>   
-           <label style="margin-top:5px; width:100%;">Associate 할 Subnet을 선택하고 확인을 누르세요.</label> 
-     <span id="associateBtn" class="btn btn-primary" style="width:100px" onclick="$('#awsSubnetAssociationForm').submit();">확인</span>
-     <span id="disassociateBtn" onclick="awsDisassociateSubnet();" class="btn btn-danger" style="width:100px" >해제</span>
-     <span id="popClose" class="btn btn-info" style="width:100px"  onclick="w2popup.close();">닫기</span>
-</form>
+
+<!-- <div id="subnetAssocitaionAvaliablePopupDiv" hidden="true">
+<label> Association 가능한 Subnet 목록</label>
+		 <div class="showSubnets" id="aws_subnetAssociationGrid" style="width:470px; height:350px"></div>
+     <label style="margin-top:10px; margin-left:100px;">연결 할 Subnet을 선택하고 연결 버튼을 누르세요.</label>
+     <span id="associateBtn" onclick="awsAssociateSubnet();" class="btn btn-primary" style="width:90px; margin-left:200px;" >연결</span>
+</div>  -->
+
+
+<div id="subnetAssociationsPopupDiv" hidden="true">
+	<label>Explicitly Associated Subnet 목록</label>
+    <div class="showSubnets" id="aws_subnetGrid" style="width:500px; height:350px"></div>
+    <label style="margin-top:10px; margin-left:100px;">해제 할 Subnet을 선택하고 해제 버튼을 누르세요.</label>
+    <span id="disassociateBtn" onclick="awsDisassociateSubnet();" class="btn btn-danger" style="width:90px; margin-left:200px;" >해제</span>
 </div> 
-
-
-
+<div id="subnetAssociationPopupBtnDiv" hidden="true">
+    <button id="popClose" class="btn btn-info" style="width:90px"  onclick="w2popup.close();">확인</button>
+</div>
 
 <div id="registAccountPopupDiv"  hidden="true">
     <input name="codeIdx" type="hidden"/>

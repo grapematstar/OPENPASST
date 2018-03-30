@@ -96,7 +96,7 @@ $(function() {
 function doSearch() {
     region = $("select[name='region']").val();
     if(region == null) region = "us-west-2";
-    w2ui['aws_natGatewayGrid'].load("<c:url value='/awsMgnt/vpc/list/natGateway/list/"+accountId+"/"+region+"'/>","",function(event){});
+    w2ui['aws_natGatewayGrid'].load("<c:url value='/awsMgnt/natGateway/list/"+accountId+"/"+region+"'/>","",function(event){});
 }
 
 
@@ -111,7 +111,7 @@ function doSearchnatGatewayDetail(accountId, publicIp){
     
     $.ajax({
         type : "GET",
-        url : "/awsMgnt/vpc/list/natGateway/save/detail/"+accountId+"/"+natGatewayId+"/"+region+"",
+        url : "/awsMgnt/natGateway/list/natGateway/save/detail/"+accountId+"/"+natGatewayId+"/"+region+"",
         contentType : "application/json",
         success : function(data, status) {
             w2utils.unlock($("#layout_layout_panel_main"));
@@ -174,7 +174,7 @@ function awsNatGatewayCreate(){
     
 $.ajax({
     type : "POST",
-    url : "/awsMgnt/vpc/list/natGateway/save",
+    url : "/awsMgnt/natGateway/save",
     contentType : "application/json",
     async : true,
     data : JSON.stringify(natGwInfo),
@@ -207,7 +207,7 @@ function awsElasticIpAllocate(){
             }
 $.ajax({
     type : "POST",
-    url : "/awsMgnt/vpc/list/elasictIp/save",
+    url : "/awsMgnt/natGateway/list/elasictIp/save",
     contentType : "application/json",
     async : true,
     data : JSON.stringify(awsInfo),
@@ -235,7 +235,7 @@ function setAwsSubnetIdList(){
     var region = $("select[name='region']").val();
     $.ajax({
            type : "GET",
-           url : '/awsMgnt/vpc/list/natGateway/subnetIdList/'+accountId+'/'+region,
+           url : '/awsMgnt/natGateway/list/subnetIdList/'+accountId+'/'+region,
            contentType : "application/json",
            dataType : "json",
            success : function(data, status) {
@@ -274,7 +274,7 @@ function setAwsEipAllocationIdList(){
     var region = $("select[name='region']").val();
     $.ajax({
            type : "GET",
-           url : '/awsMgnt/vpc/list/natGateway/eipAllocationIdList/'+accountId+'/'+region,
+           url : '/awsMgnt/natGateway/list/eipAllocationIdList/'+accountId+'/'+region,
            contentType : "application/json",
            dataType : "json",
            success : function(data, status) {

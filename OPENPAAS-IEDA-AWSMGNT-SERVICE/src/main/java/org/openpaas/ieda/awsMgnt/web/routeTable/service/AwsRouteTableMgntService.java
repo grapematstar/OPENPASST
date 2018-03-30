@@ -200,6 +200,7 @@ public class AwsRouteTableMgntService {
         return list;
      }
      
+    
      /***************************************************
       * @project : AWS 인프라 관리 대시보드
       * @description : AWS 해당 Route Table에 대해 associated Subnet 목록 조회 
@@ -266,8 +267,9 @@ public class AwsRouteTableMgntService {
                         awsRTmgntVo.setIpv6CidrBlock(" - ");
                  }
                      awsRTmgntVo.setRouteTableId(theRouteTableId);
-                     awsRTmgntVo.setRecid(j);
+                     awsRTmgntVo.setRecid(y);
                      awsRTmgntVo.setAccountId(accountId);
+                     
                      list.add(awsRTmgntVo);
                  }
              }
@@ -359,6 +361,9 @@ public class AwsRouteTableMgntService {
               }
             }
           }
+          /*if(targets = null && targets.size() == 0){
+        	 targets.add(0,"");
+          }*/
           return targets;
       }
       /***************************************************
