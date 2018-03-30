@@ -176,7 +176,7 @@ $(function() {
             },
             no_text : "취소",
             no_callBack : function(event){
-            	w2ui['config_bootstrapGrid'].clear();
+                w2ui['config_bootstrapGrid'].clear();
                 doSearch();
             }
         });
@@ -213,10 +213,11 @@ function iaasSelectPopup() {
             iaas = $(".w2ui-msg-body select[name='iaas']").val();
             if(iaas){
                 $("#bootstrapPopupDiv").load("/deploy/bootstrap/install/bootstrapPopup",function(event){
-                	if( iaas == "AWS" ) awsPopup();
-                	else if( iaas == "Openstack" ) openstackPopup();
-                	else if( iaas == "vSphere" ) vSpherePopup();
-                	else if( iaas == "Google" ) googlePopup();
+                    if( iaas == "AWS" ) awsPopup();
+                    else if( iaas == "Openstack" ) openstackPopup();
+                    else if( iaas == "vSphere" ) vSpherePopup();
+                    else if( iaas == "Google" ) googlePopup();
+                    else if( iaas == "Azure") azurePopup();
                  });       
              }else{
                  w2alert("BOOTSTRAP을 설치할 클라우드 환경을 선택하세요");

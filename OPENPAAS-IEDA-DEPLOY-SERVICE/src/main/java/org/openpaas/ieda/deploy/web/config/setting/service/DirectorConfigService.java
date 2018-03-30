@@ -473,7 +473,7 @@ public class DirectorConfigService  {
                 oldDefaultDiretor.setUpdateUserId(sessionInfo.getUserId());
                 dao.updateDirector(oldDefaultDiretor);
                 throw new CommonException("unAuthorized.director.exception",
-                        "실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
+                        "로그인 되지 않아 실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -691,7 +691,5 @@ public class DirectorConfigService  {
         }
         return statusResult;
     }
-    
-    
     
 }
