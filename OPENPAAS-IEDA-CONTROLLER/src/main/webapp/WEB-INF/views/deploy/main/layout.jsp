@@ -33,7 +33,6 @@
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/deploy-content.css?ver=5'/>"/>
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/progress-step.css'/>"/> <!-- progress-step css -->
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-guide.css?ver=2'/>"/>
-<link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-content.css?ver=2'/>"/>
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-init.css?ver=2'/>"/>
 
 <!-- JAVA SCRIPT -->
