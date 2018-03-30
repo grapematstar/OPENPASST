@@ -359,7 +359,6 @@ public class DirectorConfigService  {
      * @title :  deleteDirectorConfig
      * @return : void
      ***************************************************/
-    @SuppressWarnings("unchecked")
     public void deleteDirectorConfig(int seq, String boshConfigFileName) {
         //1. 해당 설치관리자가 존재하는지 확인한다.
         DirectorConfigVO directorConfig = dao.selectDirectorConfigBySeq(seq);
