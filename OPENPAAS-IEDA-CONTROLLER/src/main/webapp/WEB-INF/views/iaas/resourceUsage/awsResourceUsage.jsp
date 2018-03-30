@@ -229,7 +229,7 @@ $( window ).resize(function() {
         <div class="title fl">AWS 과금 사용량 정보</div>
         <div id="billingUsageWrap" style="float:left; width:100%">
              <div class="panel-group">
-                <div class="panel panel-primary">
+                <div class="panel panel-default">
                     <div class="panel-heading" style="position:relative"><b>AWS 과금 사용량</b><img src='<c:url value="images/iaasMgnt/month-white-icon.png"/>' style="width:107px;position:absolute; right:20px;" alt="CLOCK" /></div>
                    <div class="panel-body">
                         <div class="billingUsage"></div>

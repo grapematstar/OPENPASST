@@ -25,14 +25,6 @@ public interface BootstrapDAO {
     
     /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
-     * @description :  Bootstrap 공용IP를 통한 ID조회
-     * @title : selectBootstrapId
-     * @return : BootstrapVO
-    *****************************************************************/
-    BootstrapVO selectBootstrapDeploymentFile(@Param("publicStaticIp")String publicStaticIp);
-    
-    /****************************************************************
-     * @project : Paas 플랫폼 설치 자동화
      * @description : BootStrap 정보 저장
      * @title : insertBootStrapInfo
      * @return : int

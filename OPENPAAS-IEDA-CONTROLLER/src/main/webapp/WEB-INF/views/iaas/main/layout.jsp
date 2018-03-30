@@ -27,8 +27,8 @@
 <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <!--     Bootstrap Core & Custom CSS -->
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/default.css'/>"/>
-<link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-guide.css?ver=2'/>"/>
-<link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-content.css?ver=2'/>"/>
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-guide.css?ver=3'/>"/>
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-content.css?ver=3'/>"/>
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/infra-init.css?ver=2'/>"/>
 
 <!-- JQuery -->

@@ -180,14 +180,6 @@ Order by iaas_type asc, update_date asc
           On bootstrap.iaas_config_id= config.id
        Where bootstrap.id = #{id}
 </select>
-
-<select id="selectBootstrapDeploymentFile" resultMap="bootstrap">
-    /** ieda.deploy.deploy.bootstrap.selectBootstrapId  **/
-    select deployment_file
-    from 
-    ieda_bootstrap 
-    where public_static_ip = #{publicStaticIp};
-</select>
     
 <insert id="insertBootStrapInfo" useGeneratedKeys="true" keyColumn="id" keyProperty="bootstrap.id">
     /** ieda.deploy.deploy.bootstrap.insertBootStrapInfo  **/
