@@ -430,10 +430,20 @@ public class DirectorConfigService  {
         //6. bosh-env 환경설정 정보를 업데이트
         OutputStreamWriter fileWriter = null;
         try{
+            String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getDeploymentFile().replace(".yml", "-creds.yml");
+            InputStream input = new FileInputStream(new File( boshCredentialFile));
+            Yaml yaml = new Yaml();
+            //7. 파일을 로드하여 Map<String, Object>에 parse한다.
+            Map<String, Object> object = (Map<String, Object>)yaml.load(input);
+            Map<String, String> certMap = (Map<String,String>)object.get("director_ssl");
+            //8. bosh alias-env를 실행한다.
+            ProcessBuilder builder = new ProcessBuilder("bosh", "alias-env", directorConfig.getDirectorName(),
+                                                         "-e", directorConfig.getDirectorUrl(), "--ca-cert="+certMap.get("ca"));
+            builder.start();
+            Thread.sleep(1000);
             //9. bosh-env에 로그인
             String boshConfigFile = BASE_DIR+SEPARATOR+".bosh"+SEPARATOR+"config";
-            InputStream input = new FileInputStream(new File(getBoshConfigLocation(boshConfigFileName)));
-            Yaml yaml = new Yaml();
+            input = new FileInputStream(new File(getBoshConfigLocation(boshConfigFileName)));
             Map<String, Object> boshEnv = (Map<String, Object>)yaml.load(input);
             List<Map<String, Object>> envMap = (List<Map<String, Object>>) boshEnv.get("environments");
             for(int i=0;i<envMap.size();i++){
@@ -481,6 +491,10 @@ public class DirectorConfigService  {
             e.printStackTrace();
             throw new CommonException("unAuthorized.director.exception",
                     "실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new CommonException(".execute.interrupte.exception",
+                    "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
         } finally {
             try {
                 if(fileWriter != null) {
