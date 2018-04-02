@@ -67,6 +67,7 @@ public class CommonDeployService{
     final private static String KEY_DIR = LocalDirectoryConfiguration.getKeyDir();
     final private static String DEPLOYMENT_DIR = LocalDirectoryConfiguration.getDeploymentDir();
     final private static String LOCK_DIR = LocalDirectoryConfiguration.getLockDir() + SEPARATOR;
+    final private static String CREDENTIAL_DIR = LocalDirectoryConfiguration.getGenerateCredentialDir();
     final private static Logger LOGGER = LoggerFactory.getLogger(CommonDeployService.class);
     
     /****************************************************************
@@ -142,6 +143,30 @@ public class CommonDeployService{
                         continue;
                     }
                 }
+                if ( localFiles == null ){
+                    localFiles = new ArrayList<String>();
+                }
+                localFiles.add(file.getName());
+            }
+        }
+        return localFiles;
+    }
+    
+    /****************************************************************
+     * @project : Paas 플랫폼 설치 자동화
+     * @description :  Credential File 목록 조회
+     * @title : getCredentialName
+     * @return : List<String>
+    *****************************************************************/
+    public List<String> getCredentialName (){
+        File credsKeyFile = new File(CREDENTIAL_DIR);
+        if(!credsKeyFile.isDirectory()){
+            return null;
+        }
+        List<String> localFiles = null;
+        File[] credsListFiles = credsKeyFile.listFiles();
+        if(credsKeyFile != null){
+            for (File file : credsListFiles) {
                 if ( localFiles == null ){
                     localFiles = new ArrayList<String>();
                 }
