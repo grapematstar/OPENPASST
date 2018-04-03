@@ -146,6 +146,9 @@ $("#addSetting").click(function(){
         modal   : true,
         body    : $("#regPopupDiv").html(),
         buttons : $("#regPopupBtnDiv").html(),
+        onOpen : function(event){
+            getCredsKeyPathFileList();
+        },
         onClose:function(event){
             doSearch();
         }
@@ -414,7 +417,7 @@ function getCredsKeyPathFileList(){
         async : true,
         success : function(data, status) {
             credsKeyPathFileList = data;
-            $('.w2ui-msg-body input:radio[name=keyPathType]:input[value=list]').attr("checked", true);  
+            $('.w2ui-msg-body input:radio[name=credskeyPathType]:input[value=list]').attr("checked", true);  
             credsChangeKeyPathType("list");
         },
         error : function( e, status ) {
@@ -531,7 +534,7 @@ function credsChangeKeyPathStyle( showDiv, hideDiv ){
                         <!-- <label style="width:36%; text-align: left; padding-left: 20px;" class="control-label"></label> -->
                         <div id="credsKeyPathDiv" style="padding-left: 30%">
                             <div id="credsKeyPathFileDiv" hidden="true">
-                                <input type="text" id="credsKeyFileName" name="credsKeyFileName" style="width: 250px;" readonly onclick="openBrowse();" placeholder="설치된 Credential File을 선택하세요"/>
+                                <input type="text" id="credsKeyFileName" name="credsKeyFileName" style="width: 250px;" readonly onclick="openBrowse();" placeholder="Credential File을 선택하세요"/>
                                 <a href="#" id="browse" onclick="openBrowse();"><span id="BrowseBtn">Browse</span></a>
                                 <input type="file" name="keyPathFile" onchange="setCredentialKeyPath(this);" style="display:none"/>
                             </div>
@@ -607,10 +610,10 @@ $(function() {
                 }, sqlInjection :   function(){
                     return $(".w2ui-msg-body input[name='credsKeyFileName']").val();
                 }
-            },  credsKeyFileList: {
+            },  credsKeyPathList: {
                 required: function(){
                     if( $(".w2ui-msg-body input:radio[name='credskeyPathType']:checked").val() == 'list' ){
-                        return checkEmpty( $(".w2ui-msg-body select[name='credsKeyPathList']").val() );
+                        return checkEmpty( $(".w2ui-msg-body #credsKeyPathList").val() );
                     }else{
                         return false;
                     }
@@ -635,7 +638,7 @@ $(function() {
             }, credsKeyFileName: {
                 required:  "Key 값"+text_required_msg
                 ,sqlInjection : text_injection_msg
-            }, credsKeyFileList: {
+            }, credsKeyPathList: {
                 required:  "Key 값"+text_required_msg
                 ,sqlInjection : text_injection_msg
             }
