@@ -334,6 +334,7 @@ $( window ).resize(function() {
             <option value="Openstack">Openstack</option>
             <option value="vSphere">vSphere</option>
             <option value="Google">Google</option>
+            <option value="Azure">Azure</option>
         </select>
     </div>
 </div>

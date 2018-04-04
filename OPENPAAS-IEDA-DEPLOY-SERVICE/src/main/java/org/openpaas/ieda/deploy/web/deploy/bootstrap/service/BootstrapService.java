@@ -161,8 +161,7 @@ public class BootstrapService {
                 }
                 content = commonDeployService.getManifestInputTemplateStream("bootstrap", result.getTemplateVersion(), vo.getIaasType(), result.getCommonJobTemplate(), vo.getIaasAccount().get("openstackVersion").toString());
             }else {
-                throw new CommonException(message.getMessage("common.badRequest.exception.code", null, Locale.KOREA),
-                        message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
+                throw new CommonException("null.boshTemplate.exception", "설치 가능한 BOSH 릴리즈 버전을 확인 하세요.", HttpStatus.NOT_FOUND);
             }
             //필요한 Manifest Template 파일의 디렉토리 정보 설정
             ManifestTemplateVO manifestTemplate = setOptionManifestTemplateInfo(result, vo.getIaasType().toLowerCase() , vo.getIaasAccount().get("openstackVersion").toString());
@@ -256,6 +255,11 @@ public class BootstrapService {
                 items.add(new ReplaceItemDTO("[tenant]", vo.getIaasAccount().get("commonTenant").toString()));
             }
         }
+        if("AZURE".equalsIgnoreCase(vo.getIaasType())){
+            items.add(new ReplaceItemDTO("[commonTenant]", vo.getIaasAccount().get("commonTenant").toString()));
+            items.add(new ReplaceItemDTO("[azureSubscriptionId]", vo.getIaasAccount().get("azureSubscriptionId").toString()));
+        }
+        
         items.add(new ReplaceItemDTO("[accessEndpoint]", vo.getIaasAccount().get("commonAccessEndpoint").toString()));
         items.add(new ReplaceItemDTO("[accessUser]", vo.getIaasAccount().get("commonAccessUser").toString()));
         items.add(new ReplaceItemDTO("[accessSecret]", vo.getIaasAccount().get("commonAccessSecret").toString()));
@@ -279,6 +283,10 @@ public class BootstrapService {
         items.add(new ReplaceItemDTO("[vCenterPersistentDatastore]", vo.getIaasConfig().getVsphereVcenterPersistentDatastore()));
         items.add(new ReplaceItemDTO("[vCenterDiskPath]", vo.getIaasConfig().getVsphereVcenterDiskPath()));
         items.add(new ReplaceItemDTO("[vCenterCluster]", vo.getIaasConfig().getVsphereVcenterCluster()));
+        
+        items.add(new ReplaceItemDTO("[azureResourceGroup]", vo.getIaasConfig().getAzureResourceGroup()));
+        items.add(new ReplaceItemDTO("[azureStorageAccountName]", vo.getIaasConfig().getAzureStorageAccountName()));
+        items.add(new ReplaceItemDTO("[azureSshPublicKey]", vo.getIaasConfig().getAzureSshPublicKey()));
         
         //기본 정보
         items.add(new ReplaceItemDTO("[deploymentName]", vo.getDeploymentName()));

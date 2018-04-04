@@ -259,7 +259,7 @@ function getIaasConfigAliasList(iaas){
             if( !checkEmpty(data) ){
                 var options= "";
                 for( var i=0; i<data.length; i++ ){
-                	console.log(data);
+                    console.log(data);
                     if( data[i].id == iaasConfigInfo.iaasConfigId ){
                         options+= "<option value='"+data[i].id+"' selected>"+data[i].iaasConfigAlias+"</option>";
                         settingIaasConfigInfo(data[i].id);
@@ -289,7 +289,7 @@ function settingIaasConfigInfo(val){
             url :"/common/deploy/list/iaasConfig/"+iaas+"/"+val, 
             contentType :"application/json",
             success :function(data, status) {
-            	console.log(data);
+                console.log(data);
                 if( !checkEmpty(data) ){
                     if( data.openstackKeystoneVersion == "v2" ){
                         $(".w2ui-msg-body commonProject").css("display", "block");
@@ -326,7 +326,7 @@ function settingIaasConfigInfo(val){
                     $(".w2ui-msg-body input[name=vsphereVcenterDiskPath]").val(data.vsphereVcenterDiskPath);
                     $(".w2ui-msg-body input[name=vsphereVcenterCluster]").val(data.vsphereVcenterCluster);
                     $(".w2ui-msg-body input[name=azureSubscriptionId]").val(data.azureSubscriptionId);
-	                $(".w2ui-msg-body input[name=azureResourceGroupName]").val(data.azureResourceGroupName);
+                    $(".w2ui-msg-body input[name=azureResourceGroupName]").val(data.azureResourceGroupName);
                     $(".w2ui-msg-body input[name=azureStorageAccountName]").val(data.azureStorageAccountName);
                     $(".w2ui-msg-body textarea[name=azureSshPublicKey]").val(data.azureSshPublicKey);
                 }
@@ -646,6 +646,8 @@ function saveDefaultInfo(type){
             vSpherePopup(); return;
         }else if(iaas.toUpperCase() == "GOOGLE" ){
             googlePopup(); return;
+        }else if(iaas.toUpperCase() == "AZURE" ){
+            azurePopup(); return;
         }
     }else{
         $.ajax({
@@ -677,7 +679,10 @@ function selectNetworkInfoPopup(iaas){
         networkInfoPopup("#VsphereNetworkInfoDiv", "#VsphereNetworkInfoBtnDiv", 680);
     }else if( iaas.toUpperCase() == "GOOGLE" ){
         networkInfoPopup("#GoogleNetworkInfoDiv", "#GoogleNetworkInfoBtnDiv", 570)   
-    }else{
+    }else if( iaas.toUpperCase() == "AZURE" ){
+        networkInfoPopup("#AzureNetworkInfoDiv", "#AzureNetworkInfoBtnDiv", 570)   
+    }
+    else{
         networkInfoPopup("#NetworkInfoDiv", "#NetworkInfoBtnDiv", 535);
     }
 }
@@ -1633,7 +1638,7 @@ function popupClose() {
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">Resource Group</label>
                     <div style="width: 60%">
-                        <input name="azureResourceGroup" type="text" readonly style="float:left;width:80%;" placeholder="리소스 그룹을 입력하세요."/>
+                        <input name="azureResourceGroupName" type="text" readonly style="float:left;width:80%;" placeholder="리소스 그룹을 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
@@ -1919,6 +1924,81 @@ function popupClose() {
         <button class="btn" style="float: right; padding-right: 15%" onclick="setNetworkValidate('#GoogleNetworkInfoForm');" >다음>></button>
     </div>
 </div>
+
+<!-- Azure 네트워크 div -->
+<div id="AzureNetworkInfoDiv" style="width:100%;height:100%;" hidden="true">
+    <form id="azureNetworkInfoForm">
+        <div style="margin-left:2%;display:inline-block;width:97%;padding-top:20px;">
+            <ul class="progressStep_6" >
+                <li class="pass">Azure 정보</li>
+                <li class="pass">기본 정보</li>
+                <li class="active">네트워크 정보</li>
+                <li class="before">리소스 정보</li>
+                <li class="before">배포 파일 정보</li>
+                <li class="before">설치</li>
+            </ul>
+        </div>
+        <div class="w2ui-page page-0" style="margin-top:15px;padding:0 3%;">
+             <div class="panel panel-info"  style="margin-bottom:20px;">
+                 <div  class="panel-heading" style="padding:5px 5% 10px 5%;"><b>네트워크 External</b></div>
+                 <div class="panel-body">
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">설치관리자 IPs</label> 
+                         <div style="width: 60%">
+                             <input name="publicStaticIp" type="text"  style="display:inline-block;width:70%;" placeholder="예) 10.0.0.20"/>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             <div class="panel panel-info" style="margin-bottom:20px;">    
+                 <div  class="panel-heading" style="padding:5px 5% 10px 5%;"><b>네트워크 Internal</b></div>
+                 <div class="panel-body">
+                     <div class="w2ui-field" >
+                         <label style="text-align: left;width:36%;font-size:11px;">설치관리자 내부망 IPs</label> 
+                         <div style="width: 60%">
+                             <input name="privateStaticIp" type="text"  style="display:inline-block;width:70%;" placeholder="예) 10.0.0.20"/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">네트워크 명</label>
+                         <div style="width: 60%">
+                             <input name="networkName" type="text"  style="display:inline-block;width:70%;" placeholder="네트워크 명을 입력하세요."/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label class="subnetId" style="text-align: left;width:36%;font-size:11px;">서브넷 명</label>
+                         <div style="width: 60%">
+                             <input name="subnetId" type="text"  style="display:inline-block;width:70%;" placeholder="서브넷 명을 입력하세요."/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">서브넷 범위</label>
+                         <div style="width: 60%">
+                             <input name="subnetRange" type="text"  style="display:inline-block;width:70%;"  placeholder="예) 10.0.0.0/24"/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">게이트웨이</label>
+                         <div style="width: 60%">
+                             <input name="subnetGateway" type="text"  style="display:inline-block;width:70%;" placeholder="예) 10.0.0.1"/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">DNS</label>
+                         <div style="width: 60%">
+                             <input name="subnetDns" type="text"  style="display:inline-block;width:70%;" placeholder="예) 8.8.8.8"/>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+    </form>
+    <div class="w2ui-buttons" id="AzureNetworkInfoBtnDiv" hidden="true">
+        <button class="btn" style="float: left;" onclick="saveNetworkInfo('before');" >이전</button>
+        <button class="btn" style="float: right; padding-right: 15%" onclick="setNetworkValidate('#azureNetworkInfoForm');" >다음>></button>
+    </div>
+</div>
+
 
 <!-- vSphere 네트워크 div -->
 <div id="VsphereNetworkInfoDiv" style="width:100%;height:100%;" hidden="true">

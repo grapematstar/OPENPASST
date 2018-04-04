@@ -501,7 +501,7 @@ CREATE TABLE ieda_iaas_config
   vsphere_vcenter_vm_folder             VARCHAR(255) NULL,
   azure_resource_group                  VARCHAR(255) NULL,
   azure_storage_account_name            VARCHAR(255) NULL,
-  azure_ssh_public_key                  VARCHAR(255) NULL,
+  azure_ssh_public_key                  LONGTEXT NULL,
   azure_private_key                     VARCHAR(255) NULL,
   create_user_id                        VARCHAR(255) NOT NULL,
   create_date                           DATE         NOT NULL,
