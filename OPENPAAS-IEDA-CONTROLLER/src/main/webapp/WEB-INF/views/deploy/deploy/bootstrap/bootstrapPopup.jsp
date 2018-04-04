@@ -120,6 +120,7 @@ function setBootstrapData(contents){
     else if( iaas == "Openstack" ) openstackPopup();
     else if( iaas == "vSphere" ) vSpherePopup();
     else if( iaas == "Google" ) googlePopup();
+    else if( iaas == "Azure" ) azurePopup();
 }
 
 
@@ -219,6 +220,32 @@ function googlePopup(){
     }); 
 }
 
+
+/******************************************************************
+ * 기능 : azurePopup
+ * 설명 : azure 정보 입력 팝업 화면
+ ***************************************************************** */
+function azurePopup(){
+     w2popup.open({
+        title   : "<b>BOOTSTRAP 설치</b>",
+        width   : 730,
+        height  : 650,
+        onClose : popupClose,
+        modal   : true,
+        body    : $("#azureInfoDiv").html(),
+        buttons : $("#azureInfoBtnDiv").html(),
+        onOpen:function(event){
+            event.onComplete = function(){
+                $(".w2ui-msg-body input[name=iaasType]").val(iaas);
+                getIaasConfigAliasList(iaas);
+            }
+        },onClose:function(event){
+            gridReload()
+        }
+    }); 
+}
+
+
 /********************************************************
  * 설명 : 인프라 환경 설정 별칭 목록 조회
  * 기능 : getIaasConfigAliasList
@@ -232,6 +259,7 @@ function getIaasConfigAliasList(iaas){
             if( !checkEmpty(data) ){
                 var options= "";
                 for( var i=0; i<data.length; i++ ){
+                	console.log(data);
                     if( data[i].id == iaasConfigInfo.iaasConfigId ){
                         options+= "<option value='"+data[i].id+"' selected>"+data[i].iaasConfigAlias+"</option>";
                         settingIaasConfigInfo(data[i].id);
@@ -261,6 +289,7 @@ function settingIaasConfigInfo(val){
             url :"/common/deploy/list/iaasConfig/"+iaas+"/"+val, 
             contentType :"application/json",
             success :function(data, status) {
+            	console.log(data);
                 if( !checkEmpty(data) ){
                     if( data.openstackKeystoneVersion == "v2" ){
                         $(".w2ui-msg-body commonProject").css("display", "block");
@@ -296,7 +325,10 @@ function settingIaasConfigInfo(val){
                     $(".w2ui-msg-body input[name=vsphereVcenterPersistentDatastore]").val(data.vsphereVcenterPersistentDatastore);
                     $(".w2ui-msg-body input[name=vsphereVcenterDiskPath]").val(data.vsphereVcenterDiskPath);
                     $(".w2ui-msg-body input[name=vsphereVcenterCluster]").val(data.vsphereVcenterCluster);
-                    
+                    $(".w2ui-msg-body input[name=azureSubscriptionId]").val(data.azureSubscriptionId);
+	                $(".w2ui-msg-body input[name=azureResourceGroupName]").val(data.azureResourceGroupName);
+                    $(".w2ui-msg-body input[name=azureStorageAccountName]").val(data.azureStorageAccountName);
+                    $(".w2ui-msg-body textarea[name=azureSshPublicKey]").val(data.azureSshPublicKey);
                 }
             },
             error :function(request, status, error) {
@@ -1544,6 +1576,95 @@ function popupClose() {
         <button class="btn" style="float: right; padding-right: 15%" onclick="saveIaasConfigInfo();">다음>></button>
     </div>
 </div>
+
+<div id="azureInfoDiv" style="width:100%;height:100%;" hidden="true">
+    <div style="margin-left:2%;display:inline-block;width:97%;padding-top:20px;">
+        <ul class="progressStep_6" >
+            <li class="active">Azure 정보</li>
+            <li class="before">기본 정보</li>
+            <li class="before">네트워크 정보</li>
+            <li class="before">리소스 정보</li>
+            <li class="before">배포 파일 정보</li>
+            <li class="before">설치</li>
+        </ul>
+    </div>
+    <div class="w2ui-page page-0" style="margin-top:15px;padding:0 3%;">
+        <div class="panel panel-info"> 
+            <div class="panel-heading"><b>Azure 정보</b></div>
+            <div class="panel-body" style="padding:5px 5% 10px 5%;">
+                <div class="w2ui-field">
+                  <label style="text-align: left;width:40%;font-size:11px;">인프라 환경 별칭</label>
+                  <div style="width: 60%">
+                      <select name="iaasConfigId" onchange="settingIaasConfigInfo(this.value);" style="width:80%;">
+                          <option value="">인프라 환경 별칭을 선택하세요.</option>
+                      </select>
+                  </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Subscription Id</label>
+                    <div style="width: 60%">
+                        <input name="azureSubscriptionId" type="text" readonly style="float:left;width:80%;" placeholder="구독 아이디를 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Tenant</label>
+                    <div style="width: 60%">
+                        <input name="commonTenant" type="text" readonly style="float:left;width:80%;" placeholder="테넌트를 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Application Id</label>
+                    <div style="width: 60%">
+                        <input name="commonAccessUser" type="text" readonly style="float:left;width:80%;" placeholder="어플리케이션 아이디(Client Id)를 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Application Key</label>
+                    <div style="width: 60%">
+                        <input name="commonAccessSecret" type="password" readonly style="float:left;width:80%;" placeholder="어플리케이션 키(Client Key)를 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Security Group</label>
+                    <div style="width: 60%">
+                        <input name="commonSecurityGroup" type="text" readonly style="float:left;width:80%;" placeholder="보안 그룹을 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Resource Group</label>
+                    <div style="width: 60%">
+                        <input name="azureResourceGroup" type="text" readonly style="float:left;width:80%;" placeholder="리소스 그룹을 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Storage Account</label>
+                    <div style="width: 60%">
+                        <input name="azureStorageAccountName" type="text" readonly style="float:left;width:80%;" placeholder="저장소 계정 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Private key File</label>
+                    <div style="width: 60%">
+                        <input name="commonKeypairPath" type="text" readonly style="float:left;width:80%;" placeholder="개인 키 파일을 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">SSH Public Key</label>
+                    <div style="width: 60%">
+                        <textarea name="azureSshPublicKey" readonly style="float:left;width:80%; height:85px;resize:none;"rows=10; placeholder="SSH 공개 키를 입력하세요."></textarea>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w2ui-buttons" id="azureInfoBtnDiv" hidden="true">
+        <button class="btn" style="float: right; padding-right: 15%" onclick="saveIaasConfigInfo();">다음>></button>
+    </div>
+</div>
+
+
+
 <!-- 기본 설정 정보 -->
 <div id="DefaultInfoDiv" style="width:100%;height:100%;" hidden="true">
     <form id="defaultInfoForm" >

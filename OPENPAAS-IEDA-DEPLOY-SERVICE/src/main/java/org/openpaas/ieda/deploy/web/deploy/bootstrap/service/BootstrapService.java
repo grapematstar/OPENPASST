@@ -155,6 +155,10 @@ public class BootstrapService {
             //해당 Bosh 릴리즈 버전의 Manifest Template 파일 조회
             ManifestTemplateVO result = commonDeployDao.selectManifetTemplate(vo.getIaasType(), releaseVersion, "BOOTSTRAP", releaseName );
             if(result != null){
+                if(vo.getPaastaMonitoringUse().equals("true")) {
+                    String paastaMoniteringDeploymentFile = result.getCommonJobTemplate().split("\\.")[0] + "-paasta-monitering.yml";
+                    result.setCommonJobTemplate(paastaMoniteringDeploymentFile);
+                }
                 content = commonDeployService.getManifestInputTemplateStream("bootstrap", result.getTemplateVersion(), vo.getIaasType(), result.getCommonJobTemplate(), vo.getIaasAccount().get("openstackVersion").toString());
             }else {
                 throw new CommonException(message.getMessage("common.badRequest.exception.code", null, Locale.KOREA),
@@ -289,7 +293,7 @@ public class BootstrapService {
         
         if( vo.getPaastaMonitoringUse().equalsIgnoreCase("true") ) {
             items.add(new ReplaceItemDTO("[paastaMonitoringIp]", vo.getPaastaMonitoringIp()));
-            items.add(new ReplaceItemDTO("[paastaMonitoringReleaseName]", vo.getPaastaMonitoringRelease().replace("-3.0.tgz", "")));
+            items.add(new ReplaceItemDTO("[paastaMonitoringReleaseName]", "bosh-monitoring-agent"));
             items.add(new ReplaceItemDTO("[paastaMonitoringRelease]", RELEASE_DIR + SEPARATOR + vo.getPaastaMonitoringRelease()));
             items.add(new ReplaceItemDTO("[influxdbIp]", vo.getInfluxdbIp()+":8059"));
         }else {

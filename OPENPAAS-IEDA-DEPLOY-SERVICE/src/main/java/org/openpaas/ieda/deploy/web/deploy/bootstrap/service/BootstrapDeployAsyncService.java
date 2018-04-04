@@ -66,11 +66,10 @@ public class BootstrapDeployAsyncService {
                 String deployStatus = message.getMessage("common.deploy.status.processing", null, Locale.KOREA);
                 bootstrapInfo.setDeployStatus( deployStatus );
                 saveDeployStatus(bootstrapInfo);
-                setProcessBuilderBoshCreateCmd();
                 //2. bosh 실행
                 ProcessBuilder builder = new ProcessBuilder("bosh", "create-env", deployFile, 
-                                                            "--state="+deployFile.replace(".yml", "")+"-state.json", 
-                                                            "--vars-store="+CREDENTIAL_DIR+bootstrapInfo.getDeploymentFile().replace(".yml", "-creds.yml"), "--tty");
+                        "--state="+deployFile.replace(".yml", "")+"-state.json", 
+                        "--vars-store="+CREDENTIAL_DIR+bootstrapInfo.getDeploymentFile().replace(".yml", "-creds.yml"), "--tty");
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
 
@@ -136,7 +135,7 @@ public class BootstrapDeployAsyncService {
             saveDeployStatus(bootstrapInfo);
         }catch ( Exception e) {    
             status = "error";
-        	e.printStackTrace();
+            e.printStackTrace();
             DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("배포 중 Exception이 발생하였습니다."));
             if ( bootstrapInfo != null ) {
                 bootstrapInfo.setDeployLog(accumulatedLog);
@@ -168,12 +167,7 @@ public class BootstrapDeployAsyncService {
         }
     }
     
-    private void setProcessBuilderBoshCreateCmd() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/****************************************************************
+    /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
      * @description : 설치 상태를 설정하여 저장
      * @title : saveDeployStatus

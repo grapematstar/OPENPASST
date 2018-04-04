@@ -79,8 +79,8 @@ $(function() {
 $("#registConfigBtn").click(function(){
     w2popup.open({
         title : "<b>Openstack 환경 설정 등록</b>",
-        width : 650,
-        height : 465,
+        width : 680,
+        height : 470,
         modal : true,
         body : $("#registPopupDiv").html(),
         buttons : $("#registPopupBtnDiv").html(),
@@ -104,9 +104,9 @@ $("#registConfigBtn").click(function(){
 $("#updateConfigBtn").click(function(){
     if( $("#updateConfigBtn").attr("disabled") == "disabled" ) return;
     w2popup.open({
-        title   : "<b>Openstack 계정 수정</b>",
-        width   : 600,
-        height  : 465,
+        title   : "<b>Openstack 환경 설정 수정</b>",
+        width : 680,
+        height : 470,
         modal   : true,
         body    : $("#registPopupDiv").html(),
         buttons : $("#registPopupBtnDiv").html(),
@@ -115,7 +115,7 @@ $("#updateConfigBtn").click(function(){
                 //grid record
                 var selected = w2ui['openstack_configGrid'].getSelection();
                 if( selected.length == 0 ){
-                    w2alert('<spring:message code="common.grid.selected.fail"/>', "Openstack 계정 수정");
+                    w2alert('<spring:message code="common.grid.selected.fail"/>', "Openstack 환경 설정 수정");
                     return;
                 }
                 var record = w2ui['openstack_configGrid'].get(selected);

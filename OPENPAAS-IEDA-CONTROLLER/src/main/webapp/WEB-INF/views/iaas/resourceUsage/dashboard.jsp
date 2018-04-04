@@ -15,8 +15,7 @@
 <script type="text/javascript">
 var search_lock_msg = '<spring:message code="common.search.data.lock"/>';//데이터 조회 중 입니다.
 $(function() {
-    //getInfraAllResourceUsageInfo();
-
+    getInfraAllResourceUsageInfo();
 });
 
 

@@ -74,7 +74,7 @@ $(function() {
 $("#registConfigBtn").click(function(){
     w2popup.open({
         title   : "<b>Azure 환경 설정 등록</b>",
-        width   : 650,
+        width   : 680,
         height  : 550,
         modal   : true,
         body    : $("#registPopupDiv").html(),
@@ -99,8 +99,8 @@ $("#updateConfigBtn").click(function(){
     if( $("#updateConfigBtn").attr("disabled") == "disabled" ) return;
     w2popup.open({
         title   : "<b>Azure 환경 설정 수정</b>",
-        width   : 650,
-        height  : 485,
+        width   : 680,
+        height  : 550,
         modal   : true,
         body    : $("#registPopupDiv").html(),
         buttons : $("#registPopupBtnDiv").html(),

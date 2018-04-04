@@ -37,7 +37,6 @@ import com.amazonaws.services.ec2.model.Vpc;
 import com.microsoft.azure.PagedList;
 import com.microsoft.azure.credentials.AzureTokenCredentials;
 import com.microsoft.azure.management.Azure;
-import com.microsoft.azure.management.compute.ComputeUsages;
 import com.microsoft.azure.management.compute.VirtualMachine;
 import com.microsoft.azure.management.storage.StorageAccount;
 import com.microsoft.azure.storage.CloudStorageAccount;

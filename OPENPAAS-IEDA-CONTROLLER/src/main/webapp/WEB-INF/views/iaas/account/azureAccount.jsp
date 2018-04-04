@@ -43,9 +43,9 @@ $(function() {
                    , {field: 'createDate', caption: '계정 생성 일자', size: '10%', style: 'text-align:center'}
                    , {field: 'updateDate', caption: '계정 수정 일자', size: '10%', style: 'text-align:center'}
         ],onError: function(event) {
-        	w2alert(search_grid_fail_msg, "Azure 계정 목록");
+            w2alert(search_grid_fail_msg, "Azure 계정 목록");
         },onLoad : function(event){
-        	$("#rsaPublicKeyModulus").val(  JSON.parse(event.xhr.responseText).publicKeyModulus );
+            $("#rsaPublicKeyModulus").val(  JSON.parse(event.xhr.responseText).publicKeyModulus );
             $("#rsaPublicKeyExponent").val(  JSON.parse(event.xhr.responseText).publicKeyExponent );
         }, onSelect : function(event) {
             event.onComplete = function(){
@@ -74,13 +74,13 @@ $("#registAccountBtn").click(function(){
         body    : $("#registPopupDiv").html(),
         buttons : $("#registPopupBtnDiv").html(),
         onOpen : function(event){
-        	event.onComplete = function(){
-        		//popup size 값 설정
-        		popup_height  = Number( $(".w2ui-popup").css("height").substring(-1, 3));
+            event.onComplete = function(){
+                //popup size 값 설정
+                popup_height  = Number( $(".w2ui-popup").css("height").substring(-1, 3));
                 body_height = Number( $(".panel-body").css("height").substring(-1, 3)) ;
             }                   
         },onClose:function(event){
-        	initsetting();
+            initsetting();
             doSearch();
         }
     });
@@ -90,7 +90,7 @@ $("#registAccountBtn").click(function(){
  * 설명 :  MS Azure 수정 팝업 화면
  *********************************************************/
 $("#updateAccountBtn").click(function(){
-	if( $("#updateAccountBtn").attr("disabled") == "disabled" ) return;
+    if( $("#updateAccountBtn").attr("disabled") == "disabled" ) return;
     w2popup.open({
         title   : "<b>Azure 계정 수정</b>",
         width   : 650,
@@ -99,11 +99,11 @@ $("#updateAccountBtn").click(function(){
         body    : $("#registPopupDiv").html(),
         buttons : $("#registPopupBtnDiv").html(),
         onOpen : function(event){
-        	event.onComplete = function(){
-        		popup_height  = Number( $(".w2ui-popup").css("height").substring(-1, 3));
+            event.onComplete = function(){
+                popup_height  = Number( $(".w2ui-popup").css("height").substring(-1, 3));
                 body_height = Number( $(".panel-body").css("height").substring(-1, 3)) ;
                 
-        		//input readonly 설정
+                //input readonly 설정
                 $(".w2ui-msg-body input[name='accountName']").attr("readonly", true);
                 $(".w2ui-msg-body input[name='azureSubscriptionId']").attr("readonly", true);
                 $(".w2ui-msg-body input[name='commonTenant']").attr("readonly", true);
@@ -119,8 +119,8 @@ $("#updateAccountBtn").click(function(){
                 setAzureAccountInfo(record.id);
             }                    
         },onClose:function(event){
-        	initsetting();
-        	doSearch();
+            initsetting();
+            doSearch();
         }
     });
 });
@@ -129,8 +129,8 @@ $("#updateAccountBtn").click(function(){
  * 설명 :  MS Azure 삭제 팝업 화면
  *********************************************************/
 $("#deleteAccountBtn").click(function(){
-	if( $("#deleteAccountBtn").attr("disabled") == "disabled" ) return;
-	//grid record
+    if( $("#deleteAccountBtn").attr("disabled") == "disabled" ) return;
+    //grid record
     var selected = w2ui['azure_accountGrid'].getSelection();
     if( selected.length == 0 ){
         w2alert(select_fail_msg, "Azure 계정 삭제");
@@ -166,7 +166,7 @@ $("#deleteAccountBtn").click(function(){
  * 설명 : 조회기능
  *********************************************************/
 function doSearch() {
-	$("#updateAccountBtn").attr('disabled', true);
+    $("#updateAccountBtn").attr('disabled', true);
     $("#deleteAccountBtn").attr('disabled', true);
     w2ui['azure_accountGrid'].load("<c:url value='/iaasMgnt/account/azure/list'/>","",function(event){}); 
 }
@@ -354,11 +354,11 @@ $( window ).resize(function() {
 
 <script>
 $(function() {
-	$.validator.addMethod("sqlInjection", function(value, element, params) {
+    $.validator.addMethod("sqlInjection", function(value, element, params) {
         return checkInjectionBlacklist(params);
       },text_injection_msg);
     
-	
+    
     $("#azureAccountForm").validate({
         ignore : "",
         onfocusout: true,
@@ -383,13 +383,13 @@ $(function() {
                 }
             }, commonTenant: { 
                 required: function(){
-                	return checkEmpty($(".w2ui-msg-body input[name='commonTenant']").val());
+                    return checkEmpty($(".w2ui-msg-body input[name='commonTenant']").val());
                 } , sqlInjection : function(){
                     return $(".w2ui-msg-body input[name='commonTenant']").val();
                 }
             }, azureSubscriptionId: {
                 required: function(){
-                	return checkEmpty($(".w2ui-msg-body input[name='azureSubscriptionId']").val());
+                    return checkEmpty($(".w2ui-msg-body input[name='azureSubscriptionId']").val());
                 }, sqlInjection : function(){
                     return $(".w2ui-msg-body input[name='azureSubscriptionId']").val();
                 }
@@ -416,15 +416,15 @@ $(function() {
                 setInvalidHandlerStyle(errors, validator);
             }
         }, submitHandler: function (form) {
-        	w2popup.lock( save_lock_msg, true);
-        	try {
+            w2popup.lock( save_lock_msg, true);
+            try {
                 var rsa = new RSAKey();
                 rsa.setPublic($("#rsaPublicKeyModulus").val(), $("#rsaPublicKeyExponent").val() );
             } catch(err) {
                 w2alert(err);
             }
-        	//MS Azure 계정 정보 등록
-        	accountInfo = {
+            //MS Azure 계정 정보 등록
+            accountInfo = {
                     iaasType : "Azure"
                    ,id : $(".w2ui-msg-body input[name='accountId']").val()
                    ,accountName : $(".w2ui-msg-body input[name='accountName']").val()

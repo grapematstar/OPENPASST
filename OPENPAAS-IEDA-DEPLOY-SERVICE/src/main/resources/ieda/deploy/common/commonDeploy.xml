@@ -135,6 +135,8 @@ AND
       ,account.common_project as commonProject
       ,account.openstack_domain as openstackDomain
       ,account.google_json_key as googleJsonKey
+      
+      
     From ieda_iaas_config config, ieda_iaas_account account
    Where config.account_id = account.id
      And config.create_user_id = #{createUserId}

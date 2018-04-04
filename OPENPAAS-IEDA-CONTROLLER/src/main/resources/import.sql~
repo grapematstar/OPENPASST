@@ -40,7 +40,7 @@ INSERT INTO ieda_common_code VALUES ( '333', 'GARDEN_LINUX', '2006', 'garden-lin
 INSERT INTO ieda_common_code VALUES ( '334', 'GARDEN-RUNC', '2007', 'garden-runc 릴리즈' , 'garden-runc 릴리즈', '6', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '335', 'ETCD', '2008', 'etcd-release 릴리즈' , 'etcd-release 릴리즈', '7', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '336', 'CFLINUXFS2', '2009', 'cf-linuxfs2 릴리즈' , 'cf-linuxfs2 릴리즈', '9', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
-INSERT INTO ieda_common_code VALUES ( '337', 'BOSH_MONITORING_AGENT', '2010', 'agent 릴리즈' , 'agent 릴리즈', '10', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
+INSERT INTO ieda_common_code VALUES ( '337', 'AGENT', '2010', 'agent 릴리즈' , 'agent 릴리즈', '10', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '338', 'ETC', '2011', '기타 릴리즈' , '기타 릴리즈', '11', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '404', 'ROLE', '100000', '메뉴 별 권한' , '메뉴 별 권한', '0', null, null, null, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '405', 'DASHBOARD', '101000', 'DASHBOARD 조회' , '/main/dashboard/**', '0', null, null, 100000, 'SYSTEM', now(), 'SYSTEM', now() );
