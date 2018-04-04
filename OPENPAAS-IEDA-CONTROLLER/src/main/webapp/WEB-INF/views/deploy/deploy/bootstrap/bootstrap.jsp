@@ -218,7 +218,11 @@ function iaasSelectPopup() {
                     else if( iaas == "vSphere" ) vSpherePopup();
                     else if( iaas == "Google" ) googlePopup();
                     else if( iaas == "Azure") azurePopup();
+<<<<<<< HEAD
                  });
+=======
+                 });       
+>>>>>>> 35024cafefb63423009c88cfa189e85ce1ea14b5
              }else{
                  w2alert("BOOTSTRAP을 설치할 클라우드 환경을 선택하세요");
              }
