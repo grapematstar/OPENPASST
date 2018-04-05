@@ -85,6 +85,7 @@ function setBootstrapData(contents){
             ntp              : contents.ntp,
             boshRelease      : contents.boshRelease,
             boshCpiRelease   : contents.boshCpiRelease,
+            osConfRelease    : contents.osConfRelease,
             enableSnapshots  : contents.enableSnapshots,
             snapshotSchedule : contents.snapshotSchedule,
             paastaMonitoringUse : contents.paastaMonitoringUse,
@@ -204,7 +205,7 @@ function googlePopup(){
      w2popup.open({
         title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
-        height  : 495,
+        height  : 545,
         onClose : popupClose,
         modal   : true,
         body    : $("#GoogleInfoDiv").html(),
@@ -329,7 +330,7 @@ function settingIaasConfigInfo(val){
                     $(".w2ui-msg-body input[name=azureResourceGroupName]").val(data.azureResourceGroupName);
                     $(".w2ui-msg-body input[name=azureStorageAccountName]").val(data.azureStorageAccountName);
                     $(".w2ui-msg-body textarea[name=azureSshPublicKey]").val(data.azureSshPublicKey);
-                    $(".w2ui-msg-body input[name='googlePublicKey']").val(data.googlePublicKey);
+                    $(".w2ui-msg-body textarea[name='googleSshPublicKey']").val(data.googlePublicKey);
                 }
             },
             error :function(request, status, error) {
@@ -391,13 +392,17 @@ function defaultInfoPop(iaas){
      w2popup.open({
         title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
-        height  : 675,
+        height  : 730,
         onClose : popupClose,
         modal   : true,
         body    : $("#DefaultInfoDiv").html(),
         buttons : $("#DefaultInfoButtonDiv").html(),
         onOpen:function(event){
             event.onComplete = function(){
+                if( iaas == "Google" ){
+                    $(".w2ui-msg-body #osConfDiv").show();
+                }
+                
                 $(".w2ui-msg-body input[name='ingestorIp']").attr("disabled", true);
                 $(".w2ui-msg-body input[name='influxdbIp']").attr("disabled", true);
                 $('[data-toggle="popover"]').popover();
@@ -440,6 +445,9 @@ function defaultInfoPop(iaas){
                 getLocalBoshList('bosh');
                 //BOSH CPI 릴리즈 정보 가져오기
                 getLocalBoshCpiList('bosh_cpi', iaas);
+                if( iaas == "Google" ){
+                    getLocalBoshList('os-conf');
+                }
                 $('[data-toggle="popover"]').popover();
                 getReleaseVersionList();
             }
@@ -498,6 +506,14 @@ function getLocalBoshList(type){
                     
                 }
                 $(".w2ui-msg-body select[name='boshRelease']").html(options);
+            } else if(type= 'os_conf'){
+                var options = "<option value=''>OS CONF 릴리즈를 선택하세요.</option>";
+                for( var i=0; i<data.length; i++ ){
+                    if( data[i] == boshInfo.osConfRelease ){
+                        options += "<option value='"+data[i]+"' selected>"+data[i]+"</option>";
+                    }else options += "<option value='"+data[i]+"'>"+data[i]+"</option>";
+                }
+                $(".w2ui-msg-body select[name='osConfRelease']").html(options)
             }
         },
         error : function( e, status ) {
@@ -628,6 +644,7 @@ function saveDefaultInfo(type){
             directorName        : $(".w2ui-msg-body input[name=directorName]").val(),
             ntp                 : $(".w2ui-msg-body input[name=ntp]").val(),
             boshRelease         : $(".w2ui-msg-body select[name=boshRelease]").val(),
+            osConfRelease     : $(".w2ui-msg-body select[name=osConfRelease]").val(),
             boshCpiRelease      : $(".w2ui-msg-body select[name=boshCpiRelease]").val(),
             enableSnapshots     : $(".w2ui-msg-body input:radio[name=enableSnapshots]:checked").val(),
             snapshotSchedule    : $(".w2ui-msg-body input[name=snapshotSchedule]").val(),
@@ -1509,7 +1526,7 @@ function popupClose() {
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">vCenter Disk Path</label>
                     <div style="width: 60%">
-                        <input name="vsphereVcenterDiskPath" type="text" readonly style="float:left;width:70%;" placeholder="DDataCenter 디스크 경로를 입력하세요."/>
+                        <input name="vsphereVcenterDiskPath" type="text" readonly style="float:left;width:70%;" placeholder="DataCenter 디스크 경로를 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
@@ -1543,7 +1560,7 @@ function popupClose() {
                 <div class="w2ui-field">
                   <label style="text-align: left;width:40%;font-size:11px;">인프라 환경 별칭</label>
                   <div style="width: 60%">
-                      <select name="iaasConfigId" onchange="settingIaasConfigInfo(this.value);" style="width:70%;">
+                      <select name="iaasConfigId" onchange="settingIaasConfigInfo(this.value);" style="width:80%;">
                           <option value="">인프라 환경 별칭을 선택하세요.</option>
                       </select>
                   </div>
@@ -1551,37 +1568,37 @@ function popupClose() {
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">Project Id</label>
                     <div style="width: 60%">
-                        <input name="commonProject" type="text" readonly style="float:left;width:70%;" placeholder="프로젝트 아이디를 입력하세요."/>
+                        <input name="commonProject" type="text" readonly style="float:left;width:80%;" placeholder="프로젝트 아이디를 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">서비스 계정 Json 파일</label>
                     <div style="width: 60%">
-                        <input name="googleJsonKey" type="text" readonly style="float:left;width:70%;" placeholder="서비스 계정 Json 파일을 입력하세요."/>
+                        <input name="googleJsonKey" type="text" readonly style="float:left;width:80%;" placeholder="서비스 계정 Json 파일을 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">Zone</label>
                     <div style="width: 60%">
-                        <input name="commonAvailabilityZone" type="text" readonly style="float:left;width:70%;" placeholder="google zone을 입력하세요."/>
+                        <input name="commonAvailabilityZone" type="text" readonly style="float:left;width:80%;" placeholder="google zone을 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">네트워크 태그 명</label>
                     <div style="width: 60%">
-                        <input name="commonSecurityGroup" type="text" readonly style="float:left;width:70%;" placeholder="네트워크 태그 명을 입력하세요."/>
+                        <input name="commonSecurityGroup" type="text" readonly style="float:left;width:80%;" placeholder="네트워크 태그 명을 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">Public Key</label>
                     <div style="width: 60%">
-                        <input name="googlePublicKey" type="text" readonly style="float:left;width:70%;" placeholder="Public Key을 입력하세요."/>
+                        <textarea name="googleSshPublicKey" readonly style="float:left;width:80%; height:85px;resize:none;"rows=10; placeholder="SSH 공개 키를 입력하세요."></textarea>
                     </div>
                 </div>
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">Private Key File</label>
                     <div style="width: 60%">
-                        <input name="commonKeypairPath" type="text" readonly style="float:left;width:70%;" placeholder="Private Key File을 입력하세요."/>
+                        <input name="commonKeypairPath" type="text" readonly style="float:left;width:80%;" placeholder="Private Key File을 입력하세요."/>
                     </div>
                 </div>
             </div>
@@ -1733,6 +1750,16 @@ function popupClose() {
                             </select>
                         </div>
                     </div>
+ 
+                    <div class="w2ui-field" id="osConfDiv" hidden="true"> 
+                        <label style="text-align:left; width:36%; font-size:11px;">OS-CONF 릴리즈</label>
+                        <div style="width: 60%">
+                            <select name="osConfRelease" class="form-control select-control">
+                                <option value="">OS-CONF 릴리즈를 선택하세요.</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div class="w2ui-field">
                         <label style="text-align: left;width:36%;font-size:11px;">스냅샷기능 사용여부</label>
                         <div style="width: 60%">

@@ -275,6 +275,7 @@ public class BootstrapService {
             items.add(new ReplaceItemDTO("[jsonKey]", googleJsonKey));
             items.add(new ReplaceItemDTO("[projectId]", vo.getIaasAccount().get("commonProject").toString()));
             items.add(new ReplaceItemDTO("[sshKeyFile]", vo.getIaasConfig().getGooglePublicKey()));
+            items.add(new ReplaceItemDTO("[boshOsConfRelease]", RELEASE_DIR + SEPARATOR + vo.getOsConfRelease()));
         }
         
         items.add(new ReplaceItemDTO("[vCenterName]", vo.getIaasConfig().getVsphereVcentDataCenterName()));

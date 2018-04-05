@@ -134,15 +134,6 @@ public class CommonDeployService{
         File[] listFiles = keyPathFile.listFiles();
         if(listFiles != null){
             for (File file : listFiles) {
-                if( iaasType != null && iaasType.equals("google") ){
-                    if(file.getName().toLowerCase().endsWith(".pub") ||  file.getName().toLowerCase().endsWith(".pem")){
-                        continue;
-                    }
-                }else{
-                    if(!file.getName().toLowerCase().endsWith(".pem")) {
-                        continue;
-                    }
-                }
                 if ( localFiles == null ){
                     localFiles = new ArrayList<String>();
                 }

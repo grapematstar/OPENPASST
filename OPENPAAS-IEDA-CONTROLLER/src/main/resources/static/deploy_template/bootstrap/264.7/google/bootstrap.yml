@@ -3,13 +3,10 @@ name: bosh
 
 releases:
 - name: bosh
-  version: [boshReleaseVersion]
   url: file:///[boshRelease]
 - name: bosh-google-cpi
-  version: [boshCpiReleaseVersion]
   url: file:///[boshCpiRelease]
 - name: os-conf
-  version: [boshOsConfVersion]
   url: file:///[boshOsConfRelease]
 
 resource_pools:
@@ -20,8 +17,6 @@ resource_pools:
   cloud_properties: 
     zone: [availabilityZone]
     machine_type: [cloudInstanceType]
-    root_disk_size_gb: [rootDiskSizeGb]
-    root_disk_type: [rootDiskType]
   env:
     bosh:
       password: [boshPassword]
@@ -29,7 +24,6 @@ resource_pools:
 disk_pools:
 - name: disks
   disk_size: 40960
-  cloud_properties: {type: [rootDiskType]}
 
 networks:
 - name: private
@@ -136,13 +130,13 @@ instance_groups:
         password: hm-password
       resurrector_enabled: true
     ntp: &ntp
-    - 169.254.169.254
+    - [ntp]
     agent:
       mbus: nats://nats:nats-password@[privateStaticIp]:4222
     google: 
-      project: paas-ta-198701
+      project: [projectId]
       json_key: |+
-        {  "type": "service_account",  "project_id": "paas-ta-198701",  "private_key_id": "1e47e2554132f19c1725c64cec838509c3cd5ca9",  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCasxTqMtK9GwXa\n+9LF/YxZF2/uV+msefY4XJANMhMInIwgQHehtaFVv1tP6YjpBVPtQnweCfd6FBlr\nBSCSMjbqI7LmrYU6b1KnEQntRaMNfdF/z67uCXpe3QI1z4Ucc4TCljzm7+sZXM0Y\nE+8Nhc0qHZYOkmzXH2V/SLd48F+msKSYm1Ghw0xV71abCizya72eH83y8OZaSYoZ\nHWzVyysM8k3QeeCrfc91MoHL6DZHWV21T3fbmuNtWOkJ2ClcltH5mniPUSzPZ6kw\nfqP1UB0QR1HdEBI0F11DWZ90UdANyhzzJoSbAy7lk/fuNH3+QBNLibg2h3R3bWQ4\nDnCp36H5AgMBAAECggEAKjuUjKFGVfkAHrnb31BqVdInrQ5UDVGYbeebLfcLKjEu\nsglXf46p1lJw176eMVtSf7XEU6EN7kZ5b/WM4EyUIFSRnRcnBX5ptpFYv+1gZ6j/\nHiDxFSwCO86jMVSPduZ0injgdH1wFdL3bMjYXL039vTvx9einhIEr/yGlh4tRsCK\n2IvHdR6clZ/6PzYuNwSt/AvtI0PLGGe6DTZCahAiWKFLurPKw1mD3mCFTlge+59h\n1x3uqBNKWk301rGHeA43ANNfIVn7NWZh1JwQEmRBsPnzh5kLYiM+/Enz/7coJCH+\n5tSDFUYMR0VHsp/I7To4sNWTDzNUzoA3JuWILOYmVwKBgQDPDxthEgmJYLhSLmU1\nMePiVJCX8V/du5GtQZWuD0Md2UvE/zs5Rty+0m4MOYiwhGcRLHzMh7QHOZ7jlPv5\njs0uYgWodvse96ARGyZOl0Z+fc/+ns9zbm/NGDzsEM8n2v8tRhtJOmQJBpEss/NX\n6mYk0nGKcOSUe2WmR6t0jXO/vwKBgQC/Q8QBShtV0uNUMQAmSZt7CcYGKbs9DsU4\nYZhrgLSWhgW5OufEJNhdNYnDZ5WuuvbbU2t4/2HmVMKu3AasZMZwtBXnjsmHnBOG\nnOQGQ3vHQxhRHEpLAfhVLJC3g6jG3yLj0RS76AVWmeoa5C6gLb9co+p4zxEr81g9\nPWgSCFeMRwKBgQCepa6Os6lG7yqLHS1CktVORwj6wmB3ng3COCwdT2hXaHTbncuc\n2SStuMHE8BhBV1E5IWMFuzw/BPEu4qolzjp7vXMkXvWOBqFIOgsh0Fqc9Hz3VGsS\nwJ09AcM8BK0UloFKCRtDAlA/ch6tp7tdsyVMNUn1jwY0lk+OFf/Sr8buNQKBgCmJ\ntRK2nnMoJrjNH4QxLjQtbjU+cOyUvZ4+C9UlEZMzLiEJOvZtLhQoIXAvmeFlt2Dw\noAGaLQ/RzqodHNHp3PLzGWK9ruTlr5PnlNoLY+Fln+1VoIjjt6P/1roUPN5b7X7e\nlIsum6IwMRh//+RHqyyaaLyt88PAyKQcJvLrnt/XAoGAXNOcknudCypSRS8sWJNc\nrA5eGFNB1wKWRcFzkIkSVszDZPBvN1rP3i4pDk1u5u293N9V4omjzG8TQt7roP5R\nPaKg6szx11/auFChEHRY5KLD19W83vEGWPtXWIUnEe6PfS3TlDZrm/IjbQJPL9g1\nwHF80jEgSz+GgmFWW7UZ9B0=\n-----END PRIVATE KEY-----\n",  "client_email": "paas-ta3-1@paas-ta-198701.iam.gserviceaccount.com",  "client_id": "111079623725171766458",  "auth_uri": "https://accounts.google.com/o/oauth2/auth",  "token_uri": "https://accounts.google.com/o/oauth2/token",  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/paas-ta3-1%40paas-ta-198701.iam.gserviceaccount.com"}
+        [jsonKey]
     users:
     - name: vcap
       public_key: [sshKeyFile]
@@ -154,9 +148,9 @@ cloud_provider:
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
     google: 
-      project: paas-ta-198701
+      project: [projectId]
       json_key: |+
-        {  "type": "service_account",  "project_id": "paas-ta-198701",  "private_key_id": "1e47e2554132f19c1725c64cec838509c3cd5ca9",  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCasxTqMtK9GwXa\n+9LF/YxZF2/uV+msefY4XJANMhMInIwgQHehtaFVv1tP6YjpBVPtQnweCfd6FBlr\nBSCSMjbqI7LmrYU6b1KnEQntRaMNfdF/z67uCXpe3QI1z4Ucc4TCljzm7+sZXM0Y\nE+8Nhc0qHZYOkmzXH2V/SLd48F+msKSYm1Ghw0xV71abCizya72eH83y8OZaSYoZ\nHWzVyysM8k3QeeCrfc91MoHL6DZHWV21T3fbmuNtWOkJ2ClcltH5mniPUSzPZ6kw\nfqP1UB0QR1HdEBI0F11DWZ90UdANyhzzJoSbAy7lk/fuNH3+QBNLibg2h3R3bWQ4\nDnCp36H5AgMBAAECggEAKjuUjKFGVfkAHrnb31BqVdInrQ5UDVGYbeebLfcLKjEu\nsglXf46p1lJw176eMVtSf7XEU6EN7kZ5b/WM4EyUIFSRnRcnBX5ptpFYv+1gZ6j/\nHiDxFSwCO86jMVSPduZ0injgdH1wFdL3bMjYXL039vTvx9einhIEr/yGlh4tRsCK\n2IvHdR6clZ/6PzYuNwSt/AvtI0PLGGe6DTZCahAiWKFLurPKw1mD3mCFTlge+59h\n1x3uqBNKWk301rGHeA43ANNfIVn7NWZh1JwQEmRBsPnzh5kLYiM+/Enz/7coJCH+\n5tSDFUYMR0VHsp/I7To4sNWTDzNUzoA3JuWILOYmVwKBgQDPDxthEgmJYLhSLmU1\nMePiVJCX8V/du5GtQZWuD0Md2UvE/zs5Rty+0m4MOYiwhGcRLHzMh7QHOZ7jlPv5\njs0uYgWodvse96ARGyZOl0Z+fc/+ns9zbm/NGDzsEM8n2v8tRhtJOmQJBpEss/NX\n6mYk0nGKcOSUe2WmR6t0jXO/vwKBgQC/Q8QBShtV0uNUMQAmSZt7CcYGKbs9DsU4\nYZhrgLSWhgW5OufEJNhdNYnDZ5WuuvbbU2t4/2HmVMKu3AasZMZwtBXnjsmHnBOG\nnOQGQ3vHQxhRHEpLAfhVLJC3g6jG3yLj0RS76AVWmeoa5C6gLb9co+p4zxEr81g9\nPWgSCFeMRwKBgQCepa6Os6lG7yqLHS1CktVORwj6wmB3ng3COCwdT2hXaHTbncuc\n2SStuMHE8BhBV1E5IWMFuzw/BPEu4qolzjp7vXMkXvWOBqFIOgsh0Fqc9Hz3VGsS\nwJ09AcM8BK0UloFKCRtDAlA/ch6tp7tdsyVMNUn1jwY0lk+OFf/Sr8buNQKBgCmJ\ntRK2nnMoJrjNH4QxLjQtbjU+cOyUvZ4+C9UlEZMzLiEJOvZtLhQoIXAvmeFlt2Dw\noAGaLQ/RzqodHNHp3PLzGWK9ruTlr5PnlNoLY+Fln+1VoIjjt6P/1roUPN5b7X7e\nlIsum6IwMRh//+RHqyyaaLyt88PAyKQcJvLrnt/XAoGAXNOcknudCypSRS8sWJNc\nrA5eGFNB1wKWRcFzkIkSVszDZPBvN1rP3i4pDk1u5u293N9V4omjzG8TQt7roP5R\nPaKg6szx11/auFChEHRY5KLD19W83vEGWPtXWIUnEe6PfS3TlDZrm/IjbQJPL9g1\nwHF80jEgSz+GgmFWW7UZ9B0=\n-----END PRIVATE KEY-----\n",  "client_email": "paas-ta3-1@paas-ta-198701.iam.gserviceaccount.com",  "client_id": "111079623725171766458",  "auth_uri": "https://accounts.google.com/o/oauth2/auth",  "token_uri": "https://accounts.google.com/o/oauth2/token",  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/paas-ta3-1%40paas-ta-198701.iam.gserviceaccount.com"}
+        [jsonKey]
   template:
     name: google_cpi
     release: bosh-google-cpi

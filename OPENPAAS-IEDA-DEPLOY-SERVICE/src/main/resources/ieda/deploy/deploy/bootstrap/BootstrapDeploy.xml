@@ -19,6 +19,7 @@
     <result property="directorName" column ="DIRECTOR_NAME"/>
     <result property="boshRelease" column ="BOSH_RELEASE"/>
     <result property="boshCpiRelease" column ="BOSH_CPI_RELEASE"/>
+    <result property="osConfRelease" column ="OS_CONF_RELEASE"/>
     <result property="snapshotSchedule" column ="SNAPSHOT_SCHEDULE"/>
     <result property="enableSnapshots" column ="ENABLE_SNAPSHOTS"/>
     <result property="privateStaticIp" column ="PRIVATE_STATIC_IP"/>
@@ -85,6 +86,7 @@
     Select  bootstrap.id as id
         ,bootstrap.iaas_type as iaas_type
         ,bootstrap.bosh_cpi_release as bosh_cpi_release
+        ,bootstrap.os_conf_release as os_conf_release
         ,bootstrap.bosh_password as bosh_password
         ,bootstrap.bosh_release as bosh_release
         ,bootstrap.cloud_instance_type as cloud_instance_type
@@ -121,6 +123,7 @@ Order by iaas_type asc, update_date asc
             ,bootstrap.iaas_config_id as config_id
             ,bootstrap.iaas_type as iaas_type
             ,bootstrap.bosh_cpi_release as bosh_cpi_release
+            ,bootstrap.os_conf_release as os_conf_release
             ,bootstrap.bosh_password as bosh_password
             ,bootstrap.bosh_release as bosh_release
             ,bootstrap.enable_snapshots as enable_snapshots
@@ -234,6 +237,7 @@ Order by iaas_type asc, update_date asc
         ,bosh_password = #{bootstrap.boshPassword}
         ,ntp= #{bootstrap.ntp}
         ,bosh_release = #{bootstrap.boshRelease}
+        ,os_conf_release = #{bootstrap.osConfRelease}
         ,snapshot_schedule = #{bootstrap.snapshotSchedule}
         ,enable_snapshots = #{bootstrap.enableSnapshots}
         ,cloud_instance_type = #{bootstrap.cloudInstanceType}

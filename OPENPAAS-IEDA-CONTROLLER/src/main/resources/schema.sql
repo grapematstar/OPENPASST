@@ -196,6 +196,7 @@ CREATE TABLE ieda_bootstrap
   ntp                               VARCHAR(100),
   bosh_release                      VARCHAR(100),
   bosh_cpi_release                  VARCHAR(100),
+  os_conf_release                   VARCHAR(100),
   enable_snapshots                  VARCHAR(100),
   snapshot_schedule                 VARCHAR(100),
   subnet_id                         VARCHAR(100),
