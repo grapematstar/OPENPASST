@@ -270,6 +270,7 @@ public class BootstrapService {
             String googleJsonKey=setGoogleJosnKeyReplaceEnter(JSON_KEY_PATH + vo.getIaasAccount().get("googleJsonKey").toString());
             items.add(new ReplaceItemDTO("[jsonKey]", googleJsonKey));
             items.add(new ReplaceItemDTO("[projectId]", vo.getIaasAccount().get("commonProject").toString()));
+            items.add(new ReplaceItemDTO("[sshKeyFile]", vo.getIaasConfig().getGooglePublicKey()));
         }
         
         items.add(new ReplaceItemDTO("[vCenterName]", vo.getIaasConfig().getVsphereVcentDataCenterName()));

@@ -58,6 +58,7 @@
         <result property="vsphereVcenterPersistentDatastore" column="VSPHERE_VCENTER_PERSISTENT_DATASTORE"/>
         <result property="vsphereVcenterDiskPath" column="VSPHERE_VCENTER_DISK_PATH"/>
         <result property="vsphereVcenterCluster" column="VSPHERE_VCENTER_CLUSTER"/>
+        <result property="googlePublicKey" column="GOOGLE_PUBLIC_KEY"/>
     </collection>
     <collection property="iaasAccount"  ofType="hashMap" javaType="String">
         <id property="id" column="IAAS_ACCOUNT_ID"/>
@@ -164,6 +165,7 @@ Order by iaas_type asc, update_date asc
             ,config.vsphere_vcenter_persistent_datastore as vsphere_vcenter_persistent_datastore
             ,config.vsphere_vcenter_disk_path as vsphere_vcenter_disk_path
             ,config.vsphere_vcenter_cluster as vsphere_vcenter_cluster
+            ,config.google_public_key as google_public_key
             ,account.id as iaas_account_id
             ,ifnull(account.common_access_endpoint, "") as common_access_endpoint
             ,ifnull(account.common_access_user, "") as common_access_user

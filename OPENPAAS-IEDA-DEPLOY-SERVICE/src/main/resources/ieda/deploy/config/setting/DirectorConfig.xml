@@ -18,7 +18,7 @@
         <result property="updateDate" column ="update_date"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
-        <result property="deploymentFile" column="deployment_file"/>
+        <result property="credentialFile" column="credential_file"/>
     </resultMap>
 
     <select id="selectDirectorConfig" resultMap="directorConfigVo">
@@ -36,7 +36,8 @@
             director_version, 
             update_date, 
             user_id, 
-            user_password 
+            user_password,
+            credential_file
         From 
             ieda_director_config order by default_yn desc
     </select>
@@ -56,7 +57,8 @@
             director_version, 
             ieda_director_config.update_date, 
             user_id, 
-            user_password
+            user_password,
+            credential_file
         From 
             ieda_director_config
         where
@@ -66,7 +68,6 @@
     <select id="selectDirectorConfigBySeq" resultMap="directorConfigVo">
       /**ieda.deploy.config.setting.selectDirectorConfigBySeq**/
         select 
-            deployment_file,
             ieda_director_config_seq, 
             ieda_director_config.create_date, 
             current_deployment, 
@@ -79,14 +80,11 @@
             director_version, 
             ieda_director_config.update_date, 
             user_id, 
-            user_password
+            user_password,
+            credential_file
         From 
             ieda_director_config
-        join
-            ieda_bootstrap
-        on
-            ieda_director_config.director_name = ieda_bootstrap.director_name 
-        and
+        where
             ieda_director_config_seq=#{seq}
     </select>
     
@@ -105,7 +103,8 @@
             director_version, 
             update_date, 
             user_id, 
-            user_password
+            user_password,
+            credential_file
         From 
             ieda_director_config 
         Where 
@@ -130,7 +129,8 @@
             update_date, 
             update_user_id,
             user_id, 
-            user_password) 
+            user_password,
+            credential_file) 
         Values (
             #{director.iedaDirectorConfigSeq},
             now(),
@@ -146,7 +146,8 @@
             now(),
             #{director.updateUserId},
             #{director.userId},
-            #{director.userPassword})    
+            #{director.userPassword},
+            #{director.credentialFile})    
     </insert>
     
     <update id="updateDirector">
@@ -161,7 +162,8 @@
             director_port=#{director.directorPort}, 
             director_url=#{director.directorUrl}, 
             director_uuid=#{director.directorUuid}, 
-            director_version=#{director.directorVersion}, 
+            director_version=#{director.directorVersion},
+            credential_file=#{director.credentialFile},
             update_date=now(),
             update_user_id=#{director.updateUserId},
             user_id=#{director.userId}, 
@@ -192,7 +194,8 @@
            ,director_version 
            ,update_date
            ,user_id
-           ,user_password 
+           ,user_password
+           ,credential_file
           From ieda_director_config
          Where director_cpi  = #{director_cpi}
            And director_name = #{director_name}

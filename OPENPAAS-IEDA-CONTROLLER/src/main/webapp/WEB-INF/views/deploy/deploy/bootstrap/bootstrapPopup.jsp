@@ -259,7 +259,7 @@ function getIaasConfigAliasList(iaas){
             if( !checkEmpty(data) ){
                 var options= "";
                 for( var i=0; i<data.length; i++ ){
-                	console.log(data);
+                    console.log(data);
                     if( data[i].id == iaasConfigInfo.iaasConfigId ){
                         options+= "<option value='"+data[i].id+"' selected>"+data[i].iaasConfigAlias+"</option>";
                         settingIaasConfigInfo(data[i].id);
@@ -289,7 +289,7 @@ function settingIaasConfigInfo(val){
             url :"/common/deploy/list/iaasConfig/"+iaas+"/"+val, 
             contentType :"application/json",
             success :function(data, status) {
-            	console.log(data);
+                console.log(data);
                 if( !checkEmpty(data) ){
                     if( data.openstackKeystoneVersion == "v2" ){
                         $(".w2ui-msg-body commonProject").css("display", "block");
@@ -326,9 +326,10 @@ function settingIaasConfigInfo(val){
                     $(".w2ui-msg-body input[name=vsphereVcenterDiskPath]").val(data.vsphereVcenterDiskPath);
                     $(".w2ui-msg-body input[name=vsphereVcenterCluster]").val(data.vsphereVcenterCluster);
                     $(".w2ui-msg-body input[name=azureSubscriptionId]").val(data.azureSubscriptionId);
-	                $(".w2ui-msg-body input[name=azureResourceGroupName]").val(data.azureResourceGroupName);
+                    $(".w2ui-msg-body input[name=azureResourceGroupName]").val(data.azureResourceGroupName);
                     $(".w2ui-msg-body input[name=azureStorageAccountName]").val(data.azureStorageAccountName);
                     $(".w2ui-msg-body textarea[name=azureSshPublicKey]").val(data.azureSshPublicKey);
+                    $(".w2ui-msg-body input[name='googlePublicKey']").val(data.googlePublicKey);
                 }
             },
             error :function(request, status, error) {
@@ -1561,6 +1562,12 @@ function popupClose() {
                     <label style="text-align: left;width:40%;font-size:11px;">네트워크 태그 명</label>
                     <div style="width: 60%">
                         <input name="commonSecurityGroup" type="text" readonly style="float:left;width:70%;" placeholder="네트워크 태그 명을 입력하세요."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="text-align: left;width:40%;font-size:11px;">Public Key</label>
+                    <div style="width: 60%">
+                        <input name="googlePublicKey" type="text" readonly style="float:left;width:70%;" placeholder="Public Key을 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">

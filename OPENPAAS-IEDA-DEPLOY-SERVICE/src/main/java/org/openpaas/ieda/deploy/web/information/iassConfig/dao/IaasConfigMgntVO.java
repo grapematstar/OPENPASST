@@ -31,7 +31,7 @@ public class IaasConfigMgntVO{
     private String azureStorageAccountName;
     private String azureSshPublicKey;
     private String azurePrivateKey;
-    private String googlePublicKey;
+    private String googlePublicKey; //구글 Public key
     private String createUserId;//등록자 아이디
     private String updateUserId;//수정자 아이디
     private Date createDate;//등록일
@@ -149,36 +149,36 @@ public class IaasConfigMgntVO{
         this.vsphereVcenterCluster = vsphereVcenterCluster;
     }
     public String getAzureResourceGroup() {
-		return azureResourceGroup;
-	}
-	public void setAzureResourceGroup(String azureResourceGroup) {
-		this.azureResourceGroup = azureResourceGroup;
-	}
-	public String getAzureStorageAccountName() {
-		return azureStorageAccountName;
-	}
-	public void setAzureStorageAccountName(String azureStorageAccountName) {
-		this.azureStorageAccountName = azureStorageAccountName;
-	}
-	public String getAzureSshPublicKey() {
-		return azureSshPublicKey;
-	}
-	public void setAzureSshPublicKey(String azureSshPublicKey) {
-		this.azureSshPublicKey = azureSshPublicKey;
-	}
-	public String getAzurePrivateKey() {
-		return azurePrivateKey;
-	}
-	public void setAzurePrivateKey(String azurePrivateKey) {
-		this.azurePrivateKey = azurePrivateKey;
-	}
-	public String getGooglePublicKey() {
-		return googlePublicKey;
-	}
-	public void setGooglePublicKey(String googlePublicKey) {
-		this.googlePublicKey = googlePublicKey;
-	}
-	public String getCreateUserId() {
+        return azureResourceGroup;
+    }
+    public void setAzureResourceGroup(String azureResourceGroup) {
+        this.azureResourceGroup = azureResourceGroup;
+    }
+    public String getAzureStorageAccountName() {
+        return azureStorageAccountName;
+    }
+    public void setAzureStorageAccountName(String azureStorageAccountName) {
+        this.azureStorageAccountName = azureStorageAccountName;
+    }
+    public String getAzureSshPublicKey() {
+        return azureSshPublicKey;
+    }
+    public void setAzureSshPublicKey(String azureSshPublicKey) {
+        this.azureSshPublicKey = azureSshPublicKey;
+    }
+    public String getAzurePrivateKey() {
+        return azurePrivateKey;
+    }
+    public void setAzurePrivateKey(String azurePrivateKey) {
+        this.azurePrivateKey = azurePrivateKey;
+    }
+    public String getGooglePublicKey() {
+        return googlePublicKey;
+    }
+    public void setGooglePublicKey(String googlePublicKey) {
+        this.googlePublicKey = googlePublicKey;
+    }
+    public String getCreateUserId() {
         return createUserId;
     }
     public void setCreateUserId(String createUserId) {

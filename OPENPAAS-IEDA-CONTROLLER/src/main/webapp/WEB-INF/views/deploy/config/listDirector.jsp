@@ -401,8 +401,6 @@ function setCredentialKeyPath(fileInput){
 }
 
 function setCredentialKeyPathList(fileList){
-    console.log(fileList.value);
-    console.log($(".w2ui-msg-body select[name='credsKeyPathList']").val());
     $(".w2ui-msg-body input[name=credsKeyPath]").val(fileList.value);
 }
 /****************************************************

@@ -126,6 +126,7 @@ AND
       ,config.create_user_id as createUserId
       ,config.create_date as createDate
       ,config.update_date as updateDate
+      ,config.google_public_key as googlePublicKey
       ,account.account_name as accountName
       ,account.common_access_endpoint as commonAccessEndpoint
       ,account.common_access_user as commonAccessUser

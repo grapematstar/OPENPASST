@@ -177,14 +177,14 @@ public class DirectorConfigService  {
     * @title : insertDirectorInfo
     * @return : int
     ***************************************************/
-    public int createDirectorInfo(DirectorConfigDTO.Create createDto, Principal principal, DirectorInfoDTO info, String boshConfigFileName){
+    public void createDirectorInfo(DirectorConfigDTO.Create createDto, Principal principal, DirectorInfoDTO info, String boshConfigFileName){
         SessionInfoDTO sessionInfo = new SessionInfoDTO(principal);
         DirectorConfigVO director = new DirectorConfigVO();
         director.setUserId(createDto.getUserId());
         director.setUserPassword(createDto.getUserPassword());
         director.setDirectorUrl(createDto.getDirectorUrl());
         director.setDirectorPort(createDto.getDirectorPort());
-        director.setDeploymentFile(createDto.getCredentialFile());
+        director.setCredentialFile(createDto.getCredentialFile());
         director.setDirectorName(info.getName());
         director.setDirectorUuid(info.getUuid());
         if(info.getCpi().indexOf("_cpi") == -1){
@@ -195,18 +195,21 @@ public class DirectorConfigService  {
         director.setCreateUserId(sessionInfo.getUserId());
         director.setUpdateUserId(sessionInfo.getUserId());
         
-        //기존에 기본 관리자가 존재한다면 N/ 존재하지않는다면 기본 관리자로 설정
-        
+        //입력된 설치관리자 정보를 데이터베이스에 저장한다.
+        if(!director.equals(null)){
+            dao.insertDirector(director);
+            List<DirectorConfigVO> resultList = dao.selectDirectorConfigByDirectorUrl(createDto.getDirectorUrl());
+            director.setIedaDirectorConfigSeq(resultList.get(0).getIedaDirectorConfigSeq());
+        }else{
+            throw new CommonException("notfound.directorFile.exception",
+                    "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
+        }
+        //기존에 기본 설치관리자가 존재한다면 N/ 존재하지않는다면 기본 설치관리자로 설정
         DirectorConfigVO directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
-        
         director.setDefaultYn((directorConfig == null ) ? "Y":"N");
-        
         if( director.getDefaultYn().equalsIgnoreCase("Y") ) {
             boshEnvLoginSequence(director);
         }
-
-        //입력된 설치관리자 정보를 데이터베이스에 저장한다.
-        return dao.insertDirector(director);
     }
     
     /****************************************************************
@@ -219,7 +222,7 @@ public class DirectorConfigService  {
     public void boshEnvLoginSequence(DirectorConfigVO directorConfig){
         OutputStreamWriter fileWriter = null;
         try{
-            String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getDeploymentFile();
+            String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getCredentialFile();
             InputStream input = new FileInputStream(new File( boshCredentialFile));
             Yaml yaml = new Yaml();
             //7. 파일을 로드하여 Map<String, Object>에 parse한다.
@@ -430,7 +433,7 @@ public class DirectorConfigService  {
         //6. bosh-env 환경설정 정보를 업데이트
         OutputStreamWriter fileWriter = null;
         try{
-            String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getDeploymentFile().replace(".yml", "-creds.yml");
+            String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getCredentialFile();
             InputStream input = new FileInputStream(new File( boshCredentialFile));
             Yaml yaml = new Yaml();
             //7. 파일을 로드하여 Map<String, Object>에 parse한다.

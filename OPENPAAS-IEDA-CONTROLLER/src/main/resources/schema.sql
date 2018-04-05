@@ -93,6 +93,7 @@ CREATE TABLE ieda_director_config
   create_date                       DATE          NOT NULL,
   update_user_id                    VARCHAR(255)  NOT NULL,
   update_date                       DATE          NOT NULL,
+  credential_file                   VARCHAR(255),
   PRIMARY KEY (ieda_director_config_seq)
 ) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARSET=utf8;
 
