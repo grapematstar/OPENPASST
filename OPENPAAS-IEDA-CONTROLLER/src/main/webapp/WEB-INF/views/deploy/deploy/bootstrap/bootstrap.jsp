@@ -325,7 +325,7 @@ $( window ).resize(function() {
 
 <div id="bootSelectBody" style="width:100%; height: 80px;" hidden="true">
     <div class="w2ui-lefted" style="text-align: center;">
-        MICRO BOSH을 설치할 <b>클라우드 환경</b>을 선택하세요<br />
+        MICRO BOSH를 설치할 <b>클라우드 환경</b>을 선택하세요<br />
         <br />
     </div>
     <div style="width:40%;margin: 0 auto;">

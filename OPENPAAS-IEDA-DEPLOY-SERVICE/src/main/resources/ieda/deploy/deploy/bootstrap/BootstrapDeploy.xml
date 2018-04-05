@@ -58,13 +58,10 @@
         <result property="vsphereVcenterPersistentDatastore" column="VSPHERE_VCENTER_PERSISTENT_DATASTORE"/>
         <result property="vsphereVcenterDiskPath" column="VSPHERE_VCENTER_DISK_PATH"/>
         <result property="vsphereVcenterCluster" column="VSPHERE_VCENTER_CLUSTER"/>
-<<<<<<< HEAD
         <result property="googlePublicKey" column="GOOGLE_PUBLIC_KEY"/>
-=======
         <result property="azureStorageAccountName" column="AZURE_STORAGEACCOUNT_NAME"/>
         <result property="azureSshPublicKey" column="AZURE_SSHPUBLICKEY"/>
         <result property="azureResourceGroup" column="AZURE_RESOURCEGROUP_NAME"/>
->>>>>>> 23dfc2a1711af309985224f1606e61f83fb66ae6
     </collection>
     <collection property="iaasAccount"  ofType="hashMap" javaType="String">
         <id property="id" column="IAAS_ACCOUNT_ID"/>
@@ -172,13 +169,10 @@ Order by iaas_type asc, update_date asc
             ,config.vsphere_vcenter_persistent_datastore as vsphere_vcenter_persistent_datastore
             ,config.vsphere_vcenter_disk_path as vsphere_vcenter_disk_path
             ,config.vsphere_vcenter_cluster as vsphere_vcenter_cluster
-<<<<<<< HEAD
             ,config.google_public_key as google_public_key
-=======
             ,config.azure_resource_group as azure_ResourceGroup_Name 
             ,config.azure_storage_account_name as azure_StorageAccount_Name
             ,config.azure_ssh_public_key as azure_SshPublicKey
->>>>>>> 23dfc2a1711af309985224f1606e61f83fb66ae6
             ,account.id as iaas_account_id
             ,ifnull(account.common_access_endpoint, "") as common_access_endpoint
             ,ifnull(account.common_access_user, "") as common_access_user
