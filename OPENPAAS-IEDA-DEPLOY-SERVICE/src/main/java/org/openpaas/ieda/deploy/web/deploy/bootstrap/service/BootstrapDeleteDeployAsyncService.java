@@ -63,9 +63,9 @@ public class BootstrapDeleteDeployAsyncService{
             File stateFile = new File(deployStateFile);
             if ( !stateFile.exists() ) {
                 status = "done";
-                resultMessage = "BOOTSTRAP 삭제가 완료되었습니다.";
+                resultMessage = "MICRO BOSH 삭제가 완료되었습니다.";
                 bootstrapDao.deleteBootstrapInfo(vo.getId());
-                DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, status, Arrays.asList("BootStrap을 삭제했습니다."));
+                DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, status, Arrays.asList("MICRO BOSH를 삭제했습니다."));
                 
             }else{
                 String deployFile = DEPLOYMENT_DIR + vo.getDeploymentFile();
@@ -77,7 +77,7 @@ public class BootstrapDeleteDeployAsyncService{
                     builder.redirectErrorStream(true);
                     Process process = builder.start();
                     
-                    //배포 상태
+                       //배포 상태
                     vo.setDeployStatus( message.getMessage("common.deploy.status.deleting", null, Locale.KOREA) );
                     saveDeployStatus(vo, principal);
                     
@@ -103,11 +103,11 @@ public class BootstrapDeleteDeployAsyncService{
                     vo.setDeployStatus(message.getMessage("common.deploy.status.failed", null, Locale.KOREA));
                     saveDeployStatus(vo, principal);
                     if ( resultMessage.isEmpty() ) {
-                        resultMessage = "BOOTSTRAP 삭제 중 오류가 발생하였습니다.";
+                        resultMessage = "MICRO BOSH 삭제 중 오류가 발생하였습니다.";
                     }
                 } else {
                     status = "done";
-                    resultMessage = "BOOTSTRAP 삭제가 완료되었습니다.";
+                    resultMessage = "MICRO BOSH 삭제가 완료되었습니다.";
                     bootstrapDao.deleteBootstrapInfo(vo.getId());
                     //설치 관리자 삭제
                     deleteDirectorConfigInfo(vo.getIaasType(), vo.getDirectorName());
@@ -116,10 +116,10 @@ public class BootstrapDeleteDeployAsyncService{
             }
         }catch(RuntimeException e){
             status = "error";
-            DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, status, Arrays.asList("BootStrap 삭제 중 Exception이 발생하였습니다."));
+            DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, status, Arrays.asList("MICRO BOSH 삭제 중 Exception이 발생하였습니다."));
         } catch ( Exception e) {
             status = "error";
-            DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, status, Arrays.asList("BootStrap 삭제 중 Exception이 발생하였습니다."));
+            DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, status, Arrays.asList("MICRO BOSH 삭제 중 Exception이 발생하였습니다."));
         }finally {
             if(status.toLowerCase().equalsIgnoreCase("error")){
                 vo.setDeployStatus(message.getMessage("common.deploy.status.failed", null, Locale.KOREA));

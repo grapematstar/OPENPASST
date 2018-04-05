@@ -57,7 +57,7 @@ function getBootstrapData(record){
         },
         error : function(request, status, error) {
             var errorResult = JSON.parse(request.responseText);
-            w2alert(errorResult.message, "BOOTSTRAP 수정");
+            w2alert(errorResult.message, "MICRO BOSH 수정");
         }
     });
 }
@@ -130,7 +130,7 @@ function setBootstrapData(contents){
  ***************************************************************** */
 function awsPopup(){
      w2popup.open({
-        title  : "<b>BOOTSTRAP 설치</b>",
+        title  : "<b>MICRO BOSH 설치</b>",
         width  : 730,
         height : 520,
         onClose: popupClose,
@@ -154,7 +154,7 @@ function awsPopup(){
  ***************************************************************** */
 function openstackPopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 580,
         onClose : popupClose,
@@ -178,7 +178,7 @@ function openstackPopup(){
  ***************************************************************** */
 function vSpherePopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 600,
         onClose : popupClose,
@@ -202,7 +202,7 @@ function vSpherePopup(){
  ***************************************************************** */
 function googlePopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 495,
         onClose : popupClose,
@@ -227,7 +227,7 @@ function googlePopup(){
  ***************************************************************** */
 function azurePopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 650,
         onClose : popupClose,
@@ -376,7 +376,7 @@ function saveIaasConfigInfo(){
         },
         error : function( e, status ) {
             w2popup.unlock();
-            w2alert("BootStrap "+iaas+" 정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
+            w2alert("MICRO BOSH "+iaas+" 정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
         }
     });
 }
@@ -388,7 +388,7 @@ function saveIaasConfigInfo(){
 function defaultInfoPop(iaas){
      settingPopupTab("progressStep_6", iaas);
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 675,
         onClose : popupClose,
@@ -664,7 +664,7 @@ function saveDefaultInfo(type){
             error : function( e, status ) {
                 w2popup.unlock();
                 w2popup.unlock();
-                w2alert("기본정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
+                w2alert("기본정보 등록에 실패 하였습니다.", "MICRO BOSH 설치");
             }
         });
     }
@@ -693,7 +693,7 @@ function selectNetworkInfoPopup(iaas){
 function networkInfoPopup(div, btn, height){
     settingPopupTab("progressStep_6", iaas);
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : height,
         onClose : popupClose,
@@ -774,7 +774,7 @@ function saveNetworkInfo(type){
             },
             error : function( e, status ) {
                 w2popup.unlock();
-                w2alert("Network 정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
+                w2alert("Network 정보 등록에 실패 하였습니다.", "MICRO BOSH 설치");
             }
         });
     }
@@ -788,7 +788,7 @@ function resourceInfoPopup(height){
     settingPopupTab("ResourceInfoDiv", iaas);
     
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : height,
         onClose : popupClose,
@@ -835,7 +835,7 @@ function getStemcellList(iaas){
             setReourceData();
         },
         error : function( e, status ) {
-            w2alert("스템셀 "+search_data_fail_msg, "BOOTSTRAP 설치");
+            w2alert("스템셀 "+search_data_fail_msg, "MICRO BOSH 설치");
         }
     });
 }
@@ -897,7 +897,7 @@ function saveResourceInfo(type){
             error :function(request, status, error) {
                 w2popup.unlock();
                 var errorResult = JSON.parse(request.responseText);
-                w2alert(errorResult.message, "Bootstrap 리소스 정보 저장");
+                w2alert(errorResult.message, "MICRO BOSH 리소스 정보 저장");
                 
             }
         });
@@ -914,6 +914,9 @@ function createSettingFile(data){
             iaasType       : data.iaasType,
             deploymentFile : data.deploymentFile
     }
+    var credentialFile = data.deploymentFile.split(".")[0]+"-creds.yml";
+    
+    w2alert("MICRO BOSH 설치 성공 후 <br> 설치 관리자 설정 Credential 파일 명은 <br><strong><font color='red'> "+credentialFile+" </strong></font>입니다.");
     
     $.ajax({
         type : "POST",
@@ -927,7 +930,7 @@ function createSettingFile(data){
         },
         error :function(request, status, error) {
             var errorResult = JSON.parse(request.responseText);
-            w2alert(errorResult.message, "Bootstrap 배포 파일 생성");
+            w2alert(errorResult.message, "MICRO BOSH 배포 파일 생성");
             if( iaas.toUpperCase() == "VSPHERE" ){
                 resourceInfoPopup(390);
             }else resourceInfoPopup(330);
@@ -944,7 +947,7 @@ function deployPopup(){
     settingPopupTab("DeployDiv", iaas);
     
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 615,
         modal   : true,
@@ -989,8 +992,8 @@ function getDeployInfo(){
 function confirmDeploy(type){
     if(type == 'after'){        
         w2confirm({
-            msg          : "BOOTSTRAP을 설치하시겠습니까?",
-            title        : w2utils.lang('BOOTSTRAP 설치'),
+            msg          : "MICRO BOSH를 설치하시겠습니까?",
+            title        : w2utils.lang('MICRO BOSH 설치'),
             yes_text     : "예",
             no_text      : "아니오",
             yes_callBack : installPopup
@@ -1011,7 +1014,7 @@ var lockFile = false;
 function lockFileSet(deployFile){
     if(!checkEmpty(deployFile) ){
         var FileName = "bootstrap";
-        var message = "현재 다른 설치 관리자가 해당 BootStrap을 사용 중 입니다.";
+        var message = "현재 다른 설치 관리자가 해당 MICRO BOSH를 설치 중 입니다.";
         lockFile = commonLockFile("<c:url value='/common/deploy/lockFile/"+FileName+"'/>",message);
     }
     return lockFile;
@@ -1055,7 +1058,7 @@ function installPopup(){
             iaasType: iaas
     };
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 800,
         height  : 620,
         modal   : true,
@@ -1085,7 +1088,7 @@ function installPopup(){
                                 $('.w2ui-msg-buttons #deployPopupBtn').prop("disabled", false);
                                     
                                 installClient.disconnect();
-                                w2alert(message, "BOOTSTRAP 설치");
+                                w2alert(message, "MICRO BOSH 설치");
                             }
                         }
                     });
@@ -1127,7 +1130,7 @@ function installPopup(){
             },
             error : function(request, status, error) {
                 var errorResult = JSON.parse(request.responseText);
-                w2alert(errorResult.message, "BOOTSTRAP 삭제");
+                w2alert(errorResult.message, "MICRO BOSH 삭제");
             }
         });
     } else {
@@ -1164,7 +1167,7 @@ function installPopup(){
                                     
                                     installStatus = response.state.toLowerCase();
                                     deleteClient.disconnect();
-                                    w2alert(message, "BOOTSTRAP 삭제");
+                                    w2alert(message, "MICRO BOSH 삭제");
                                    }
                             }
                         });
