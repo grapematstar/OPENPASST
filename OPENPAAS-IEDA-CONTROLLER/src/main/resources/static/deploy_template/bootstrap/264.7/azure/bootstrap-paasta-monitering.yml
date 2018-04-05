@@ -3,20 +3,21 @@ name: bosh
 
 releases:
 - name: bosh
-  url: file:////home/cloud4u/.bosh_plugin/release/bosh-264.7.0.tgz
+  url: file:///[boshRelease]
 - name: bosh-azure-cpi
-  url: file:////home/cloud4u/.bosh_plugin/release/bosh-azure-cpi-release-35.0.0.tgz
-
+  url: file:///[boshCpiRelease]
+- name: [paastaMonitoringReleaseName]
+  url: file:///[paastaMonitoringRelease]
 resource_pools:
 - name: vms
   network: public
   stemcell: 
-    url: file:////home/cloud4u/.bosh_plugin/stemcell/bosh-stemcell-3468.21-azure-hyperv-ubuntu-trusty-go_agent.tgz
+    url: file:///[stemcell]
   cloud_properties: 
-    instance_type: Standard_D1_v2
+    instance_type: [cloudInstanceType]
   env:
     bosh:
-      password: $6$bTqDjkjyfN$xvKE8PUfm7s9djZ9WEgUirJjq9MYUhw0PybfOqyRweUrP9GYO.Y1CcP9Ladj9iH1tEVD1wRAl1Yt6Mp5JP5y9/
+      password: [boshPassword]
 
 disk_pools:
 - name: disks
@@ -26,13 +27,13 @@ networks:
 - name: private
   type: manual
   subnets:
-  - range: 192.168.10.0/24
-    gateway: 192.168.10.1
-    static: [192.168.10.20]
-    dns: [8.8.8.8]
+  - range: [subnetRange]
+    gateway: [subnetGateway]
+    static: [[privateStaticIp]]
+    dns: [[subnetDns]]
     cloud_properties: 
-      virtual_network_name: bootstrap_deploy
-      subnet_name: bootstrap_deploy_sub
+      virtual_network_name: [networkName]
+      subnet_name: [subnetId]
 - name: public
   type: vip
 
@@ -47,17 +48,20 @@ instance_groups:
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
   - {name: azure_cpi, release: bosh-azure-cpi}
+  - {name: metrics_agent, release: [paastaMonitoringReleaseName]}
+  - {name: logstash, release: [paastaMonitoringReleaseName]}
+  
   resource_pool: vms
   persistent_disk_pool: disks
   networks:
   - name: private
-    static_ips: [192.168.10.20]
+    static_ips: [[privateStaticIp]]
     default: [dns, gateway]
   - name: public
-    static_ips: [52.231.198.194]
+    static_ips: [[publicStaticIp]]
   properties:
     nats:
-      address: 192.168.10.20
+      address: [privateStaticIp]
       user: nats
       password: nats-password
       tls:
@@ -82,7 +86,7 @@ instance_groups:
       database: bosh
       adapter: postgres
     blobstore:
-      address: 192.168.10.20
+      address: [privateStaticIp]
       port: 25250
       provider: dav
       director:
@@ -93,7 +97,7 @@ instance_groups:
         password: agent-password
     director:
       default_ssh_options:
-        gateway_host: 52.231.198.194
+        gateway_host: [publicStaticIp]
       address: 127.0.0.1
       name: abosh
       db: *db
@@ -125,13 +129,25 @@ instance_groups:
         password: hm-password
         ca_cert: ((director_ssl.ca))
       resurrector_enabled: true
+    logstash:
+      ingestor_bosh:
+        host: [paastaMonitoringIp]
+        port: 3001
+      input:
+        file_path: /var/vcap/store/director/tasks/**/debug
+    metrics_agent:
+      influxdb:
+        database: bosh_metric_db
+        measurement: bosh_metrics
+        processMeasurement: bosh_process_metrics
+        url: [influxdbIp]
     ntp: &ntp
-    - 
+    - [ntp]
     agent:
-      mbus: nats://nats:nats-password@192.168.10.20:4222
+      mbus: nats://nats:nats-password@[privateStaticIp]:4222
     registry:
-      address: 192.168.10.20
-      host: 192.168.10.20
+      address: [privateStaticIp]
+      host: [privateStaticIp]
       db: # todo remove
         host: 127.0.0.1
         user: postgres
@@ -147,19 +163,18 @@ instance_groups:
       port: 25777
     azure: &cpi_conf
       environment: AzureCloud
-      subscription_id: 41ddf816-91e9-4bac-94b6-806c2ccb8630
-      tenant_id: aeacdca2-4f9e-4bc5-8c8b-b0403fbdcfd1
-      client_id: 6011987b-9891-433f-8f84-f6465a45659c
-      client_secret: 26W48w5VpOCBnTkzJUMxg9klTPkW6OzlJT23zwV87BE=
-      resource_group_name: bootstrap_deploy_test
-      storage_account_name: bootstrapstoragetest
-      default_security_group: nsg-bootstrap
+      subscription_id: [azureSubscriptionId]
+      tenant_id: [commonTenant]
+      client_id: [accessUser]
+      client_secret: [accessSecret]
+      resource_group_name: [azureResourceGroup]
+      storage_account_name: [azureStorageAccountName]
+      default_security_group: [defaultSecurityGroups]
       ssh_user: vcap
-      ssh_public_key: |+
-        ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5IXyvG1tEw9lvXZLPYqBrbGu8YmhqMiyG5ilKw8hItzeRQda0Gqzszhbw+cVZK7lC90n9597tQiEy1CABvPK5aTC1KwrnxuWJ1BeUUqIiwuZ9uRdngBCptF6Cq52gx0ULq2KJP6GP2KiZYhAgcPaejvNwMY4L9MAYZNuP4bOPlvGeg7gtQJMysneSTd7sCwrN87VdIweEdZyGBX0TpmCmLdN3IV2LkYneMR4Ei/ov+athD52ViD6TRCaxzr0XRsnofXtp//NrgBkwKUhfi12pI5CaZiM/HjiIYxUTjkJ14Xg4XOiqQQrO4BGA1b+HNBSx6SJfgbXD4UY/s6UcosmJ
+      ssh_public_key: [azureSshPublicKey]
 
 cloud_provider:
-  mbus: https://mbus:mbus-password@52.231.198.194:6868
+  mbus: https://mbus:mbus-password@[publicStaticIp]:6868
   properties:
     agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
@@ -169,10 +184,10 @@ cloud_provider:
     name: azure_cpi
     release: bosh-azure-cpi
   ssh_tunnel:
-    host: 52.231.198.194
+    host: [publicStaticIp]
     port: 22
     user: vcap
-    private_key: /home/cloud4u/.ssh/azure_pub
+    private_key: [privateKeyPath]
 
 variables:
 - name: default_ca
@@ -185,8 +200,8 @@ variables:
   type: certificate
   options:
     ca: default_ca
-    common_name: 52.231.198.194
-    alternative_names: [52.231.198.194]
+    common_name: [publicStaticIp]
+    alternative_names: [[publicStaticIp]]
 
 - name: nats_ca
   type: certificate
@@ -199,7 +214,7 @@ variables:
   options:
     ca: nats_ca
     common_name: default.nats.bosh-internal
-    alternative_names: [192.168.10.20]
+    alternative_names: [[privateStaticIp]]
     extended_key_usage:
     - server_auth
 

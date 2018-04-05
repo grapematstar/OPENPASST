@@ -901,10 +901,10 @@ INSERT INTO ieda_role_detail VALUES ( '190', '1000', '182540', 'SYSTEM', now(), 
 
 #manifest tamplate info
 INSERT INTO ieda_manifest_template VALUES (1, 'BOOTSTRAP','openstack','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (2, 'BOOTSTRAP','aws','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (3, 'BOOTSTRAP','google','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (4, 'BOOTSTRAP','vsphere','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (5, 'BOOTSTRAP','azure','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (2, 'BOOTSTRAP','aws','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (3, 'BOOTSTRAP','google','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (4, 'BOOTSTRAP','vsphere','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (5, 'BOOTSTRAP','azure','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
 INSERT INTO ieda_manifest_template VALUES (6, 'CF','aws','cf','226','226','generic_manifest_mask.yml','', '', 'aws-cf-stub.yml','','','','','aws-cf-param.yml','SYSTEM',now(),'SYSTEM',now());
 INSERT INTO ieda_manifest_template VALUES (7, 'CF','openstack','cf','226','226','generic_manifest_mask.yml','', '', 'openstack-cf-stub.yml','','','','','openstack-cf-param.yml','SYSTEM',now(),'SYSTEM',now());
 INSERT INTO ieda_manifest_template VALUES (8, 'CF','aws','openpaas-controller','226','1.0','generic_manifest_mask.yml','', '', 'aws-cf-stub.yml','','','','','aws-cf-param.yml','SYSTEM',now(),'SYSTEM',now());

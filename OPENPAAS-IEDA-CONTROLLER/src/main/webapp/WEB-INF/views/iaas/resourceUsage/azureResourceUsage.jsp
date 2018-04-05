@@ -18,7 +18,7 @@ $(function() {
 });
 
 function doSearch(){
-    //getIAzureResourceUsageInfo();
+    getIAzureResourceUsageInfo();
 }
 
 

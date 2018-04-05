@@ -57,7 +57,7 @@ function getBootstrapData(record){
         },
         error : function(request, status, error) {
             var errorResult = JSON.parse(request.responseText);
-            w2alert(errorResult.message, "BOOTSTRAP 수정");
+            w2alert(errorResult.message, "MICRO BOSH 수정");
         }
     });
 }
@@ -130,7 +130,7 @@ function setBootstrapData(contents){
  ***************************************************************** */
 function awsPopup(){
      w2popup.open({
-        title  : "<b>BOOTSTRAP 설치</b>",
+        title  : "<b>MICRO BOSH 설치</b>",
         width  : 730,
         height : 520,
         onClose: popupClose,
@@ -154,7 +154,7 @@ function awsPopup(){
  ***************************************************************** */
 function openstackPopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 580,
         onClose : popupClose,
@@ -178,7 +178,7 @@ function openstackPopup(){
  ***************************************************************** */
 function vSpherePopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 600,
         onClose : popupClose,
@@ -202,7 +202,7 @@ function vSpherePopup(){
  ***************************************************************** */
 function googlePopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 495,
         onClose : popupClose,
@@ -227,7 +227,7 @@ function googlePopup(){
  ***************************************************************** */
 function azurePopup(){
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 650,
         onClose : popupClose,
@@ -377,7 +377,7 @@ function saveIaasConfigInfo(){
         },
         error : function( e, status ) {
             w2popup.unlock();
-            w2alert("BootStrap "+iaas+" 정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
+            w2alert("MICRO BOSH "+iaas+" 정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
         }
     });
 }
@@ -389,7 +389,7 @@ function saveIaasConfigInfo(){
 function defaultInfoPop(iaas){
      settingPopupTab("progressStep_6", iaas);
      w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 675,
         onClose : popupClose,
@@ -647,6 +647,8 @@ function saveDefaultInfo(type){
             vSpherePopup(); return;
         }else if(iaas.toUpperCase() == "GOOGLE" ){
             googlePopup(); return;
+        }else if(iaas.toUpperCase() == "AZURE" ){
+            azurePopup(); return;
         }
     }else{
         $.ajax({
@@ -663,7 +665,7 @@ function saveDefaultInfo(type){
             error : function( e, status ) {
                 w2popup.unlock();
                 w2popup.unlock();
-                w2alert("기본정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
+                w2alert("기본정보 등록에 실패 하였습니다.", "MICRO BOSH 설치");
             }
         });
     }
@@ -678,7 +680,10 @@ function selectNetworkInfoPopup(iaas){
         networkInfoPopup("#VsphereNetworkInfoDiv", "#VsphereNetworkInfoBtnDiv", 680);
     }else if( iaas.toUpperCase() == "GOOGLE" ){
         networkInfoPopup("#GoogleNetworkInfoDiv", "#GoogleNetworkInfoBtnDiv", 570)   
-    }else{
+    }else if( iaas.toUpperCase() == "AZURE" ){
+        networkInfoPopup("#AzureNetworkInfoDiv", "#AzureNetworkInfoBtnDiv", 570)   
+    }
+    else{
         networkInfoPopup("#NetworkInfoDiv", "#NetworkInfoBtnDiv", 535);
     }
 }
@@ -689,7 +694,7 @@ function selectNetworkInfoPopup(iaas){
 function networkInfoPopup(div, btn, height){
     settingPopupTab("progressStep_6", iaas);
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : height,
         onClose : popupClose,
@@ -770,7 +775,7 @@ function saveNetworkInfo(type){
             },
             error : function( e, status ) {
                 w2popup.unlock();
-                w2alert("Network 정보 등록에 실패 하였습니다.", "BOOTSTRAP 설치");
+                w2alert("Network 정보 등록에 실패 하였습니다.", "MICRO BOSH 설치");
             }
         });
     }
@@ -784,7 +789,7 @@ function resourceInfoPopup(height){
     settingPopupTab("ResourceInfoDiv", iaas);
     
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : height,
         onClose : popupClose,
@@ -831,7 +836,7 @@ function getStemcellList(iaas){
             setReourceData();
         },
         error : function( e, status ) {
-            w2alert("스템셀 "+search_data_fail_msg, "BOOTSTRAP 설치");
+            w2alert("스템셀 "+search_data_fail_msg, "MICRO BOSH 설치");
         }
     });
 }
@@ -893,7 +898,7 @@ function saveResourceInfo(type){
             error :function(request, status, error) {
                 w2popup.unlock();
                 var errorResult = JSON.parse(request.responseText);
-                w2alert(errorResult.message, "Bootstrap 리소스 정보 저장");
+                w2alert(errorResult.message, "MICRO BOSH 리소스 정보 저장");
                 
             }
         });
@@ -910,6 +915,9 @@ function createSettingFile(data){
             iaasType       : data.iaasType,
             deploymentFile : data.deploymentFile
     }
+    var credentialFile = data.deploymentFile.split(".")[0]+"-creds.yml";
+    
+    w2alert("MICRO BOSH 설치 성공 후 <br> 설치 관리자 설정 Credential 파일 명은 <br><strong><font color='red'> "+credentialFile+" </strong></font>입니다.");
     
     $.ajax({
         type : "POST",
@@ -923,7 +931,7 @@ function createSettingFile(data){
         },
         error :function(request, status, error) {
             var errorResult = JSON.parse(request.responseText);
-            w2alert(errorResult.message, "Bootstrap 배포 파일 생성");
+            w2alert(errorResult.message, "MICRO BOSH 배포 파일 생성");
             if( iaas.toUpperCase() == "VSPHERE" ){
                 resourceInfoPopup(390);
             }else resourceInfoPopup(330);
@@ -940,7 +948,7 @@ function deployPopup(){
     settingPopupTab("DeployDiv", iaas);
     
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 730,
         height  : 615,
         modal   : true,
@@ -985,8 +993,8 @@ function getDeployInfo(){
 function confirmDeploy(type){
     if(type == 'after'){        
         w2confirm({
-            msg          : "BOOTSTRAP을 설치하시겠습니까?",
-            title        : w2utils.lang('BOOTSTRAP 설치'),
+            msg          : "MICRO BOSH를 설치하시겠습니까?",
+            title        : w2utils.lang('MICRO BOSH 설치'),
             yes_text     : "예",
             no_text      : "아니오",
             yes_callBack : installPopup
@@ -1007,7 +1015,7 @@ var lockFile = false;
 function lockFileSet(deployFile){
     if(!checkEmpty(deployFile) ){
         var FileName = "bootstrap";
-        var message = "현재 다른 설치 관리자가 해당 BootStrap을 사용 중 입니다.";
+        var message = "현재 다른 설치 관리자가 해당 MICRO BOSH를 설치 중 입니다.";
         lockFile = commonLockFile("<c:url value='/common/deploy/lockFile/"+FileName+"'/>",message);
     }
     return lockFile;
@@ -1051,7 +1059,7 @@ function installPopup(){
             iaasType: iaas
     };
     w2popup.open({
-        title   : "<b>BOOTSTRAP 설치</b>",
+        title   : "<b>MICRO BOSH 설치</b>",
         width   : 800,
         height  : 620,
         modal   : true,
@@ -1081,7 +1089,7 @@ function installPopup(){
                                 $('.w2ui-msg-buttons #deployPopupBtn').prop("disabled", false);
                                     
                                 installClient.disconnect();
-                                w2alert(message, "BOOTSTRAP 설치");
+                                w2alert(message, "MICRO BOSH 설치");
                             }
                         }
                     });
@@ -1123,7 +1131,7 @@ function installPopup(){
             },
             error : function(request, status, error) {
                 var errorResult = JSON.parse(request.responseText);
-                w2alert(errorResult.message, "BOOTSTRAP 삭제");
+                w2alert(errorResult.message, "MICRO BOSH 삭제");
             }
         });
     } else {
@@ -1160,7 +1168,7 @@ function installPopup(){
                                     
                                     installStatus = response.state.toLowerCase();
                                     deleteClient.disconnect();
-                                    w2alert(message, "BOOTSTRAP 삭제");
+                                    w2alert(message, "MICRO BOSH 삭제");
                                    }
                             }
                         });
@@ -1640,7 +1648,7 @@ function popupClose() {
                 <div class="w2ui-field">
                     <label style="text-align: left;width:40%;font-size:11px;">Resource Group</label>
                     <div style="width: 60%">
-                        <input name="azureResourceGroup" type="text" readonly style="float:left;width:80%;" placeholder="리소스 그룹을 입력하세요."/>
+                        <input name="azureResourceGroupName" type="text" readonly style="float:left;width:80%;" placeholder="리소스 그룹을 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
@@ -1926,6 +1934,81 @@ function popupClose() {
         <button class="btn" style="float: right; padding-right: 15%" onclick="setNetworkValidate('#GoogleNetworkInfoForm');" >다음>></button>
     </div>
 </div>
+
+<!-- Azure 네트워크 div -->
+<div id="AzureNetworkInfoDiv" style="width:100%;height:100%;" hidden="true">
+    <form id="azureNetworkInfoForm">
+        <div style="margin-left:2%;display:inline-block;width:97%;padding-top:20px;">
+            <ul class="progressStep_6" >
+                <li class="pass">Azure 정보</li>
+                <li class="pass">기본 정보</li>
+                <li class="active">네트워크 정보</li>
+                <li class="before">리소스 정보</li>
+                <li class="before">배포 파일 정보</li>
+                <li class="before">설치</li>
+            </ul>
+        </div>
+        <div class="w2ui-page page-0" style="margin-top:15px;padding:0 3%;">
+             <div class="panel panel-info"  style="margin-bottom:20px;">
+                 <div  class="panel-heading" style="padding:5px 5% 10px 5%;"><b>네트워크 External</b></div>
+                 <div class="panel-body">
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">설치관리자 IPs</label> 
+                         <div style="width: 60%">
+                             <input name="publicStaticIp" type="text"  style="display:inline-block;width:70%;" placeholder="예) 10.0.0.20"/>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             <div class="panel panel-info" style="margin-bottom:20px;">    
+                 <div  class="panel-heading" style="padding:5px 5% 10px 5%;"><b>네트워크 Internal</b></div>
+                 <div class="panel-body">
+                     <div class="w2ui-field" >
+                         <label style="text-align: left;width:36%;font-size:11px;">설치관리자 내부망 IPs</label> 
+                         <div style="width: 60%">
+                             <input name="privateStaticIp" type="text"  style="display:inline-block;width:70%;" placeholder="예) 10.0.0.20"/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">네트워크 명</label>
+                         <div style="width: 60%">
+                             <input name="networkName" type="text"  style="display:inline-block;width:70%;" placeholder="네트워크 명을 입력하세요."/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label class="subnetId" style="text-align: left;width:36%;font-size:11px;">서브넷 명</label>
+                         <div style="width: 60%">
+                             <input name="subnetId" type="text"  style="display:inline-block;width:70%;" placeholder="서브넷 명을 입력하세요."/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">서브넷 범위</label>
+                         <div style="width: 60%">
+                             <input name="subnetRange" type="text"  style="display:inline-block;width:70%;"  placeholder="예) 10.0.0.0/24"/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">게이트웨이</label>
+                         <div style="width: 60%">
+                             <input name="subnetGateway" type="text"  style="display:inline-block;width:70%;" placeholder="예) 10.0.0.1"/>
+                         </div>
+                     </div>
+                     <div class="w2ui-field">
+                         <label style="text-align: left;width:36%;font-size:11px;">DNS</label>
+                         <div style="width: 60%">
+                             <input name="subnetDns" type="text"  style="display:inline-block;width:70%;" placeholder="예) 8.8.8.8"/>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+    </form>
+    <div class="w2ui-buttons" id="AzureNetworkInfoBtnDiv" hidden="true">
+        <button class="btn" style="float: left;" onclick="saveNetworkInfo('before');" >이전</button>
+        <button class="btn" style="float: right; padding-right: 15%" onclick="setNetworkValidate('#azureNetworkInfoForm');" >다음>></button>
+    </div>
+</div>
+
 
 <!-- vSphere 네트워크 div -->
 <div id="VsphereNetworkInfoDiv" style="width:100%;height:100%;" hidden="true">
