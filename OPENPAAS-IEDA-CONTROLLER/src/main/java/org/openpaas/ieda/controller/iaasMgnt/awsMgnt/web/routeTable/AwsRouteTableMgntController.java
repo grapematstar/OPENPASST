@@ -81,7 +81,6 @@ public class AwsRouteTableMgntController {
      	return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
      }     
      
-     
      /***************************************************
       * @project : AWS 관리 대시보드
       * @description : AWS RouteTable에 대한 associated Subnets 목록 조회 (화면 하단)
@@ -113,25 +112,6 @@ public class AwsRouteTableMgntController {
      public ResponseEntity<HashMap<String, Object>> getAwsAvailableSubnetList(@PathVariable("accountId") int accountId, @PathVariable("region") String region, Principal principal, @PathVariable("routeTableId") String routeTableId, @PathVariable("vpcId") String vpcId){
     	 
     	 List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsAvailableSubnetList(accountId, region, principal, routeTableId, vpcId);
-    	 HashMap<String, Object> map = new HashMap<String, Object>();
-    	 if(list != null){
-    		 map.put("total", list.size());
-    		 map.put("records", list);
-    	 }
-    	 return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
-     }
-     
-     /***************************************************
-      * @project : AWS 관리 대시보드
-      * @description : AWS RouteTable의 해당 VPC에 대한 Association 가능한 Subnets 목록 조회 (pop up)
-      * @title : getAwsAvailableSubAssociationList
-      * @return : ResponseEntity<?>
-      ***************************************************/
-     @RequestMapping(value="/awsMgnt/routeTable/list/avaliable/subnetAssoication/{accountId}/{region}/{routeTableId}/{vpcId}", method=RequestMethod.GET)
-     @ResponseBody
-     public ResponseEntity<HashMap<String, Object>> getAwsAvailableSubAssociationList(@PathVariable("accountId") int accountId, @PathVariable("region") String region, Principal principal, @PathVariable("routeTableId") String routeTableId, @PathVariable("vpcId") String vpcId){
-    	 
-    	 List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsAvailableSubAssociationList(accountId, region, principal, routeTableId, vpcId);
     	 HashMap<String, Object> map = new HashMap<String, Object>();
     	 if(list != null){
     		 map.put("total", list.size());
@@ -185,7 +165,23 @@ public class AwsRouteTableMgntController {
          }  
          awsRouteTableMgntService.saveAwsRouteTableInfo(dto, principal);
          return new ResponseEntity<>(HttpStatus.CREATED);
-     } 
+     }
+     
+     /***************************************************
+      * @project : AWS 인프라 관리 대시보드
+      * @description : AWS delete RouteTable
+      * @title : deleteRouteTable
+      * @return : ResponseEntity<?>
+      ***************************************************/
+     @RequestMapping(value="/awsMgnt/routeTable/delete", method=RequestMethod.DELETE)
+     @ResponseBody
+     public ResponseEntity<?> deleteRouteTable (@RequestBody AwsRouteTableMgntDTO dto, Principal principal){
+    	 if(LOG.isInfoEnabled()) {
+    		 LOG.info("========================================> AWS Subnet 연결해제");
+    	 }
+    	 awsRouteTableMgntService.deleteRouteTable(dto, principal);
+    	 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+     }
      
      /***************************************************
       * @project : AWS 인프라 관리 대시보드
@@ -202,7 +198,13 @@ public class AwsRouteTableMgntController {
          awsRouteTableMgntService.addAwsRouteInfo(dto, principal);
          return new ResponseEntity<>(HttpStatus.CREATED);
      }
-     
+
+     /***************************************************
+      * @project : AWS 인프라 관리 대시보드
+      * @description : AWS Route 삭제
+      * @title : deleteAwsRouteInfo
+      * @return : ResponseEntity<?>
+      ***************************************************/
      @RequestMapping(value="/awsMgnt/routeTable/route/delete", method=RequestMethod.DELETE)
      @ResponseBody
      public ResponseEntity<?> deleteAwsRouteInfo(@RequestBody AwsRouteTableMgntDTO dto, Principal principal){
@@ -210,7 +212,7 @@ public class AwsRouteTableMgntController {
              LOG.info("================================================> AWS Route 삭제");
          }  
          awsRouteTableMgntService.deleteAwsRouteInfo(dto, principal);
-         return new ResponseEntity<>(HttpStatus.CREATED);
+         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
      }
      
      /***************************************************
@@ -244,22 +246,4 @@ public class AwsRouteTableMgntController {
           awsRouteTableMgntService.disassociateAwsSubnetFromRouteTable(dto, principal);
           return new ResponseEntity<>(HttpStatus.NO_CONTENT);
       }
-      
-      /***************************************************
-       * @project : AWS 인프라 관리 대시보드
-       * @description : AWS delete RouteTable
-       * @title : deleteRouteTable
-       * @return : ResponseEntity<?>
-       ***************************************************/
-       @RequestMapping(value="/awsMgnt/routeTable/delete", method=RequestMethod.DELETE)
-      @ResponseBody
-      public ResponseEntity<?> deleteRouteTable (@RequestBody AwsRouteTableMgntDTO dto, Principal principal){
-          if(LOG.isInfoEnabled()) {
-              LOG.info("========================================> AWS Subnet 연결해제");
-          }
-          awsRouteTableMgntService.deleteRouteTable(dto, principal);
-          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-      }
-      
-      
 }

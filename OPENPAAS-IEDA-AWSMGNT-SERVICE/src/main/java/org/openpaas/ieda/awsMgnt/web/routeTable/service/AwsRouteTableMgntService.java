@@ -31,8 +31,8 @@ public class AwsRouteTableMgntService {
     
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
-     * @description : AWS NAT Gateway 목록 조회
-     * @title : getAwsrouteTableInfoList
+     * @description : AWS Route Table 목록 조회
+     * @title : getAwsRouteTableInfoList
      * @return : List<AwsrouteTableMgntVO>
      ***************************************************/
      public List<AwsRouteTableMgntVO> getAwsRouteTableInfoList( int accountId, String regionName, Principal principal ) {
@@ -91,7 +91,7 @@ public class AwsRouteTableMgntService {
      
      /***************************************************
       * @project : AWS 인프라 관리 대시보드
-      * @description : AWS Route Table에 대한 Route 목록 조회 
+      * @description : AWS 선택 한 Route Table에 대한 Route 목록 조회 
       * @title : getAwsRouteList
       * @return :  List<AwsRouteTableMgntVO> 
       ***************************************************/
@@ -134,7 +134,7 @@ public class AwsRouteTableMgntService {
 
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
-     * @description : AWS Route Table에 대한 Explicitly Associated Subnets 목록 조회 //routeTable > associations > getSubnetId && get해당 subnet의 object info 목록
+     * @description : AWS 선택 한 Route Table에 대한 Explicitly Associated Subnets 목록 조회 //routeTable > associations > getSubnetId && get해당 subnet의 object info 목록
      * @title : getAwsAssociatedWithThisTableSubnetList 
      * @return :  List<AwsRouteTableMgntVO> 
      ***************************************************/
@@ -156,7 +156,7 @@ public class AwsRouteTableMgntService {
                        if(apiRouteTable.getRouteTableId().equals(routeTableId)){
                          String apiSubnetId = apiAwsSubnetList.get(i).getSubnetId();
                          if(apiRouteTable.getAssociations().size() != 0 ){
-                        	 AwsRouteTableMgntVO awsRTmgntVo = new AwsRouteTableMgntVO();
+                             AwsRouteTableMgntVO awsRTmgntVo = new AwsRouteTableMgntVO();
                            int y = apiRouteTable.getAssociations().size();
                            for(int x=0; x<y; x++){
                              String tableSubnetId = apiRouteTable.getAssociations().get(x).getSubnetId();
@@ -194,7 +194,7 @@ public class AwsRouteTableMgntService {
    
    /***************************************************
     * @project : AWS 인프라 관리 대시보드
-    * @description : AWS Route Table에 대한 Associate 가능한 Subnets 목록 조회 (화면 하단)
+    * @description : AWS 선택한 Route Table에 대한 Association이 수정 가능한 Subnets 목록 조회 (화면 하단)
     * @title : getAwsAvailableSubAssociationList
     * @return :  List<AwsRouteTableMgntVO> 
     ***************************************************/
@@ -234,20 +234,20 @@ public class AwsRouteTableMgntService {
                          }
                        }
                        /*else{
-                    	   awsRTmgntVo.setRouteTableId("");
+                           awsRTmgntVo.setRouteTableId("");
                        }*/
                    }
                    awsRTmgntVo.setSubnetId (apiAwsSubnetList.get(i).getSubnetId());
                    awsRTmgntVo.setDestinationIpv4CidrBlock(apiAwsSubnetList.get(i).getCidrBlock());
                    int vp6size = apiAwsSubnetList.get(i).getIpv6CidrBlockAssociationSet().size();
                    if(vp6size!=0){
-                	   for(int k=0; k<vp6size; k++){
-                		   String ipv6Block = "";
-                		   ipv6Block += apiAwsSubnetList.get(i).getIpv6CidrBlockAssociationSet().get(k).getIpv6CidrBlock();
-                		   awsRTmgntVo.setIpv6CidrBlock(ipv6Block);
-                	   } 
+                       for(int k=0; k<vp6size; k++){
+                           String ipv6Block = "";
+                           ipv6Block += apiAwsSubnetList.get(i).getIpv6CidrBlockAssociationSet().get(k).getIpv6CidrBlock();
+                           awsRTmgntVo.setIpv6CidrBlock(ipv6Block);
+                       } 
                    }else if(vp6size == 0){
-                	   awsRTmgntVo.setIpv6CidrBlock("-");
+                       awsRTmgntVo.setIpv6CidrBlock("-");
                    }
                    awsRTmgntVo.setRecid(i);
                    awsRTmgntVo.setAccountId(accountId);
@@ -258,70 +258,6 @@ public class AwsRouteTableMgntService {
        return list;
     }
     
-   /***************************************************
-    * @project : AWS 인프라 관리 대시보드
-    * @description : AWS Route Table에 대한 Associate 가능한 Subnets 목록 조회 (popup)
-    * @title : getAwsAvailableSubAssociationList
-    * @return :  List<AwsRouteTableMgntVO> 
-    ***************************************************/
-    public  List<AwsRouteTableMgntVO> getAwsAvailableSubAssociationList(int accountId, String regionName, Principal principal, String routeTableId,  String vpcId  ){
-        IaasAccountMgntVO vo =  getAwsAccountInfo(principal, accountId);
-        Region region = getAwsRegionInfo(regionName);
-        List<Subnet> apiAwsSubnetList = awsRouteTableMgntApiService.getAwsSubnetInfoListApiFromAws(vo,region.getName());
-        List<RouteTable> apiAwsRouteTableList = awsRouteTableMgntApiService.getAwsRouteTableListApiFromAws(vo,region.getName());
-        List<AwsRouteTableMgntVO> list = new ArrayList<AwsRouteTableMgntVO>();
-        for (int i=0; i<apiAwsSubnetList.size(); i++ ){
-           String subnetVpcId = apiAwsSubnetList.get(i).getVpcId().toString();
-           if( subnetVpcId.equals(vpcId)){
-               List<String> subnetVpcIds = new ArrayList<String>();
-               subnetVpcIds.add(subnetVpcId);
-               for(int j=0; j<subnetVpcIds.size();j++){
-                   AwsRouteTableMgntVO awsRTmgntVo = new AwsRouteTableMgntVO();
-                   for(int h=0; h<apiAwsRouteTableList.size(); h++){
-                       RouteTable routeTable = apiAwsRouteTableList.get(h);
-                       if(routeTable.getVpcId().equals(subnetVpcIds.get(j))){
-                         String apiSubnetId = apiAwsSubnetList.get(i).getSubnetId();
-                         if(routeTable.getAssociations().size() != 0 ){
-                           int y = routeTable.getAssociations().size();
-                           for(int x=0; x<y; x++){
-                             String tableSubnetId = routeTable.getAssociations().get(x).getSubnetId();
-                             String rTableId = routeTable.getAssociations().get(x).getRouteTableId(); 
-                             if(apiSubnetId.equals(tableSubnetId)){
-                               if(rTableId.equals(routeTableId)){
-                                 awsRTmgntVo.setRouteTableId("associated to "+rTableId );
-                                 awsRTmgntVo.setCheck(true);
-                               }else{
-                                 awsRTmgntVo.setRouteTableId(rTableId);
-                               }
-                             }
-                           }
-                         }
-                       }
-                       /*else{
-                    	   awsRTmgntVo.setRouteTableId("");
-                       }*/
-                   }
-                   awsRTmgntVo.setSubnetId (apiAwsSubnetList.get(i).getSubnetId());
-                   awsRTmgntVo.setDestinationIpv4CidrBlock(apiAwsSubnetList.get(i).getCidrBlock());
-                   int vp6size = apiAwsSubnetList.get(i).getIpv6CidrBlockAssociationSet().size();
-                   if(vp6size!=0){
-                	   for(int k=0; k<vp6size; k++){
-                		   String ipv6Block = "";
-                		   ipv6Block += apiAwsSubnetList.get(i).getIpv6CidrBlockAssociationSet().get(k).getIpv6CidrBlock();
-                		   awsRTmgntVo.setIpv6CidrBlock(ipv6Block);
-                	   } 
-                   }else if(vp6size == 0){
-                	   awsRTmgntVo.setIpv6CidrBlock("-");
-                   }
-                   awsRTmgntVo.setRecid(i);
-                   awsRTmgntVo.setAccountId(accountId);
-                   list.add(awsRTmgntVo);
-               }
-           }
-       }
-       return list;
-     }
-     
      /***************************************************
       * @project : AWS 인프라 관리 대시보드
       * @description : AWS VPC ID 목록 조회
@@ -405,8 +341,7 @@ public class AwsRouteTableMgntService {
             }
           }
          if(targets == null || targets.size() == 0){
-        	  //targets.add(0,"NOT Avaliable");
-        	  //do nothing
+              //do nothing
           }
           return targets;
       }
@@ -430,11 +365,11 @@ public class AwsRouteTableMgntService {
       
       /***************************************************
        * @project : AWS 인프라 관리 대시보드
-       * @description : AWS Route  생성
+       * @description : AWS Route 생성
        * @title : addAwsRouteInfo
        * @return : void
        ***************************************************/
-      public void addAwsRouteInfo (AwsRouteTableMgntDTO dto, Principal principal) {
+      public void addAwsRouteInfo(AwsRouteTableMgntDTO dto, Principal principal) {
           IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
           Region region = getAwsRegionInfo(dto.getRegion());
           try{
@@ -451,7 +386,7 @@ public class AwsRouteTableMgntService {
        * @title : deleteAwsRouteInfo
        * @return : void
        ***************************************************/
-      public void deleteAwsRouteInfo (AwsRouteTableMgntDTO dto, Principal principal) {
+      public void deleteAwsRouteInfo(AwsRouteTableMgntDTO dto, Principal principal) {
           IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
           Region region = getAwsRegionInfo(dto.getRegion());
           try{
@@ -468,7 +403,7 @@ public class AwsRouteTableMgntService {
        * @title : associateAwsSubnetWithRouteTableFromAws
        * @return : void
        ***************************************************/
-      public void associateAwsSubnetWithRouteTable (AwsRouteTableMgntDTO dto, Principal principal) {
+      public void associateAwsSubnetWithRouteTable(AwsRouteTableMgntDTO dto, Principal principal) {
           IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
           Region region = getAwsRegionInfo(dto.getRegion());
           try{
@@ -486,14 +421,14 @@ public class AwsRouteTableMgntService {
        * @return : void
        ***************************************************/
       public void disassociateAwsSubnetFromRouteTable(AwsRouteTableMgntDTO dto, Principal principal) {
-	      IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
-	      Region region = getAwsRegionInfo(dto.getRegion());
-	      try{
-	          awsRouteTableMgntApiService.disassociateAwsSubnetFromRouteTableFromAws(vo, region.getName(), dto);
-	      }catch (Exception e) {
-	          throw new CommonException(
-	                  message.getMessage("common.badRequest.exception.code", null, Locale.KOREA), message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
-	      }
+          IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
+          Region region = getAwsRegionInfo(dto.getRegion());
+          try{
+              awsRouteTableMgntApiService.disassociateAwsSubnetFromRouteTableFromAws(vo, region.getName(), dto);
+          }catch (Exception e) {
+              throw new CommonException(
+                      message.getMessage("common.badRequest.exception.code", null, Locale.KOREA), message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
+          }
        }
       
       /***************************************************
@@ -503,15 +438,16 @@ public class AwsRouteTableMgntService {
        * @return : void
        ***************************************************/
       public void deleteRouteTable(AwsRouteTableMgntDTO dto, Principal principal) {
-	      IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
-	      Region region = getAwsRegionInfo(dto.getRegion());
-	      try{
-	          awsRouteTableMgntApiService.deleteAwsRouteTableFromAws(vo, region.getName(), dto);
-	      }catch (Exception e) {
-	          throw new CommonException(
-	                  message.getMessage("common.badRequest.exception.code", null, Locale.KOREA), message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
-	      }
+          IaasAccountMgntVO vo =  getAwsAccountInfo(principal, dto.getAccountId());
+          Region region = getAwsRegionInfo(dto.getRegion());
+          try{
+              awsRouteTableMgntApiService.deleteAwsRouteTableFromAws(vo, region.getName(), dto);
+          }catch (Exception e) {
+              throw new CommonException(
+                      message.getMessage("common.badRequest.exception.code", null, Locale.KOREA), message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
+          }
       }
+      
      /***************************************************
       * @project : AWS 인프라 관리 대시보드
       * @description : AWS 계정 정보가 실제 존재 하는지 확인 및 상세 조회

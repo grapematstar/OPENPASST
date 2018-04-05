@@ -25,8 +25,8 @@ import com.amazonaws.services.ec2.model.DescribeNatGatewaysRequest;
 import com.amazonaws.services.ec2.model.DisassociateRouteTableRequest;
 import com.amazonaws.services.ec2.model.InternetGateway;
 import com.amazonaws.services.ec2.model.NatGateway;
-import com.amazonaws.services.ec2.model.ReplaceRouteRequest;
-import com.amazonaws.services.ec2.model.ReplaceRouteTableAssociationRequest;
+//import com.amazonaws.services.ec2.model.ReplaceRouteRequest;
+//import com.amazonaws.services.ec2.model.ReplaceRouteTableAssociationRequest;
 import com.amazonaws.services.ec2.model.RouteTable;
 import com.amazonaws.services.ec2.model.Subnet;
 import com.amazonaws.services.ec2.model.Tag;
@@ -58,10 +58,6 @@ public class AwsRouteTableMgntApiService {
     public List<RouteTable> getAwsRouteTableListApiFromAws(IaasAccountMgntVO vo, String regionName) {
     	AmazonEC2Client ec2 =  getAmazonEC2Client(vo, regionName);
     	List<RouteTable> routetables = ec2.describeRouteTables().getRouteTables();
-    	//routetables.get(0).getRoutes();
-    	//routetables.get(0).getRoutes().get(0).getGatewayId();
-    	//routetables.get(0).getAssociations().get(0).getSubnetId();
-    	//routetables.get(0).getAssociations().get(0).getRouteTableId();
     	return routetables;
     }
     
@@ -76,7 +72,6 @@ public class AwsRouteTableMgntApiService {
     	String vpcId = dto.getVpcId();
     	CreateRouteTableRequest request = new CreateRouteTableRequest().withVpcId(vpcId);
     	CreateRouteTableResult result = ec2.createRouteTable(request);
-    	
     	 if( !StringUtils.isEmpty(dto.getNameTag()) ){
              List<Tag> tags = new ArrayList<Tag>();
              Tag newTag = new Tag();
@@ -113,17 +108,30 @@ public class AwsRouteTableMgntApiService {
     
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
+     * @description : AWS Delete Route Table 실제 API 호출
+     * @title : deleteAwsRouteTableFromAws
+     * @return : void
+     ***************************************************/
+    public void deleteAwsRouteTableFromAws (IaasAccountMgntVO vo, String regionName, AwsRouteTableMgntDTO dto){
+    	AmazonEC2Client ec2 =  getAmazonEC2Client(vo, regionName);
+    	String routeTableId = dto.getRouteTableId();
+    	DeleteRouteTableRequest request = new DeleteRouteTableRequest().withRouteTableId(routeTableId);
+    	ec2.deleteRouteTable(request);
+    }
+    
+    /***************************************************
+     * @project : AWS 인프라 관리 대시보드
      * @description : AWS Replace Existing Route form Route Table 실제 API 호출
      * @title : replaceAwsExistingRouteFromRouteTableWithRouteTableFromAws
      * @return : void
      ***************************************************/
-    public void replaceAwsExistingRouteFromRouteTableWithRouteTableFromAws(IaasAccountMgntVO vo, String regionName, AwsRouteTableMgntDTO dto){
+    /*public void replaceAwsExistingRouteFromRouteTableWithRouteTableFromAws(IaasAccountMgntVO vo, String regionName, AwsRouteTableMgntDTO dto){
     	AmazonEC2Client ec2 =  getAmazonEC2Client(vo, regionName);
     	String routeTableId = dto.getRouteTableId();
     	String destinationCidrBlock = dto.getDestinationIpv4CidrBlock();
     	ReplaceRouteRequest request = new ReplaceRouteRequest().withRouteTableId(routeTableId).withDestinationCidrBlock(destinationCidrBlock);
     	ec2.replaceRoute(request);
-    }
+    }*/
     
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
@@ -134,7 +142,8 @@ public class AwsRouteTableMgntApiService {
     public void deleteAwsRouteInRouteTableFromAws(IaasAccountMgntVO vo, String regionName, AwsRouteTableMgntDTO dto){
     	AmazonEC2Client ec2 =  getAmazonEC2Client(vo, regionName);
     	String routeTableId = dto.getRouteTableId();
-    	DeleteRouteRequest request = new DeleteRouteRequest().withRouteTableId(routeTableId);
+    	String destinationCidrBlock = dto.getDestinationIpv4CidrBlock();
+    	DeleteRouteRequest request = new DeleteRouteRequest().withRouteTableId(routeTableId).withDestinationCidrBlock(destinationCidrBlock);
     	ec2.deleteRoute(request);
     }
     
@@ -150,7 +159,6 @@ public class AwsRouteTableMgntApiService {
     	String subnetId = dto.getSubnetId();
     	AssociateRouteTableRequest request = new AssociateRouteTableRequest().withRouteTableId(routeTableId).withSubnetId(subnetId);
     	ec2.associateRouteTable(request);
-    	//String associationId = ec2.associateRouteTable(request).getAssociationId();
     }
     
     
@@ -173,26 +181,13 @@ public class AwsRouteTableMgntApiService {
      * @title : replaceAwsRouteTableAssociatedWithSubnetFromAws
      * @return : String
      ***************************************************/
-    public String replaceAwsRouteTableAssociatedWithSubnetFromAws(IaasAccountMgntVO vo, String regionName, AwsRouteTableMgntDTO dto){
+    /*public String replaceAwsRouteTableAssociatedWithSubnetFromAws(IaasAccountMgntVO vo, String regionName, AwsRouteTableMgntDTO dto){
     	AmazonEC2Client ec2 =  getAmazonEC2Client(vo, regionName);
     	String associationId = dto.getAssociationId();
     	ReplaceRouteTableAssociationRequest request = new ReplaceRouteTableAssociationRequest().withAssociationId(associationId);
     	String newAssociationId = ec2.replaceRouteTableAssociation(request).getNewAssociationId().toString();
     	return newAssociationId;
-    }
-    
-    /***************************************************
-     * @project : AWS 인프라 관리 대시보드
-     * @description : AWS Delete Route Table 실제 API 호출
-     * @title : deleteAwsRouteTableFromAws
-     * @return : void
-     ***************************************************/
-    public void deleteAwsRouteTableFromAws (IaasAccountMgntVO vo, String regionName, AwsRouteTableMgntDTO dto){
-		AmazonEC2Client ec2 =  getAmazonEC2Client(vo, regionName);
-		String routeTableId = dto.getRouteTableId();
-		DeleteRouteTableRequest request = new DeleteRouteTableRequest().withRouteTableId(routeTableId);
-		ec2.deleteRouteTable(request);
-    }
+    }*/
     
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
@@ -228,7 +223,6 @@ public class AwsRouteTableMgntApiService {
     public List<Address> getAwsAddressListApiFromAws(IaasAccountMgntVO vo, String regionName) {
         AmazonEC2Client ec2 =  getAmazonEC2Client(vo, regionName);
         List<Address> addresses = ec2.describeAddresses().getAddresses();
-        //addresses.get(0).getAssociationId();
         return addresses;
     }
     

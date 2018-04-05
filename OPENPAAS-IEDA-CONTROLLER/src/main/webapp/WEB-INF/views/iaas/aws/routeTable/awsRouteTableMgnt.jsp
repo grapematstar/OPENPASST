@@ -14,7 +14,6 @@
 <script>
 var text_required_msg='<spring:message code="common.text.vaildate.required.message"/>';//을(를) 입력하세요.
 var detail_lock_msg='<spring:message code="common.search.detaildata.lock"/>';//상세 조회 중 입니다.
-var detail_rg_lock_msg='<spring:message code="common.search.detaildata.lock"/>';//상세 조회 중 입니다.
 var text_cidr_msg='<spring:message code="common.text.validate.cidr.message"/>';//CIDR 대역을 확인 하세요.
 var text_injection_msg='<spring:message code="common.text.validate.sqlInjection.message"/>';//입력하신 값은 입력하실 수 없습니다.
 var save_lock_msg = '<spring:message code="common.save.data.lock"/>';//등록 중 입니다.
@@ -51,7 +50,6 @@ $(function() {
                 $('#addRouteBtn').attr('disabled', false);
                 $('#subnetAssociationBtn').attr('disabled', false);
                 $('#deleteBtn').attr('disabled', false);
-                //$('#associateBtn').attr('disabled', false);
                 var region = $("select[name='region']").val();
                 var accountId =  $("select[name='accountId']").val();
                 var routeTableId = w2ui.aws_routeTableGrid.get(event.recid).routeTableId;
@@ -66,7 +64,6 @@ $(function() {
                 $('#addRouteBtn').attr('disabled', true);
                 $('#subnetAssociationBtn').attr('disabled', true);
                 $('#deleteBtn').attr('disabled', true);
-                //$('#associateBtn').attr('disabled', true);
                 w2ui['aws_routeGrid'].clear();
             }
         },
@@ -156,10 +153,7 @@ $(function() {
         }
     });
     
-   
-    
-    
- // 화면 하단 상세조회 목록 : association available subnets 목록
+ // 화면 하단 상세조회 목록 중: association 수정 가능한 subnets 목록
     $('#aws_avaliableSubnetsGrid').w2grid({
         name: 'aws_avaliableSubnetsGrid',
         method: 'GET',
@@ -211,51 +205,6 @@ $(function() {
         }
     });
     
-    //associate 추가 가능한 subnets list (pop-up)
-    /* $('#aws_avaliableAssociationsGrid').w2grid({
-         name: 'aws_avaliableAssociationsGrid',
-         method: 'GET',
-         msgAJAXerror : 'AWS 계정을 확인해주세요.',
-         header: '<b>Avaliable Subnets 목록</b>',
-         multiSelect: false,
-         show: {  
-                 selectColumn: false,
-                 footer: true},
-         style: 'text-align: center',
-         columns    : [
-                      {field: 'recid',     caption: 'recid',  hidden: true}
-                    , {field: 'accountId',     caption: 'accountId', hidden: true}
-                    , {field: 'check',     caption: 'Associated', size: '100px', editable:{ type:"checkbox" } }
-                    , {field: 'subnetId', caption: 'subnetId', size: '150px', style: 'text-align:center'}
-                    , {field: 'destinationIpv4CidrBlock', caption: 'IPv4 CIDR', size: '150px', style: 'text-align:center'}
-                    , {field: 'ipv6CidrBlock', caption: 'IPv6', size: '40px', style: 'text-align:center'}
-                    , {field: 'routeTableId',     caption: '현재 RouteTableId', size: '150px', style: 'text-align:center'}
-                    ],
-         onSelect: function(event) {
-             event.onComplete = function() {
-                  $("#associateSubnetToTableBtn").attr('disabled', false);
-                  var accountId = w2ui.aws_avaliableAssociationsGrid.get(event.recid).accountId;
-                  var subnetId = w2ui.aws_avaliableAssociationsGrid.get(event.recid).subnetId;
-                  var routeTableId = w2ui.aws_avaliableAssociationsGrid.get(event.recid).routeTableId;
-             }
-         },
-         onUnselect: function(event) {
-             event.onComplete = function() {
-                  $("#associateSubnetToTableBtn").attr('disabled', 'disabled');
-             }
-         },
-            onLoad:function(event){
-                $("#associateSubnetToTableBtn").attr('disabled', 'disabled');
-             if(event.xhr.status == 403){
-                 location.href = "/abuse";
-                 event.preventDefault();
-             }
-         }, onError:function(event){
-         }
-     });
-     */
-    
-    
     /*************************** *****************************
      * 설명 :  AWS Route Table Create 팝업 화면
      *********************************************************/
@@ -301,33 +250,6 @@ $(function() {
             }
         });
     }); 
-    
-    /*************************** *****************************
-     * 설명 :  AWS associate/ disassociate subnet edit 팝업 화면
-     *********************************************************/
-    /* $("#associateBtn").click(function(){
-        if($("#associateBtn").attr('disabled') == "disabled") return;
-       
-        var selected = w2ui['aws_routeTableGrid'].getSelection();
-        var record = w2ui['aws_routeTableGrid'].get(selected);
-        w2popup.open({
-            title   : "<b>AWS Add Association </b>",
-            width   : 500,
-            height  : 350,
-            modal   : true,
-            body    : $("#associatePopupDiv").html(),
-            buttons : $("#associatPopupBtnDiv").html(),
-            onOpen : function(event){
-                event.onComplete = function(){
-                    doSearchAvailableAssociationList(record);
-                     w2popup.unlock();
-                }                   
-            },onClose:function(event){
-                subnetsSetting();
-            }
-        });
-    });  */
-    
     
     /********************************************************
      * 설명 :subnet associate버튼 클릭
@@ -398,27 +320,7 @@ $(function() {
            });
        });
     
-    
 });
-
-
-/********************************************************
- * 설명 : 추가 그리드 및 폼 값 초기화
- *********************************************************/
-/* var config = {
-         layouti: {
-             name: 'layouti',
-             padding: 4,
-             panels: [
-                 { type: 'left', size: '480px', minSize: 300},
-                 { type: 'main', size: '450px',minSize: 300}
-             ]
-         },
-         }
-$(function () {
-    // initialization in memory
-    $().w2layout(config.layouti);
-}); */
 
 /********************************************************
  * 설명 : Route Table 목록 조회 Function
@@ -431,19 +333,16 @@ function doSearch() {
     doButtonStyle();
  }
 
-
 /********************************************************
  * 설명 : Route Table 해당 Route List 조회 Function 
  * 기능 : doSearchRouteDetail
  *********************************************************/
 function doSearchRouteDetail(accountId, routeTableId){
-    w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
+    w2utils.lock($("#layout_layout_panel_main"), detail_lock_msg, true);
     var region = $("select[name='region']").val();
     w2ui['aws_routeGrid'].load("<c:url value='/awsMgnt/routeTable/save/detail/route/'/>"+accountId+"/"+region+"/"+routeTableId);
     w2utils.unlock($("#layout_layout_panel_main"));
 }
-
-
 
 /********************************************************
  * 설명 : Route Table 해당 Subnet중 Associated Subnet List 조회 Function (화면 하단 Detail목록 ) 
@@ -455,46 +354,16 @@ function doSearchAssociatedSubnets(accountId, routeTableId, vpcId){
 }
  
  /********************************************************
-  * 설명 :  Route Table 해당 Associate 가능한 Subnet List 조회 AAA BBB CCC (화면 하단 Detail목록 ) 
+  * 설명 :  Route Table 해당 Association 수정 가능한 Subnet List 조회 (화면 하단 Detail목록 ) 
   * 기능 : doSearchAvailableList
   *********************************************************/
 function doSearchAvailableList(accountId, routeTableId, vpcId){
-     w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
+     w2utils.lock($("#layout_layout_panel_main"), detail_lock_msg, true);
      var region = $("select[name='region']").val();
      w2ui['aws_avaliableSubnetsGrid'].load("<c:url value='/awsMgnt/routeTable/list/avaliable/subnets/'/>"+accountId+"/"+region+"/"+routeTableId+"/"+vpcId);
-    //$('#aws_avaliableSubnetsGrid #grid_aws_avaliableSubnetsGrid_rec_top').css('height','25px'); 
      w2utils.unlock($("#layout_layout_panel_main"));
 }
  
-
-/********************************************************
- * 설명 :  Route Table 해당 Associate 가능한 Subnet List 조회 AAA BBB CCC (add association popup)
- * 기능 : doSearchAvailableSubnetList
- *********************************************************/
-function doSearchAvailableAssociationList(record){
-    w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
-    var region = $("select[name='region']").val();
-    var accountId =  $("select[name='accountId']").val();
-    var selected = w2ui['aws_routeTableGrid'].getSelection();
-    var record2 = w2ui['aws_routeTableGrid'].get(selected);
-    w2ui['aws_avaliableAssociationsGrid'].load("<c:url value='/awsMgnt/routeTable/list/avaliable/subnetAssoication/'/>"+record2.accountId+"/"+region+"/"+record2.routeTableId+"/"+record2.vpcId);
-    $('#aws_avaliableAssociationsGrid #grid_aws_avaliableAssociationsGrid_rec_top').css('height','25px'); 
-    w2utils.unlock($("#layout_layout_panel_main")); 
-}
- 
- /********************************************************
-  * 설명 : Route Table 해당 Associated Subnet List 조회 Function (POP UP - right panel ; main)
-  * 기능 : doSearchSubnetDetail
-  *********************************************************/
- /* function doSearchSubnetDetail(accountId, routeTableId, vpcId){
-     w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
-     var region = $("select[name='region']").val();
-     //show selected colum effects nth-child number show=6 hide=5
-     //var vpcId= document.querySelector("#aws_routeTableGrid .w2ui-selected td:nth-child(5) div").innerHTML; 
-     w2ui['aws_subnetGrid'].load("<c:url value='/awsMgnt/routeTable/list/detail/subnet/'/>"+accountId+"/"+region+"/"+routeTableId+"/"+vpcId);
-     w2utils.unlock($("#layout_layout_panel_main"));
- } */  
-
 /********************************************************
  * 설명 : Route Table 생성
  * 기능 : awsRouteTableCreate
@@ -507,25 +376,24 @@ function awsRouteTableCreate(){
             nameTag : $(".w2ui-msg-body input[name='nameTag']").val(),
             vpcId :$(".w2ui-msg-body select[name='vpcId']").val()
         }
-    
-$.ajax({
-    type : "POST",
-    url : "/awsMgnt/routeTable/save",
-    contentType : "application/json",
-    async : true,
-    data : JSON.stringify(routeTableInfo),
-    success : function(status) {
-        w2popup.unlock();
-        w2popup.close();    
-        initsetting();
-    },
-    error : function(request, status, error) {
-        w2popup.unlock();
-        initsetting();
-        var errorResult = JSON.parse(request.responseText);
-        w2alert(errorResult.message, "");
-    }
-  });
+	$.ajax({
+	    type : "POST",
+	    url : "/awsMgnt/routeTable/save",
+	    contentType : "application/json",
+	    async : true,
+	    data : JSON.stringify(routeTableInfo),
+	    success : function(status) {
+	        w2popup.unlock();
+	        w2popup.close();    
+	        initsetting();
+	    },
+	    error : function(request, status, error) {
+	        w2popup.unlock();
+	        initsetting();
+	        var errorResult = JSON.parse(request.responseText);
+	        w2alert(errorResult.message, "");
+	    }
+	  });
 }
 
 /********************************************************
@@ -541,8 +409,6 @@ function awsRouteCreate(){
     routeInfo = { 
             accountId : $("select[name='accountId']").val(),
             region :  $("select[name='region']").val(), 
-            //show selected colum config affects td nth childe number  show =3 hide =2
-            //routeTableId : document.querySelector("#aws_routeTableGrid .w2ui-selected td:nth-child(2) div").innerHTML,
             routeTableId : record.routeTableId,
             destinationIpv4CidrBlock : $(".w2ui-msg-body input[name='destinationIpv4CidrBlock']").val(),
             targetId : $(".w2ui-msg-body select[name='targetId']").val()
@@ -569,7 +435,7 @@ $.ajax({
 }
 
 /********************************************************
- * 설명 : AWS Route 삭제  버튼 function
+ * 설명 : AWS Route 삭제 버튼 컨폼 
  * Function : awsRouteDeleteBtn()
  *********************************************************/
  function awsRouteDeleteBtn(){
@@ -596,9 +462,8 @@ $.ajax({
      }
  }
 
-
 /********************************************************
- * 설명 : Route 삭제
+ * 설명 : Route 삭제 function
  * 기능 : awsRouteDelete
  *********************************************************/
 function awsRouteDelete(record){
@@ -609,26 +474,31 @@ function awsRouteDelete(record){
             accountId : $("select[name='accountId']").val(),
             region :  $("select[name='region']").val(), 
             routeTableId : record.routeTableId,
+            destinationIpv4CidrBlock : record.destinationIpv4CidrBlock,
             }
-$.ajax({
-    type : "DELETE",
-    url : "/awsMgnt/routeTable/route/delete",
-    contentType : "application/json",
-    async : true,
-    data : JSON.stringify(info),
-    success : function(status) {
-        w2utils.unlock($("#layout_layout_panel_main"));
-        w2popup.unlock();
-        w2popup.close();    
-        
-    },
-    error : function(request, status, error) {
-        w2utils.unlock($("#layout_layout_panel_main"));
-        w2popup.unlock();
-        var errorResult = JSON.parse(request.responseText);
-        w2alert(errorResult.message, "");
-    }
-  });
+    console.log(info.destinationIpv4CidrBlock+"TEST 99999999999999");
+	$.ajax({
+	    type : "DELETE",
+	    url : "/awsMgnt/routeTable/route/delete",
+	    contentType : "application/json",
+	    async : true,
+	    data : JSON.stringify(info),
+	    success : function(status) {
+	        w2utils.unlock($("#layout_layout_panel_main"));
+	        w2popup.unlock();
+	        w2popup.close();
+	        accountId = info.accountId;
+	        routeSetting();
+	        doSearch();
+	        
+	    },
+	    error : function(request, status, error) {
+	        w2utils.unlock($("#layout_layout_panel_main"));
+	        w2popup.unlock();
+	        var errorResult = JSON.parse(request.responseText);
+	        w2alert(errorResult.message, "");
+	    }
+	  });
 }
 
 /********************************************************
@@ -636,7 +506,7 @@ $.ajax({
  * 설명 : 기본  Azure VPC 목록 조회 기능
  *********************************************************/
 function setAwsVpcIdList(){
-     w2popup.lock(detail_lock_msg, true);
+    w2popup.lock(detail_lock_msg, true);
     var accountId = $("select[name='accountId']").val();
     var region = $("select[name='region']").val();
     $.ajax({
@@ -674,7 +544,7 @@ function setAwsVpcIdList(){
  * 설명 : 기본  Azure Target 목록 조회 기능
  *********************************************************/
 function setAwsTargetList(){
-     w2popup.lock(detail_lock_msg, true);
+    w2popup.lock(detail_lock_msg, true);
     var accountId = $("select[name='accountId']").val();
     var region = $("select[name='region']").val();
     var selected = w2ui['aws_routeTableGrid'].getSelection();
@@ -708,13 +578,12 @@ function setAwsTargetList(){
        });
 }
 
-
 /********************************************************
  * 기능 : setAwsSubnetIdList
  * 설명 : 기본  Azure Subnet 목록 조회 기능
  *********************************************************/
 function setAwsSubnetIdList(){
-     w2popup.lock(detail_lock_msg, true);
+    w2popup.lock(detail_lock_msg, true);
     var accountId = $("select[name='accountId']").val();
     var region = $("select[name='region']").val();
     $.ajax({
@@ -744,74 +613,77 @@ function setAwsSubnetIdList(){
            }
        });
 }
-
-/*************************** *****************************
- * 설명 :  AWS Subnet Association Edit 팝업 화면
- *********************************************************/
-/* function subnetAssociation() {
-    if($("#subnetAssociationBtn").attr('disabled') == "disabled") return;
-    var region = $("select[name='region']").val();
-    var accountId = $("select[name='accountId']").val();
-    var selected = w2ui['aws_routeTableGrid'].getSelection();
-    var record = w2ui['aws_routeTableGrid'].get(selected);
-    w2popup.open({
-        title   : "<b> Edit Subnet Association </b>",
-        width   : 1000,
-        height  : 550,
-        modal   : true,
-        body    : "<div id='subnetAssociationPopupDiv' style='position: absolute; width:99%; height:95%; margin:5px 0;'></div>",
-        buttons : $("#subnetAssociationPopupBtnDiv").html(),
-        onOpen : function(event){
-            event.onComplete = function(){
-                $('.w2ui-popup #subnetAssociationPopupDiv').w2render('layouti');
-                w2ui.layouti.content('left', $('#subnetAssocitaionAvaliablePopupDiv').html());
-                //w2ui['aws_subnetAssociationGrid'].load("<c:url value='/awsMgnt/routeTable/list/avaliable/subnet/'/>"+accountId+"/"+region+"/"+record.vpcId);
-                $('#aws_subnetAssociationGrid #grid_aws_subnetAssociationGrid_rec_top').css('height','25px');
+ 
+/********************************************************
+* 설명 : AWS Subnet Association(연결) function
+* Function : associateSubnetToRouteTable
+*********************************************************/
+function associateSubnetToRouteTable(){
+ w2popup.lock("연결 중", true);
+    var selected = w2ui['aws_avaliableSubnetsGrid'].getSelection();
+    if( selected == null ){
+        w2alert("선택된 정보가 없습니다.", "");
+        return;
+    }else{
+        var record = w2ui['aws_avaliableSubnetsGrid'].get(selected);
+    }
+    var selected2 = w2ui['aws_routeTableGrid'].getSelection();
+    if( selected2 == null ){
+        w2alert("선택된 정보가 없습니다.", "");
+        return;
+    }else{
+        var record2 = w2ui['aws_routeTableGrid'].get(selected2);
+    }
+    console.log(record.subnetId+"TEST000000"+record2.routeTableId+"TEST000000" );
+        var info = {
+                  accountId : $("select[name='accountId']").val(),
+                  region :  $("select[name='region']").val(), 
+                  subnetId: record.subnetId,
+                  routeTableId: record2.routeTableId,
+                }
+        $.ajax({
+        type: "POST",
+        url: "/awsMgnt/routeTable/list/subnet/associate",
+        contentType: "application/json",
+        async: true,
+        data: JSON.stringify(info),
+        success: function(status) {
+            w2popup.unlock();
+            w2popup.close();
+            accountId = info.accountId;
+            subnetsSetting();
+            doSearch();
             
-                w2ui['layouti'].content('main', $('#subnetAssociationsPopupDiv').html());
-                doSearchSubnetDetail(accountId, record.routeTableId, record.vpcId);
-                $('#aws_subnetGrid #grid_aws_subnetGrid_rec_top').css('height','25px'); 
-            }                   
-        },onClose:function(event){
-            //initsetting();
-            //doSearch();
+        },
+        error: function(request, status, error) {
+            w2popup.unlock();
+            var errorResult = JSON.parse(request.responseText);
+            w2alert(errorResult.message);
         }
     });
- }  */
- 
- 
-  
- 
-    /********************************************************
-   * 설명 : AWS Subnet Association(연결) function
-   * Function : associateSubnetToRouteTable
-   *********************************************************/
-    function associateSubnetToRouteTable(){
-	   w2popup.lock("연결 중", true);
-      var selected = w2ui['aws_avaliableSubnetsGrid'].getSelection();
+}
+   
+/********************************************************
+ * 설명 : AWS Subnet Disassociation (연결 해제) function
+ * Function : disassociateSubnetFromRouteTable
+*********************************************************/
+function disassociateSubnetFromRouteTable(){
+	  w2popup.lock("연결 해제 중", true);
+	  var selected = w2ui['aws_avaliableSubnetsGrid'].getSelection();
       if( selected == null ){
           w2alert("선택된 정보가 없습니다.", "");
           return;
       }else{
           var record = w2ui['aws_avaliableSubnetsGrid'].get(selected);
       }
-      var selected2 = w2ui['aws_routeTableGrid'].getSelection();
-      if( selected2 == null ){
-          w2alert("선택된 정보가 없습니다.", "");
-          return;
-      }else{
-          var record2 = w2ui['aws_routeTableGrid'].get(selected2);
-      }
-      console.log(record.subnetId+"TEST000000"+record2.routeTableId+"TEST000000" );
           var info = {
                     accountId : $("select[name='accountId']").val(),
                     region :  $("select[name='region']").val(), 
-                    subnetId: record.subnetId,
-                    routeTableId: record2.routeTableId,
+                    associationId: record.associationId,
                   }
           $.ajax({
-          type: "POST",
-          url: "/awsMgnt/routeTable/list/subnet/associate",
+          type: "DELETE",
+          url: "/awsMgnt/routeTable/list/subnet/disassociate",
           contentType: "application/json",
           async: true,
           data: JSON.stringify(info),
@@ -820,7 +692,8 @@ function setAwsSubnetIdList(){
               w2popup.close();
               accountId = info.accountId;
               subnetsSetting();
-              doSearch();;
+              doSearch();
+              
               
           },
           error: function(request, status, error) {
@@ -829,89 +702,48 @@ function setAwsSubnetIdList(){
               w2alert(errorResult.message);
           }
       });
-  }
+}
    
-   /********************************************************
-    * 설명 : AWS Subnet Disassociation (연결 해제) function
-    * Function : disassociateSubnetFromRouteTable
-    *********************************************************/
-     function disassociateSubnetFromRouteTable(){
-  	  w2popup.lock("연결 해제 중", true);
-  	  var selected = w2ui['aws_avaliableSubnetsGrid'].getSelection();
-        if( selected == null ){
-            w2alert("선택된 정보가 없습니다.", "");
-            return;
-        }else{
-            var record = w2ui['aws_avaliableSubnetsGrid'].get(selected);
+/********************************************************
+ * 설명 : AWS RouteTable 삭제 function
+ * Function : routeTableDelete
+*********************************************************/
+function routeTableDelete(){
+	 w2popup.lock("삭제 중", true);
+	 var selected = w2ui['aws_routeTableGrid'].getSelection();
+	    if( selected == 0 ){
+	        w2alert("선택된 정보가 없습니다.", "");
+	        return;
+	    }else{
+	        var record = w2ui['aws_routeTableGrid'].get(selected);
+	    }
+	        var info = {
+	                  accountId : $("select[name='accountId']").val(),
+	                  region :  $("select[name='region']").val(), 
+	                  routeTableId : record.routeTableId
+	                }
+	        $.ajax({
+	        type: "DELETE",
+	        url: "/awsMgnt/routeTable/delete",
+	        contentType: "application/json",
+	        async: true,
+	        data: JSON.stringify(info),
+	        success: function(status) {
+	            w2popup.unlock();
+	            w2popup.close();
+	            accountId = info.accountId;
+	            subnetsSetting();
+	            doSearch();
+	            
+	            
+	        },
+	        error: function(request, status, error) {
+	            w2popup.unlock();
+	            var errorResult = JSON.parse(request.responseText);
+	            w2alert(errorResult.message);
         }
-            var info = {
-                      accountId : $("select[name='accountId']").val(),
-                      region :  $("select[name='region']").val(), 
-                      associationId: record.associationId,
-                    }
-            $.ajax({
-            type: "DELETE",
-            url: "/awsMgnt/routeTable/list/subnet/disassociate",
-            contentType: "application/json",
-            async: true,
-            data: JSON.stringify(info),
-            success: function(status) {
-                w2popup.unlock();
-                w2popup.close();
-                accountId = info.accountId;
-                subnetsSetting();
-                doSearch();
-                
-                
-            },
-            error: function(request, status, error) {
-                w2popup.unlock();
-                var errorResult = JSON.parse(request.responseText);
-                w2alert(errorResult.message);
-            }
-        });
-    }
-   
-   /********************************************************
-    * 설명 : AWS RouteTable 삭제 function
-    * Function : routeTableDelete
-    *********************************************************/
-     function routeTableDelete(){
- 	  w2popup.lock("삭제 중", true);
- 	  var selected = w2ui['aws_routeTableGrid'].getSelection();
-       if( selected == 0 ){
-           w2alert("선택된 정보가 없습니다.", "");
-           return;
-       }else{
-           var record = w2ui['aws_routeTableGrid'].get(selected);
-       }
-           var info = {
-                     accountId : $("select[name='accountId']").val(),
-                     region :  $("select[name='region']").val(), 
-                     routeTableId : record.routeTableId
-                   }
-           $.ajax({
-           type: "DELETE",
-           url: "/awsMgnt/routeTable/delete",
-           contentType: "application/json",
-           async: true,
-           data: JSON.stringify(info),
-           success: function(status) {
-               w2popup.unlock();
-               w2popup.close();
-               accountId = info.accountId;
-               subnetsSetting();
-               doSearch();
-               
-               
-           },
-           error: function(request, status, error) {
-               w2popup.unlock();
-               var errorResult = JSON.parse(request.responseText);
-               w2alert(errorResult.message);
-           }
-       });
-   }
+    });
+}
     
  
 /********************************************************
@@ -928,10 +760,24 @@ function initsetting(){
   
 }
 
+/********************************************************
+ * 기능 : subnetsSetting
+ * 설명 : 기본 설정값 초기화
+ *********************************************************/
 function subnetsSetting(){
     w2ui['aws_associatedSubnetsGrid'].clear();
     w2ui['aws_avaliableSubnetsGrid'].clear();
     
+}
+
+/********************************************************
+ * 기능 : routeSetting
+ * 설명 : 기본 설정값 초기화
+ *********************************************************/
+function routeSetting(){
+	w2ui['aws_routeGrid'].clear();
+    w2ui['aws_associatedSubnetsGrid'].clear();
+    w2ui['aws_avaliableSubnetsGrid'].clear();
 }
 
 /********************************************************
@@ -943,11 +789,9 @@ function doButtonStyle() {
     $('#deleteRouteBtn').attr('disabled', true);
     $('#deleteBtn').attr('disabled', true);
     $('#subnetAssociationBtn').attr('disabled', true);
-    //$('#associateBtn').attr('disabled', true);
     $('#associateSubnetToBtn').attr('disabled', true);
     $('#disassociateSubnetFromBtn').attr('disabled', true);
 }
-
 
 /********************************************************
  * 기능 : clearMainPage
@@ -959,7 +803,6 @@ function clearMainPage() {
     $().w2destroy('aws_associatedSubnetsGrid');
     $().w2destroy('aws_avaliableSubnetsGrid');
     doSearch();
-    
 }
 
 /********************************************************
@@ -1129,15 +972,6 @@ td {
      <button class="btn" id="popClose"  onclick="w2popup.close();">취소</button>
 </div>
 
-<!-- AWS Add Subnet Association PopupDiv Subnet 팝업 Div AAABBBCCC-->
-<!-- <div id="associatePopupDiv" hidden="true">
-    <div id="aws_avaliableAssociationsGrid" style="width:470px; height:250px"></div>
-</div>
-<div id="associatePopupBtnDiv" hidden="true">
-     <button class="btn btn-primary" id="addAssociationBtn" onclick="associateSubnetToTable();">확인</button>
-     <button class="btn" id="popClose"  onclick="w2popup.close();">취소</button>
-</div> -->
-
 <!-- AWS Add Subnet Association 팝업 Div -->
 <div id="subnetAddPopupDiv" hidden="true">
     <div style="margin-top:50px; margin-left:10px;">이 Subnet을 이 라우트테이블에 Explictily Associate ( 연결 ) 하시겠습니까? </div>
@@ -1156,26 +990,7 @@ td {
      <button class="btn" id="popClose"  onclick="w2popup.close();">취소</button>
 </div>
 
-<!-- AWS Association 가능 Subnets 목록 팝업 Div-->
-<!-- <div id="subnetAssocitaionAvaliablePopupDiv" hidden="true">
-<label> Association 가능한 Subnet 목록</label>
-        <div class="showSubnets" id="aws_subnetAssociationGrid" style="width:470px; height:350px"></div>
-     <label style="margin-top:10px; margin-left:100px;">연결 할 Subnet을 선택하고 연결 버튼을 누르세요.</label>
-     <span id="associateSubnetBtn" onclick="awsAssociateSubnet();" class="btn btn-primary" style="width:90px; margin-left:200px;" >연결</span>
-</div>  -->
-
-<!-- AWS Explicitly Associated Subnet 목록 팝업 Div-->
-<!-- <div id="subnetAssociationsPopupDiv" hidden="true">
-    <label>Explicitly Associated Subnet 목록</label>
-    <div class="showSubnets" id="aws_subnetGrid" style="width:500px; height:350px"></div>
-    <label style="margin-top:10px; margin-left:100px;">해제 할 Subnet을 선택하고 해제 버튼을 누르세요.</label>
-    <span id="disassociateBtn" onclick="awsDisassociateSubnet();" class="btn btn-danger" style="width:90px; margin-left:200px;" >해제</span>
-</div> 
-<div id="subnetAssociationPopupBtnDiv" hidden="true">
-    <button id="popClose" class="btn btn-info" style="width:90px"  onclick="w2popup.close();">확인</button>
-</div> -->
-
-<!-- AWS  Disassociate Subnet 팝업 Div -->
+<!-- AWS  라우트 테이블 삭제 팝업 Div -->
 <div id="routeTableDeletePopupDiv" hidden="true">
     <div style="margin-top:50px; margin-left:10px;"> 이 라우트 테이블을 삭제 하시겠습니까?</div>
 </div>
@@ -1183,6 +998,7 @@ td {
      <button class="btn btn-primary" id="" onclick="routeTableDelete();">확인</button>
      <button class="btn" id="popClose"  onclick="w2popup.close();">취소</button>
 </div>
+
 
 <!-- AWS 계정 선택 Div-->
 <div id="registAccountPopupDiv"  hidden="true">
