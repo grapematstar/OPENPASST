@@ -18,6 +18,7 @@ public class AwsRouteTableMgntVO {
     private String associationId;
     private String requestId;
     private String propagationId;
+    private boolean check;
     private boolean mainYN;
     private boolean propagatedYN;
     private String status;
@@ -105,6 +106,12 @@ public class AwsRouteTableMgntVO {
 	}
 	public void setPropagationId(String propagationId) {
 		this.propagationId = propagationId;
+	}
+	public boolean isCheck() {
+		return check;
+	}
+	public void setCheck(boolean check) {
+		this.check = check;
 	}
 	public boolean isMainYN() {
 		return mainYN;

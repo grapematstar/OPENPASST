@@ -291,6 +291,8 @@ function setAwsEipAllocationIdList(){
                            }
                            result += "</option>"; 
                    }
+               }else{
+            	   //aaaaaaaaaaaaaaaa
                }
                
                $('#eipInfoDiv #eipInfo').html(result);
