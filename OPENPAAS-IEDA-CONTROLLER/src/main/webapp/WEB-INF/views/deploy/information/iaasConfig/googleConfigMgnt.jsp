@@ -7,6 +7,7 @@
  * 수정일      작성자      내용     
  * -----------------------------------------------------------------
  * 2017.12    배병욱    Google Public-Key 입력 삭제
+ 
  * =================================================================
  */ 
 %>
@@ -328,10 +329,12 @@ function setGoogleDetailInfo(id){
                  $(".w2ui-msg-body input[name='id']").val(data.id);
                  $(".w2ui-msg-body input[name='accountId']").val(data.accountId);
                  $(".w2ui-msg-body input[name='googleTagNames']").val(data.commonSecurityGroup);
+                 $(".w2ui-msg-body input[name='googlePublicKey']").val(data.googlePublicKey);
                  configInfo = { 
                          accountId : data.accountId,
                          commonKeypairPath : data.commonKeypairPath,
-                         commonAvailabilityZone : data.commonAvailabilityZone
+                         commonAvailabilityZone : data.commonAvailabilityZone,
+                         googlePublicKey : data.googlePublicKey
                  }
              }
              getGoogleAccountName();
@@ -389,6 +392,7 @@ function saveGoogleConfigInfo(){
              ,commonKeypairPath : $(".w2ui-msg-body input[name='commonKeypairPath']").val()
              ,commonAvailabilityZone : $(".w2ui-msg-body select[name='commonAvailabilityZone']").val()
              ,commonSecurityGroup : $(".w2ui-msg-body input[name='googleTagNames']").val()
+             ,googlePublicKey: $(".w2ui-msg-body input[name='googlePublicKey']").val()
      }
      $.ajax({
          type : "PUT",
@@ -559,6 +563,12 @@ $( window ).resize(function() {
                     </div>
                 </div>
                 <div class="w2ui-field">
+                    <label style="width:36%; text-align: left; padding-left: 20px;">Public Key</label>
+                    <div>
+                        <input name="googlePublicKey" type="text" style="width: 300px; height: 60px;" placeholder="ex)ssh-rsa AEV...."/>
+                    </div>
+                </div>
+                <div class="w2ui-field">
                     <label style="width:36%;text-align: left; padding-left: 20px;">Private Key File</label>
                     <div>
                         <span onclick="changeKeyPathType('file');" style="width:30%;"><label><input type="radio" name="keyPathType" value="file" />&nbsp;파일업로드</label></span>
@@ -615,6 +625,12 @@ $(function() {
                 }, sqlInjection :   function(){
                     return $(".w2ui-msg-body input[name='googleTagNames']").val();
                 }
+            }, googlePublicKey: {
+                required: function(){
+                    return checkEmpty( $(".w2ui-msg-body input[name='googlePublicKey']").val());
+                }, sqlInjection : function(){
+                    return $(".w2ui-msg-body input[name='googlePublicKey']").val();
+                }
             }, commonAvailabilityZone: { 
                 required: function(){
                     return checkEmpty( $(".w2ui-msg-body select[name='commonAvailabilityZone']").val() );
@@ -645,6 +661,9 @@ $(function() {
             }, googleTagNames: {
                 required:  "태그 명"+text_required_msg
                 ,sqlInjection : text_injection_msg
+            }, googlePublicKey: {
+                required:  "Public 키" + text_required_msg
+                , sqlInjection : text_injection_msg
             }, commonAvailabilityZone: {
                 required:  "영역"+select_required_msg
             }, keyPathList: { 

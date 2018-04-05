@@ -5,6 +5,7 @@
  * 수정일         작성자             내용     
  * ------------------------------------------------------------------
  * 2016-08       지향은      설치관리자 설정 화면 개선
+ * 2018-04       배병욱      설치관리자 BOSH_CLI_V2 적용 및 버그 수정
  * =================================================================
  */ 
 %>
@@ -13,6 +14,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix = "spring" uri = "http://www.springframework.org/tags" %>
 <script type="text/javascript">
+var credsKeyPathFileList = "";
 var text_required_msg='<spring:message code="common.text.vaildate.required.message"/>';//을(를) 입력하세요.
 var text_injection_msg='<spring:message code="common.text.validate.sqlInjection.message"/>';//입력하신 값은 입력하실 수 없습니다.
 var save_lock_msg='<spring:message code="common.save.data.lock"/>';//등록 중 입니다.
@@ -81,6 +83,7 @@ $(function() {
             location.href = "/abuse";
             event.preventDefault();
         }
+        getCredsKeyPathFileList();
     },
     onError: function(event) {
         
@@ -139,10 +142,13 @@ $("#addSetting").click(function(){
     w2popup.open({
         title   : "<b>설치관리자 설정추가</b>",
         width   : 600,
-        height  : 350,
+        height  : 380,
         modal   : true,
         body    : $("#regPopupDiv").html(),
         buttons : $("#regPopupBtnDiv").html(),
+        onOpen : function(event){
+            getCredsKeyPathFileList();
+        },
         onClose:function(event){
             doSearch();
         }
@@ -266,7 +272,7 @@ function registDirectorConfig(){
             directorPort : parseInt($(".w2ui-msg-body input[name='port']").val()),
             userId : $(".w2ui-msg-body input[name='user']").val(),
             userPassword : $(".w2ui-msg-body input[name='pwd']").val(),
-            credentialFile : $(".w2ui-msg-body input[name='credsKeyFileName']").val()
+            credentialFile : $(".w2ui-msg-body input[name=credsKeyPath]").val()
         }),
         success : function(data, status) {
             
@@ -308,7 +314,6 @@ function updateDirectorConfigPopup(record) {
                         $(".w2ui-msg-body input[name='user']").val(record.userId);
                         $(".w2ui-msg-body input[name='pwd']").val("");
                         $(".w2ui-msg-body input[name='ip']").val();
-                        $(".w2ui-msg-body input[name='credsKeyFileName']").attr("disabled", true);
                     }
                 },onClose : function(event){
                     w2ui['config_directorGrid'].reset();
@@ -392,6 +397,64 @@ function clearMainPage() {
 function setCredentialKeyPath(fileInput){
     var file = fileInput.files;
     $(".w2ui-msg-body #credsKeyFileName").val(file[0].name);
+    $(".w2ui-msg-body input[name=credsKeyPath]").val(file[0].name);
+}
+
+function setCredentialKeyPathList(fileList){
+    $(".w2ui-msg-body input[name=credsKeyPath]").val(fileList.value);
+}
+/****************************************************
+ * 기능 : getCredsKeyPathFileList
+ * 설명 : credential 키 파일 정보 조회
+ *****************************************************/
+function getCredsKeyPathFileList(){
+    $.ajax({
+        type : "GET",
+        url : "/common/deploy/creds/list",
+        contentType : "application/json",
+        async : true,
+        success : function(data, status) {
+            credsKeyPathFileList = data;
+            $('.w2ui-msg-body input:radio[name=credskeyPathType]:input[value=list]').attr("checked", true);  
+            credsChangeKeyPathType("list");
+        },
+        error : function( e, status ) {
+            w2alert("Credential KeyPath File 목록을 가져오는데 실패하였습니다.", "BOOTSTRAP 설치");
+        }
+    });
+}
+
+/******************************************************************
+ * 기능 : credsChangeKeyPathType
+ * 설명 : Credential key file 선택
+ ***************************************************************** */
+function credsChangeKeyPathType(type){
+     $(".w2ui-msg-body input[name=credsKeyPath]").val("");
+     $(".w2ui-msg-body input[name=credsKeyFileName]").val("");
+     //목록에서 선택
+     if(type == "list") {
+         $('.w2ui-msg-body select[name=credsKeyPathList]').css("borderColor", "#bbb")
+         credsChangeKeyPathStyle("#credsKeyPathListDiv", "#credsKeyPathFileDiv");
+         
+         var options = "<option value=''>Credential 파일을 선택하세요.</option>";
+         for( var i=0; i<credsKeyPathFileList.length; i++ ){
+             options += "<option value='"+credsKeyPathFileList[i]+"'>"+credsKeyPathFileList[i]+"</option>";
+         }
+         $('.w2ui-msg-body select[name=credsKeyPathList]').html(options);
+     }else{
+         //파일업로드
+         $('.w2ui-msg-body input[name=keyPathFileName]').css("borderColor", "#bbb")
+         credsChangeKeyPathStyle("#credsKeyPathFileDiv", "#credsKeyPathListDiv");
+     }
+}
+/********************************************************
+ * 기능 : credsChangeKeyPathStyle
+ * 설명 : Credential File 입력 스타일 변경
+ *********************************************************/
+function credsChangeKeyPathStyle( showDiv, hideDiv ){
+     $(".w2ui-msg-body "+ hideDiv).hide();
+     $(".w2ui-msg-body "+ hideDiv +" p").remove();
+     $(".w2ui-msg-body "+ showDiv).show();
 }
 </script>
 
@@ -432,7 +495,7 @@ function setCredentialKeyPath(fileInput){
         <div class="w2ui-page page-0">
             <div class="panel panel-info" style="margin-top:5px;">
                 <div class="panel-heading"><b>설치관리자 정보</b></div>
-                <div class="panel-body" style="overflow-y:auto;height:200px;">
+                <div class="panel-body" style="overflow-y:auto;height:240px;">
                     <div class="w2ui-field">
                         <label style="width:30%;text-align: left;padding-left: 20px;">디렉터 IP</label>
                         <div style="width: 70%;">
@@ -458,14 +521,26 @@ function setCredentialKeyPath(fileInput){
                         </div>
                     </div>
                     <div class="w2ui-field">
-                        <label style="width:30%;text-align: left; padding-left: 20px;">Credential File 등록</label>
-                        <div id="credsKeyPathDiv" style="width: 65%; left: 120px;">
-                            <div id="credsKeyPathFileDiv">
-                                <input type="text" id="credsKeyFileName" name="credsKeyFileName" style="width: 250px;" readonly onclick="openBrowse();" placeholder="설치된 Credential File을 선택하세요"/>
+                        <label style="width:30%;text-align: left; padding-left: 20px;">Credential File 정보</label>
+                        <div>
+                            <span onclick="credsChangeKeyPathType('file');" style="width:30%;"><label><input type="radio" name="credskeyPathType" value="file" />&nbsp;파일업로드</label></span>
+                            &nbsp;&nbsp;
+                            <span onclick="credsChangeKeyPathType('list');" style="width:30%;"><label><input type="radio" name="credskeyPathType" value="list" />&nbsp;목록에서 선택</label></span>
+                        </div>
+                    </div>
+                    <div class="w2ui-field">
+                        <!-- <label style="width:36%; text-align: left; padding-left: 20px;" class="control-label"></label> -->
+                        <div id="credsKeyPathDiv" style="padding-left: 30%">
+                            <div id="credsKeyPathFileDiv" hidden="true">
+                                <input type="text" id="credsKeyFileName" name="credsKeyFileName" style="width: 250px;" readonly onclick="openBrowse();" placeholder="Credential File을 선택하세요"/>
                                 <a href="#" id="browse" onclick="openBrowse();"><span id="BrowseBtn">Browse</span></a>
                                 <input type="file" name="keyPathFile" onchange="setCredentialKeyPath(this);" style="display:none"/>
                             </div>
+                            <div id="credsKeyPathListDiv">
+                                <select name="credsKeyPathList" id="credsKeyPathList" style="width: 250px;" onchange="setCredentialKeyPathList(this)"></select>
+                            </div>
                         </div>
+                        <input name="credsKeyPath" type="hidden" />
                     </div>
                 </div>
             </div>
@@ -525,9 +600,23 @@ $(function() {
                 }
             },  credsKeyFileName: {
                 required: function(){
-                    return checkEmpty( $(".w2ui-msg-body input[name='credsKeyFileName']").val() );
+                    if( $(".w2ui-msg-body input:radio[name='credskeyPathType']:checked").val() == 'file' ){
+                        return checkEmpty( $(".w2ui-msg-body input[name='credsKeyFileName']").val() );
+                    }else{
+                        return false;
+                    }
                 }, sqlInjection :   function(){
                     return $(".w2ui-msg-body input[name='credsKeyFileName']").val();
+                }
+            },  credsKeyPathList: {
+                required: function(){
+                    if( $(".w2ui-msg-body input:radio[name='credskeyPathType']:checked").val() == 'list' ){
+                        return checkEmpty( $(".w2ui-msg-body #credsKeyPathList").val() );
+                    }else{
+                        return false;
+                    }
+                }, sqlInjection :   function(){
+                    return $(".w2ui-msg-body select[name='credsKeyPathList']").val();
                 }
             }
         }, messages: {
@@ -545,6 +634,9 @@ $(function() {
                 required:  "비밀번호"+text_required_msg
                 ,sqlInjection : text_injection_msg
             }, credsKeyFileName: {
+                required:  "Key 값"+text_required_msg
+                ,sqlInjection : text_injection_msg
+            }, credsKeyPathList: {
                 required:  "Key 값"+text_required_msg
                 ,sqlInjection : text_injection_msg
             }

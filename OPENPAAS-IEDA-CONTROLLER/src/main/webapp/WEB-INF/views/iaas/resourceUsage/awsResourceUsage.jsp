@@ -164,6 +164,10 @@ $( window ).resize(function() {
                     <sec:authorize access="hasAuthority('OPENSTACK_RESOURCE_USAGE_MENU')">
                         <li><a href="javascript:goPage('<c:url value="/iaasMgnt/resourceUsage/openstack"/>', 'OPENSTACK 리소스 사용량');">Openstack</a></li>
                     </sec:authorize>
+                    <sec:authorize access="hasAuthority('AZURE_RESOURCE_USAGE_MENU')">
+                        <li><a href="javascript:goPage('<c:url value="/iaasMgnt/resourceUsage/azure"/>', 'Azure 리소스 사용량');">Azure</a></li>
+                    </sec:authorize>
+                    
                 </ul>
             </div>
             <!-- AWS Region -->

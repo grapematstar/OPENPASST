@@ -3,22 +3,18 @@ name: bosh
 
 releases:
 - name: bosh
-  version: [boshReleaseVersion]
   url: file:///[boshRelease]
-- name: bosh-google-cpi
-  version: [boshCpiReleaseVersion]
+- name: bosh-openstack-cpi
   url: file:///[boshCpiRelease]
-
+- name: [paastaMonitoringReleaseName]
+  url: file:///[paastaMonitoringRelease]
 resource_pools:
 - name: vms
   network: public
   stemcell: 
     url: file:///[stemcell]
   cloud_properties: 
-    zone: [availabilityZone]
-    machine_type: [cloudInstanceType]
-    root_disk_size_gb: [rootDiskSizeGb]
-    root_disk_type: [rootDiskType]
+    instance_type: [cloudInstanceType]
   env:
     bosh:
       password: [boshPassword]
@@ -26,7 +22,6 @@ resource_pools:
 disk_pools:
 - name: disks
   disk_size: 40960
-  cloud_properties: {type: [rootDiskType]}
 
 networks:
 - name: private
@@ -36,11 +31,7 @@ networks:
     gateway: [subnetGateway]
     static: [[privateStaticIp]]
     dns: [[subnetDns]]
-    cloud_properties: 
-      network_name: [networkName]
-      subnetwork_name: [subnetId]
-      ephemeral_external_ip: false
-      tags: [defaultSecurityGroups]
+    cloud_properties: {net_id: [subnetId]}
 - name: public
   type: vip
 
@@ -54,7 +45,10 @@ instance_groups:
   - {name: director, release: bosh}
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
-  - {name: google_cpi, release: bosh-google-cpi}
+  - {name: openstack_cpi, release: bosh-openstack-cpi}
+  - {name: metrics_agent, release: [paastaMonitoringReleaseName]}
+  - {name: logstash, release: [paastaMonitoringReleaseName]}
+  
   resource_pool: vms
   persistent_disk_pool: disks
   networks:
@@ -126,15 +120,28 @@ instance_groups:
             password: admin
           - name: hm
             password: hm-password
-      cpi_job: google_cpi
+      cpi_job: openstack_cpi
     hm:
       director_account:
         user: hm
         password: hm-password
         ca_cert: ((director_ssl.ca))
       resurrector_enabled: true
+    logstash:
+      ingestor_bosh:
+        host: [paastaMonitoringIp]
+        port: 3001
+      input:
+        file_path: /var/vcap/store/director/tasks/**/debug
+    metrics_agent:
+      influxdb:
+        database: bosh_metric_db
+        measurement: bosh_metrics
+        processMeasurement: bosh_process_metrics
+        url: [influxdbIp]
+    
     ntp: &ntp
-    - [169.254.169.254]
+    - [ntp]
     agent:
       mbus: nats://nats:nats-password@[privateStaticIp]:4222
     registry:
@@ -146,16 +153,18 @@ instance_groups:
         password: postgres-password
         database: bosh
         adapter: postgres
-      http: 
-        user: registry
-        password: registry-password
-        port: 25777
       username: registry
       password: registry-password
       port: 25777
-    google: &cpi_conf
-      project: [projectId]
-      json_key: [jsonKey]
+      endpoint: http://registry:registry-password@[privateStaticIp]:25777
+    openstack: &openstack
+      auth_url: [accessEndpoint]
+      username: [accessUser]
+      api_key: [accessSecret]
+      tenant: [tenant]
+      default_key_name: [privateKeyName]
+      default_security_groups: [[defaultSecurityGroups]]
+      human_readable_vm_names: true
 
 cloud_provider:
   mbus: https://mbus:mbus-password@[publicStaticIp]:6868
@@ -163,10 +172,15 @@ cloud_provider:
     agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
-    google: *cpi_conf
+    openstack: *openstack
   template:
-    name: google_cpi
-    release: bosh-google-cpi
+    name: openstack_cpi
+    release: bosh-openstack-cpi
+  ssh_tunnel:
+    host: [publicStaticIp]
+    port: 22
+    user: vcap
+    private_key: [privateKeyPath]
 
 variables:
 - name: default_ca

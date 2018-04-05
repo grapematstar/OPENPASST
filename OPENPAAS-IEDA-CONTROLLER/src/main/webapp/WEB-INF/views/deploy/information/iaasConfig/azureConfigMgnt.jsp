@@ -46,7 +46,7 @@ $(function() {
            , {field: 'accountName', caption: '계정 별칭', size: '10%', style: 'text-align:left'}
            , {field: 'commonSecurityGroup', caption: '보안 그룹', size: '10%', style: 'text-align:center'}  
            , {field: 'azureResourceGroup', caption: '리소스 그룹', size: '10%', style: 'text-align:center'}
-   		   , {field: 'azureStorageAccountName', caption: '스토리지 계정 명', size: '10%', style: 'text-align:center'}  
+           , {field: 'azureStorageAccountName', caption: '스토리지 계정 명', size: '10%', style: 'text-align:center'}  
            , {field: 'createUserId', caption: '생성자', hidden:true}
            , {field: 'createDate', caption: '생성 일자', size: '5%', style: 'text-align:right'}
            , {field: 'updateDate', caption: '수정 일자', size: '5%', style: 'text-align:right'}
@@ -68,13 +68,13 @@ $(function() {
     });
      doSearch(); 
 
-/*************************** *****************************
+/*********************************************************
  * 설명 :  azure 등록 팝업 화면
  *********************************************************/
 $("#registConfigBtn").click(function(){
     w2popup.open({
         title   : "<b>Azure 환경 설정 등록</b>",
-        width   : 650,
+        width   : 680,
         height  : 550,
         modal   : true,
         body    : $("#registPopupDiv").html(),
@@ -99,8 +99,8 @@ $("#updateConfigBtn").click(function(){
     if( $("#updateConfigBtn").attr("disabled") == "disabled" ) return;
     w2popup.open({
         title   : "<b>Azure 환경 설정 수정</b>",
-        width   : 650,
-        height  : 485,
+        width   : 680,
+        height  : 550,
         modal   : true,
         body    : $("#registPopupDiv").html(),
         buttons : $("#registPopupBtnDiv").html(),
@@ -248,7 +248,7 @@ function getAzureSecurityGroupList(){
         url : "/common/azure/SecurityGroup/list",
         contentType : "application/json",
         success : function(data, status) {
-        	setAzureSecurityGroupList(data);
+            setAzureSecurityGroupList(data);
            
         },
         error : function(request, status, error) {
@@ -416,7 +416,6 @@ function saveAzureConfigInfo(){
             //,azurePrivateKey : $(".w2ui-msg-body input[name='azurePrivateKey']").val()
             ,commonKeypairPath : $(".w2ui-msg-body input[name='commonKeypairPath']").val()
     }
-    console.log(configInfo+"TESTETETETETETETETETE");
     $.ajax({
         type : "PUT",
         url : "/info/iaasConfig/azure/save",
@@ -587,7 +586,7 @@ $( window ).resize(function() {
                 <div class="w2ui-field">
                     <label style="width:36%;text-align: left; padding-left: 20px;">Azure SSH Public Key</label>
                     <div>
-                        <input name="azureSshPublicKey" type="text" maxlength="100" style="width: 300px; height:50px;" placeholder="Azure SSH Public Key를 입력하세요."/>
+                        <input name="azureSshPublicKey" type="text" maxlength="1000" style="width: 300px; height:50px;" placeholder="Azure SSH Public Key를 입력하세요."/>
                     </div>
                 </div>
                 <!-- <div class="w2ui-field">
@@ -606,7 +605,7 @@ $( window ).resize(function() {
                 </div>
                 <div class="w2ui-field">
                   <label style="text-align: left;font-size:11px;" class="control-label"></label>
-                  <div id="keyPathDiv" style="position:relative; width: 65%; left:220px;">
+                  <div id="keyPathDiv" style="position:relative; width: 65%; left:231px;">
                         <div id="keyPathFileDiv" hidden="true">
                             <input type="text" id="keyPathFileName" name="keyPathFileName" style="width:55%;" readonly  onClick="openBrowse();" placeholder="업로드할 Key 파일을 선택하세요."/>
                             <a href="#" id="browse" onClick="openBrowse();"><span id="BrowseBtn">Browse</span></a>
@@ -722,11 +721,11 @@ $(function() {
                 setInvalidHandlerStyle(errors, validator);
             }
         }, submitHandler: function (form) {
-        	 if(  $(".w2ui-msg-body input:radio[name='keyPathType']:checked").val() == 'file' ){
+             if(  $(".w2ui-msg-body input:radio[name='keyPathType']:checked").val() == 'file' ){
                  uploadPrivateKey();
              }else{
                 saveAzureConfigInfo();
-                }
+             }
         }
     });
 });

@@ -544,7 +544,8 @@ function deletePop(record){
         async : true,
         data : JSON.stringify(requestParameter),
         success : function(data, status) {
-            if( downloadClient != "" || downloadClient != null ){
+            if( downloadClient != ""){
+            	console.log(downloadClient);
                 downloadClient.disconnect();
                 downloadClient = "";
             }

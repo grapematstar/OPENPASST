@@ -40,7 +40,7 @@ INSERT INTO ieda_common_code VALUES ( '333', 'GARDEN_LINUX', '2006', 'garden-lin
 INSERT INTO ieda_common_code VALUES ( '334', 'GARDEN-RUNC', '2007', 'garden-runc 릴리즈' , 'garden-runc 릴리즈', '6', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '335', 'ETCD', '2008', 'etcd-release 릴리즈' , 'etcd-release 릴리즈', '7', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '336', 'CFLINUXFS2', '2009', 'cf-linuxfs2 릴리즈' , 'cf-linuxfs2 릴리즈', '9', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
-INSERT INTO ieda_common_code VALUES ( '337', 'AGENT', '2010', 'agent 릴리즈' , 'agent 릴리즈', '10', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
+INSERT INTO ieda_common_code VALUES ( '337', 'BOSH_MONITORING_AGENT', '2010', 'agent 릴리즈' , 'agent 릴리즈', '10', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '338', 'ETC', '2011', '기타 릴리즈' , '기타 릴리즈', '11', null, null, 2000, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '404', 'ROLE', '100000', '메뉴 별 권한' , '메뉴 별 권한', '0', null, null, null, 'SYSTEM', now(), 'SYSTEM', now() );
 INSERT INTO ieda_common_code VALUES ( '405', 'DASHBOARD', '101000', 'DASHBOARD 조회' , '/main/dashboard/**', '0', null, null, 100000, 'SYSTEM', now(), 'SYSTEM', now() );
@@ -901,10 +901,10 @@ INSERT INTO ieda_role_detail VALUES ( '190', '1000', '182540', 'SYSTEM', now(), 
 
 #manifest tamplate info
 INSERT INTO ieda_manifest_template VALUES (1, 'BOOTSTRAP','openstack','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (2, 'BOOTSTRAP','aws','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (3, 'BOOTSTRAP','google','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (4, 'BOOTSTRAP','vsphere','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
-INSERT INTO ieda_manifest_template VALUES (5, 'BOOTSTRAP','azure','bosh','264.7','262','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (2, 'BOOTSTRAP','aws','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (3, 'BOOTSTRAP','google','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (4, 'BOOTSTRAP','vsphere','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
+INSERT INTO ieda_manifest_template VALUES (5, 'BOOTSTRAP','azure','bosh','264.7','264.7','','bootstrap.yml', 'paasta_options.yml', '','','','','','','SYSTEM',now(),'SYSTEM',now());
 INSERT INTO ieda_manifest_template VALUES (6, 'CF','aws','cf','226','226','generic_manifest_mask.yml','', '', 'aws-cf-stub.yml','','','','','aws-cf-param.yml','SYSTEM',now(),'SYSTEM',now());
 INSERT INTO ieda_manifest_template VALUES (7, 'CF','openstack','cf','226','226','generic_manifest_mask.yml','', '', 'openstack-cf-stub.yml','','','','','openstack-cf-param.yml','SYSTEM',now(),'SYSTEM',now());
 INSERT INTO ieda_manifest_template VALUES (8, 'CF','aws','openpaas-controller','226','1.0','generic_manifest_mask.yml','', '', 'aws-cf-stub.yml','','','','','aws-cf-param.yml','SYSTEM',now(),'SYSTEM',now());

@@ -66,11 +66,10 @@ public class BootstrapDeployAsyncService {
                 String deployStatus = message.getMessage("common.deploy.status.processing", null, Locale.KOREA);
                 bootstrapInfo.setDeployStatus( deployStatus );
                 saveDeployStatus(bootstrapInfo);
-                setProcessBuilderBoshCreateCmd();
                 //2. bosh 실행
                 ProcessBuilder builder = new ProcessBuilder("bosh", "create-env", deployFile, 
-                                                            "--state="+deployFile.replace(".yml", "")+"-state.json", 
-                                                            "--vars-store="+CREDENTIAL_DIR+bootstrapInfo.getDeploymentFile().replace(".yml", "-creds.yml"), "--tty");
+                        "--state="+deployFile.replace(".yml", "")+"-state.json", 
+                        "--vars-store="+CREDENTIAL_DIR+bootstrapInfo.getDeploymentFile().replace(".yml", "-creds.yml"), "--tty");
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
 
@@ -101,24 +100,24 @@ public class BootstrapDeployAsyncService {
                     status = "error";
                     bootstrapInfo.setDeployStatus(message.getMessage("common.deploy.status.failed", null, Locale.KOREA) );
                     saveDeployStatus(bootstrapInfo);
-                    DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("", "BOOTSTRAP 설치 중 오류가 발생하였습니다."));
+                    DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("", "MICRO BOSH 설치 중 오류가 발생하였습니다.<br> 배포 정보를 확인 하세요."));
                 }    else {
                     // 타겟 테스트
-                    DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "started", Arrays.asList("","BOOTSTRAP 디렉터 정보 : https://" + bootstrapInfo.getPublicStaticIp() + ":25555"));
-                    DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "started", Arrays.asList("BOOTSTRAP 디렉터 타겟 접속 테스트..."));
+                    DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "started", Arrays.asList("","MICRO BOSH 디렉터 정보 : https://" + bootstrapInfo.getPublicStaticIp() + ":25555"));
+                    DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "started", Arrays.asList("MICRO BOSH 디렉터 타겟 접속 테스트..."));
                     DirectorInfoDTO directorInfo = directorConfigService.getDirectorInfo(bootstrapInfo.getPublicStaticIp(), 25555, "admin", "admin");
                     
                     if ( directorInfo == null ) {
                         status = "error";
                         bootstrapInfo.setDeployStatus(message.getMessage("common.deploy.status.failed", null, Locale.KOREA));
                         saveDeployStatus(bootstrapInfo);
-                        DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("BOOTSTRAP 디렉터 타겟 접속 테스트 실패"));
+                        DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("MICRO BOSH 디렉터 타겟 접속 테스트 실패 <br> 인프라 정보를 확인 하세요."));
                     } else {
-                        DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "started", Arrays.asList("BOOTSTRAP 디렉터 타겟 접속 테스트 성공"));
+                        DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "started", Arrays.asList("MICRO BOSH 디렉터 타겟 접속 테스트 성공"));
                         status = "done";
                         bootstrapInfo.setDeployStatus( message.getMessage("common.deploy.status.done", null,  Locale.KOREA ) );
                         saveDeployStatus(bootstrapInfo);
-                        DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "done", Arrays.asList("", "BOOTSTRAP 설치가 완료되었습니다."));
+                        DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "done", Arrays.asList("", "MICRO BOSH 설치가 완료되었습니다."));
                     }
                 }
             }
@@ -136,7 +135,7 @@ public class BootstrapDeployAsyncService {
             saveDeployStatus(bootstrapInfo);
         }catch ( Exception e) {    
             status = "error";
-        	e.printStackTrace();
+            e.printStackTrace();
             DirectorRestHelper.sendTaskOutput(principal.getName(), messagingTemplate, MESSAGE_ENDPOINT, "error", Arrays.asList("배포 중 Exception이 발생하였습니다."));
             if ( bootstrapInfo != null ) {
                 bootstrapInfo.setDeployLog(accumulatedLog);
@@ -168,12 +167,7 @@ public class BootstrapDeployAsyncService {
         }
     }
     
-    private void setProcessBuilderBoshCreateCmd() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/****************************************************************
+    /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
      * @description : 설치 상태를 설정하여 저장
      * @title : saveDeployStatus

@@ -66,7 +66,7 @@ $(function() {
         columns:[
                   {field: 'recid', caption: 'recid', hidden: true}
              , {field: 'os', caption: '운영체계', size: '30%'}
-             , {field: 'stemcellFileName', caption: '스템셀명', size: '40%'}                 
+             , {field: 'stemcellFileName', caption: '스템셀명', size: '40%'}
              , {field: 'stemcellVersion', caption: '스템셀버전', size: '30%'}
         ],onError: function(event) {
     

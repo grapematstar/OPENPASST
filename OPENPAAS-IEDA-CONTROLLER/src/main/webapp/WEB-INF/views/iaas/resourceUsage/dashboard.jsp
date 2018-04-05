@@ -15,8 +15,7 @@
 <script type="text/javascript">
 var search_lock_msg = '<spring:message code="common.search.data.lock"/>';//데이터 조회 중 입니다.
 $(function() {
-    //getInfraAllResourceUsageInfo();
-
+    getInfraAllResourceUsageInfo();
 });
 
 
@@ -87,7 +86,7 @@ function settingResourceUsageData(data){
               azureBilling += data[i].billing;
               $("."+data[i].iaasType.toLowerCase()+"-instance").html( azureInstance +" VM(s)" );
               $("."+data[i].iaasType.toLowerCase()+"-network").html( azureNetwork + " 개" );
-              $("."+data[i].iaasType.toLowerCase()+"-volume").html( azureVolume + "GB" );
+              $("."+data[i].iaasType.toLowerCase()+"-volume").html( bytesToSize(azureVolume) );
               $("."+data[i].iaasType.toLowerCase()+"-billing").html( azureBilling + "USD" ); 
           }else{
               
