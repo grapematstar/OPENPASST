@@ -172,7 +172,7 @@
             ieda_director_config_seq= #{director.iedaDirectorConfigSeq}
     </update>
     
-    <delete id="deleteDirecotr">
+    <delete id="deleteDirector">
         Delete from 
             ieda_director_config 
         Where 

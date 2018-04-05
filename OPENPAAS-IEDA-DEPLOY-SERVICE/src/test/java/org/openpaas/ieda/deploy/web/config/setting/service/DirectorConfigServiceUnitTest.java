@@ -15,14 +15,18 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openpaas.ieda.common.exception.CommonException;
 import org.openpaas.ieda.deploy.api.director.dto.DirectorInfoDTO;
 import org.openpaas.ieda.deploy.web.common.base.BaseDeployControllerUnitTest;
 import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigDAO;
 import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigVO;
 import org.openpaas.ieda.deploy.web.config.setting.dto.DirectorConfigDTO;
+
+import com.amazonaws.services.dynamodbv2.document.Expected;
 
 public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     
@@ -46,13 +50,13 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
         principal = getLoggined();
     }
     
-    
     /***************************************************
     * @project : Paas 플랫폼 설치 자동화
     * @description : 기본 설치 관리자 정보가 존재 하지 않을 경우 테스트
     * @title : testGetDefaultDirector
     * @return : void
     ***************************************************/
+    @Test
     public void testGetDefaultDirectorResultNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigByDefaultYn(anyString())).thenReturn(null);
         DirectorConfigVO resultVo = mockDirectorConfigService.getDefaultDirector();
@@ -65,6 +69,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testGetDefaultDirector
     * @return : void
     ***************************************************/
+    @Test
     public void testGetDefaultDirector(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigByDefaultYn(anyString())).thenReturn(expectVo);
@@ -83,6 +88,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testListDirector
     * @return : void
     ***************************************************/
+    @Test
     public void testListDirector(){
         List<DirectorConfigVO> expectList = setListDirector();
         when(mockDirectorConfigDAO.selectDirectorConfig()).thenReturn(expectList);
@@ -103,6 +109,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testExistCreateDirectorInfo
     * @return : void
     ***************************************************/
+    @Test(expected=CommonException.class)
     public void testExistCreateDirectorInfo(){
         List<DirectorConfigVO> expectList = setListDirector();
         DirectorConfigDTO.Create dto = setDirectorConfigInfo();
@@ -116,6 +123,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testCreateDirectorLoginFail
     * @return : void
     ***************************************************/
+    @Test(expected=CommonException.class)
     public void testCreateDirectorLoginFail(){
         List<DirectorConfigVO> expectList = new ArrayList<DirectorConfigVO>();
         DirectorConfigDTO.Create dto = setDirectorConfigInfo();
@@ -125,14 +133,15 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     
     /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
-     * @description : 설치 관리자 설정 추가 테스트
+     * @description : 설치 관리자 설정 추가 실패 테스트
      * @title : testInsertDirectorInfo
      * @return : void
     *****************************************************************/
+    @Test(expected=CommonException.class)
     public void testInsertDirectorInfo(){
         DirectorConfigDTO.Create dto = setDirectorConfigInfo();
         DirectorInfoDTO apiDto = setDirectorInfoDTO();
-        when(mockDirectorConfigDAO.selectDirectorConfigByDefaultYn(anyString())).thenReturn(null);
+        when(mockDirectorConfigDAO.selectDirectorConfigBySeq(3)).thenReturn(null);
         mockDirectorConfigService.createDirectorInfo(dto, principal, apiDto, BOSHCONFIGTESTFILE);
     }
     
@@ -142,6 +151,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testGetDirectorConfig
     * @return : void
     ***************************************************/
+    @Test
     public void testGetDirectorConfig(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(expectVo);
@@ -154,46 +164,10 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testGetDirectorConfigResultNull
     * @return : void
     ***************************************************/
+    @Test(expected=CommonException.class)
     public void testGetDirectorConfigResultNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(null);
         mockDirectorConfigService.getDirectorConfig(1);
-    }
-    
-    /***************************************************
-    * @project : Paas 플랫폼 설치 자동화
-    * @description : 설치 관리자 수정 시 해당 설치 관리자 정보가 존재 하지 않을 경우 테스트
-    * @title : UpdateDirectorinfoResultNull
-    * @return : void
-    ***************************************************/
-    public void UpdateDirectorinfoResultNull(){
-        when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(null);
-        DirectorConfigDTO.Update dto = updateDirectorConfigInfo();
-        mockDirectorConfigService.existCheckUpdateDirectorinfo(dto, principal, BOSHCONFIGTESTFILE);
-    }
-    
-    /***************************************************
-    * @project : Paas 플랫폼 설치 자동화
-    * @description : 설치 관리자 수정 정보 디렉터 로그인 실패 테스트
-    * @title : existCheckUpdateDirectorinfoLoginFail
-    * @return : void
-    ***************************************************/
-    public void existCheckUpdateDirectorinfoLoginFail(){
-        DirectorConfigVO expectVo = setDirectorInfo();
-        when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(expectVo);
-        DirectorConfigDTO.Update dto = updateDirectorConfigInfo();
-        mockDirectorConfigService.existCheckUpdateDirectorinfo(dto, principal, BOSHCONFIGTESTFILE);
-    }
-    
-    /***************************************************
-    * @project : Paas 플랫폼 설치 자동화
-    * @description : 설치 관리자 정보 수정 테스트
-    * @title : testUpdateDirectorinfo
-    * @return : void
-    ***************************************************/
-    public void testUpdateDirectorinfo(){
-        DirectorConfigDTO.Update dto = updateDirectorConfigInfo();
-        DirectorConfigVO vo = setDirectorInfo();
-        mockDirectorConfigService.updateDirectorinfo(dto,vo, principal, BOSHCONFIGTESTFILE);
     }
     
     /***************************************************
@@ -202,6 +176,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : testDeleteDirectorConfigResultNull
     * @return : void
     ***************************************************/
+    @Test(expected=CommonException.class)
     public void testDeleteDirectorConfigResultNull(){
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(null);
         mockDirectorConfigService.deleteDirectorConfig(1, BOSHCONFIGTESTFILE);
@@ -213,6 +188,7 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     * @title : deleteDirectorConfigFileNotFound
     * @return : void
     ***************************************************/
+    @Test
     public void deleteDirectorConfigFileNotFound(){
         DirectorConfigVO expectVo = setDirectorInfo();
         when(mockDirectorConfigDAO.selectDirectorConfigBySeq(anyInt())).thenReturn(expectVo);
@@ -283,54 +259,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
         
         mockDirectorConfigService.setDefaultDirectorInfo(expectVo, apiDto, principal, BOSHCONFIGTESTFILE);
     }
-    
-    /***************************************************
-    * @project : Paas 플랫폼 설치 자동화
-    * @description : 설치 관리자 설정 파일이 존재 할 경우 테스트
-    * @title : testFileExistSetBoshConfigFile
-    * @return : void
-    ***************************************************/
-    public void testFileExistSetBoshConfigFile(){
-        testInsertDirectorInfo();
-        DirectorConfigVO vo = setDirectorInfo();
-        mockDirectorConfigService.setBoshConfigFile(vo, BOSHCONFIGTESTFILE);
-    }
-    
-    /***************************************************
-    * @project : Paas 플랫폼 설치 자동화
-    * @description : 설치 관리자 설정 파일 정보가 잘못 되었을 경우 테스트
-    * @title : testSetBoshConfigFileNullPoint
-    * @return : void
-    ***************************************************/
-    public void testSetBoshConfigFileNullPoint() throws Exception{
-        OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(BOSHCONFIGTESTFILEPATH),"UTF-8");
-        fileWriter.write("1");
-        fileWriter.close();
-        DirectorConfigVO vo = setDirectorInfo();
-        mockDirectorConfigService.setBoshConfigFile(vo, BOSHCONFIGTESTFILE);
-    }
-    /***************************************************
-    * @project : Paas 플랫폼 설치 자동화
-    * @description : 설치 관리자 설정 파일이 존재 하지 않을 경우 테스트
-    * @title : testFileNotExistSetBoshConfigFile
-    * @return : void
-    ***************************************************/
-    public void testFileNotExistSetBoshConfigFile(){
-        DirectorConfigVO vo = setDirectorInfo();
-        mockDirectorConfigService.setBoshConfigFile(vo, BOSHCONFIGTESTFILE);
-    }
-    
-    /***************************************************
-    * @project : Paas 플랫폼 설치 자동화
-    * @description : 설치 관리자 설정 파일과 기본 설치 관리자가 존재 하지 않을 경우 테스트
-    * @title : testFileNotExistSetBoshConfigFile
-    * @return : void
-    ***************************************************/
-    public void testFileNotExistSetBoshConfigFileDefault(){
-        DirectorConfigVO vo = setDirectorInfo2();
-        mockDirectorConfigService.setBoshConfigFile(vo, BOSHCONFIGTESTFILE);
-    }
-    
     
     /***************************************************
     * @project : Paas 플랫폼 설치 자동화

@@ -164,7 +164,7 @@ public class BootstrapDeleteDeployAsyncService{
         String cpi = iaasType.toLowerCase()+"_cpi";
         DirectorConfigVO vo = directorDao.selectDirectorConfigInfoByDirectorNameAndCPI(cpi, directorName);
         if( vo != null ) {
-            directorDao.deleteDirecotr(vo.getIedaDirectorConfigSeq());
+            directorDao.deleteDirector(vo.getIedaDirectorConfigSeq());
         }
     }
 

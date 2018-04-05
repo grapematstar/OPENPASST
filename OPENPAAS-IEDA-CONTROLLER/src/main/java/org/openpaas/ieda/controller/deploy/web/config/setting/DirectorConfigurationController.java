@@ -81,21 +81,6 @@ public class DirectorConfigurationController extends BaseController {
 
     /***************************************************
      * @project : Paas 플랫폼 설치 자동화
-     * @description : 설치관리자 설정 수정
-     * @title : updateDirector
-     * @return : ResponseEntity<Object>
-    ***************************************************/
-    @RequestMapping(value="/config/director/update", method=RequestMethod.PUT)
-    public ResponseEntity<Object> updateDirector(@RequestBody @Valid DirectorConfigDTO.Update updateDto, Principal principal) {
-        if(LOGGER.isInfoEnabled()){ LOGGER.info("=============================> 설치 관리자 수정 요청"); }
-        String boshConfigFileName = "config";
-        service.existCheckUpdateDirectorinfo(updateDto, principal, boshConfigFileName);
-        
-        return new ResponseEntity<> (HttpStatus.OK); 
-    }
-    
-    /***************************************************
-     * @project : Paas 플랫폼 설치 자동화
      * @description : 설치관리자 설정 삭제
      * @title : deleteDirector
      * @return : ResponseEntity<Object>
