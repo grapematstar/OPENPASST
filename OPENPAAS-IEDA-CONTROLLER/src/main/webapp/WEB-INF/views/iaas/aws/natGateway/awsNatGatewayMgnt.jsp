@@ -99,66 +99,6 @@ function doSearch() {
     w2ui['aws_natGatewayGrid'].load("<c:url value='/awsMgnt/natGateway/list/"+accountId+"/"+region+"'/>","",function(event){});
 }
 
-
-/********************************************************
- * 설명 : NAT Gateway 상세 조회
- * 기능 : doSearchnatGatewayDetail
- *********************************************************/
-function doSearchnatGatewayDetail(accountId, publicIp){
-    var accountId =  $("select[name='accountId']").val();
-    var region = $("select[name='region']").val();
-    w2utils.lock($("#layout_layout_panel_main"), search_lock_msg, true);
-    
-    $.ajax({
-        type : "GET",
-        url : "/awsMgnt/natGateway/list/natGateway/save/detail/"+accountId+"/"+natGatewayId+"/"+region+"",
-        contentType : "application/json",
-        success : function(data, status) {
-            w2utils.unlock($("#layout_layout_panel_main"));
-            if(data != null){
-                $(".subnetId").html(data.subnetId+"");
-                if(data.subnetId != null){
-                    $(".subnetId").html(data.subnetId);
-                }else{
-                    $(".subnetId").html("-");
-                }
-                $(".subnetName").html(data.subnetName+"");
-                if(data.subnetName != null){
-                    $(".subnetName").html(data.subnetName);
-                }else{
-                    $(".subnetName").html("-");
-                }
-                $(".vpcId").html(data.vpcId+"");
-                if(data.vpcId != null){
-                    $(".vpcId").html(data.vpcId);
-                }else{
-                    $(".vpcId").html("-");
-                }
-                
-                
-                $(".elascitIp").html(data.publicIp+"");
-                if(data.publicIp != null){
-                    $(".elascitIp").html(data.publicIp);
-                }else{
-                    $(".elascitIp").html("-");
-                }
-                $(".allocationId").html(data.allocationId+"");
-                if(data.allocationId != null){
-                    $(".allocationId").html(data.allocationId);
-                }else{
-                    $(".allocationId").html("-");
-                }
-            }
-            return;
-        },
-        error : function(request, status, error) {
-            w2utils.unlock($("#layout_layout_panel_main"));
-            var errorResult = JSON.parse(request.responseText);
-            w2alert(errorResult.message, "AWS NAT Gateway 상세 정보");
-        }
-    });
-}
-
 /********************************************************
  * 설명 : NAT Gateway 생성
  * 기능 : awsNatGatewayCreate
@@ -278,21 +218,22 @@ function setAwsEipAllocationIdList(){
            contentType : "application/json",
            dataType : "json",
            success : function(data, status) {
-               var result = "";
-               if(data != null){
+        	   var result = "";
+               if(data.length == 0){
+        	       result = "<option value=''>Allocation ID를 가진 EIP가 없습니다. 새로 EIP를 할당 받으세요.</option>";
+               }
+        	   else if(data != null){
                    for(var i=0; i<data.length; i++){
-                           result += "<option value='" + data[i].allocationId + "' >";
-                           if(data[i].allocationId !=null){
-                           result += data[i].allocationId;
-                           }
-                           if(data[i].publicIp !=null){
-                           result += "  |  ";
-                           result += data[i].publicIp;
-                           }
-                           result += "</option>"; 
+                       result += "<option value='" + data[i].allocationId + "' >";
+                       if(data[i].allocationId !=null){
+                       result += data[i].allocationId;
+                       }
+                       if(data[i].publicIp !=null){
+                       result += "  |  ";
+                       result += data[i].publicIp;
+                       }
+                       result += "</option>"; 
                    }
-               }else{
-            	   //aaaaaaaaaaaaaaaa
                }
                
                $('#eipInfoDiv #eipInfo').html(result);
@@ -368,8 +309,14 @@ td {
                         <sec:authorize access="hasAuthority('AWS_VPC_MENU')">
                             <li><a href="javascript:goPage('<c:url value="/awsMgnt/vpc"/>', 'AWS VPC');">VPC 관리</a></li>
                         </sec:authorize>
+                        <sec:authorize access="hasAuthority('AWS_ELASTIC_IP_MENU')">
+                            <li><a href="javascript:goPage('<c:url value="/awsMgnt/elasticIp"/>', 'AWS Elastic IP');">Elastic IP 관리</a></li>
+                        </sec:authorize>
                         <sec:authorize access="hasAuthority('AWS_INTERNET_GATEWAY_MENU')">
                             <li><a href="javascript:goPage('<c:url value="/awsMgnt/internetGateway"/>', 'AWS Internet GateWay');">Internet Gateway 관리</a></li>
+                        </sec:authorize>
+                        <sec:authorize access="hasAuthority('AWS_ROUTE_TABLE_MENU')">
+                            <li><a href="javascript:goPage('<c:url value="/awsMgnt/routeTable"/>', 'AWS Route Table');">Route Table 관리</a></li>
                         </sec:authorize>
                     </ul>
                 </div>
@@ -396,28 +343,7 @@ td {
         </div>
     </div>
     <div id="aws_natGatewayGrid" style="width:100%; height:705px"></div>
-   
-    <!-- <div class="title fl">AWS NAT Gateway 상세 정보</div>
-    <div id="aws_natGatewayDetailGrid" style="width:100%; height:128px; margin-top:50px; border-top: 2px solid #c5c5c5; ">
-        <table id= "natGatewayDetailTable" class="table table-condensed table-hover">
-              <tr>
-                  <th class= "trTitle"> Subnet Name</th>
-                  <td class= "subnetName"></td>
-                  <th class= "trTitle"> Subnet ID</th>
-                  <td class="subnetId"></td>
-                  <th class= "trTitle"> VPC Id</th>
-                  <td class= "vpcId"></td>
-              </tr>
-              <tr style = "border-bottom: 1px solid #ddd;">
-                  <th class= "trTitle">Public Ip</th>
-                  <td class= "elascitIp"></td>
-                  <th class= "trTitle">Private IP Address</th>
-                  <td class= "privateIp"></td>
-                  <th class= "trTitle">Allocation ID</th>
-                  <td class= "allocationId"></td>
-              </tr>
-        </table>
-    </div> -->
+
 </div>
 
  

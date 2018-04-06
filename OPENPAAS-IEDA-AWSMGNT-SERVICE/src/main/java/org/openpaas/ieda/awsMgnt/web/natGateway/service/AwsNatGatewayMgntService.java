@@ -74,31 +74,31 @@ public class AwsNatGatewayMgntService {
     
     List<AwsNatGatewayMgntVO> awsSubnetList = new ArrayList<AwsNatGatewayMgntVO>();
     if(apiAwsSubnetList !=null && apiAwsSubnetList.size()!= 0){
-	    for ( int i=0; i<apiAwsSubnetList.size(); i++ ){
-	        Subnet subnet = apiAwsSubnetList.get(i);
-	        AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
-	        awsNatGatewayVO.setSubnetId(subnet.getSubnetId().toString());
-	        awsNatGatewayVO.setVpcId(subnet.getVpcId().toString());
-	        if(subnet.getTags().size() != 0){
-	            String result = "";
-	            for(int j=0; j<subnet.getTags().size(); j++){
-	            result += subnet.getTags().get(j).getValue().toString();
-	            }
-	            awsNatGatewayVO.setNameTag(result);
-	        }else{
-	            awsNatGatewayVO.setNameTag("");
-	        }
-	        awsNatGatewayVO.setRecid(i);
-	        awsNatGatewayVO.setAccountId(accountId);
-	        awsSubnetList.add(awsNatGatewayVO);
-	    }
+        for ( int i=0; i<apiAwsSubnetList.size(); i++ ){
+            Subnet subnet = apiAwsSubnetList.get(i);
+            AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
+            awsNatGatewayVO.setSubnetId(subnet.getSubnetId().toString());
+            awsNatGatewayVO.setVpcId(subnet.getVpcId().toString());
+            if(subnet.getTags().size() != 0){
+                String result = "";
+                for(int j=0; j<subnet.getTags().size(); j++){
+                result += subnet.getTags().get(j).getValue().toString();
+                }
+                awsNatGatewayVO.setNameTag(result);
+            }else{
+                awsNatGatewayVO.setNameTag("");
+            }
+            awsNatGatewayVO.setRecid(i);
+            awsNatGatewayVO.setAccountId(accountId);
+            awsSubnetList.add(awsNatGatewayVO);
+        }
     }
     return awsSubnetList;
 }
 
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
-     * @description : AWS Eip AllocationId 목록 조회
+     * @description : AWS EIP AllocationId 목록 조회
      * @title : getAwsEipAllocationIdList
      * @return : List<AwsNatGatewayMgntVO>
      ***************************************************/
@@ -106,33 +106,23 @@ public class AwsNatGatewayMgntService {
         IaasAccountMgntVO vo =  getAwsAccountInfo(principal, accountId);
         Region region = getAwsRegionInfo(regionName);
         List<Address> apiAddressList = awsNatGatewayMgntApiService.getAwsEipAllocationIdListApiFromAws(vo, region.getName());
-        List<NatGateway> apiAwsNatGwList = awsNatGatewayMgntApiService.getAwsNatGatewayInfoListApiFromAws(vo, region.getName());
         List<AwsNatGatewayMgntVO> awsEipAllocationIdList = new ArrayList<AwsNatGatewayMgntVO>();
         if(apiAddressList !=null && apiAddressList.size()!= 0){
-	        for ( int i=0; i<apiAddressList.size(); i++ ){
+            for ( int i=0; i<apiAddressList.size(); i++ ){
                 Address address = apiAddressList.get(i);
                 AwsNatGatewayMgntVO awsNatGatewayVO = new AwsNatGatewayMgntVO();
-                for(int j=0; j<apiAwsNatGwList.size(); j++){
-                	if(!apiAwsNatGwList.get(j).getState().equals("pending")){
-                		
-                	/*for(int k=0; k<apiAwsNatGwList.get(j).getNatGatewayAddresses().size();k++){
-                	String apiAddress = apiAwsNatGwList.get(j).getNatGatewayAddresses().get(k).getAllocationId();
-                	if(!apiAddress.equals("null") && !apiAddress.equals(address.getAllocationId())){*/
-		               
-		                awsNatGatewayVO.setPublicIp(address.getPublicIp());
-		                awsNatGatewayVO.setAllocationId(address.getAllocationId());
-		              /* }
-                      }*/
-                    }
+               //elastic IP가 아무데도 associate되어있지 않을 경우
+                if(address.getAssociationId() == null ){ 
+                   awsNatGatewayVO.setPublicIp(address.getPublicIp());
+                     awsNatGatewayVO.setAllocationId(address.getAllocationId());
+                     awsNatGatewayVO.setRecid(i); 
+                   awsNatGatewayVO.setAccountId(accountId);
+                   awsEipAllocationIdList.add(awsNatGatewayVO);
                 }
-                awsNatGatewayVO.setRecid(i);
-                awsNatGatewayVO.setAccountId(accountId);
-                awsEipAllocationIdList.add(awsNatGatewayVO);
-	        }
+            }
         }
         return awsEipAllocationIdList;
     }
-    
     
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
@@ -142,12 +132,12 @@ public class AwsNatGatewayMgntService {
      ***************************************************/
     public void allocateNewElasticIp(AwsNatGatewayMgntDTO dto, Principal principal){
     
-    IaasAccountMgntVO vo =  getAwsAccountInfo(principal,dto.getAccountId());
-    Region region = getAwsRegionInfo(dto.getRegion());
-    awsNatGatewayMgntApiService.allocateNewElasticIpFromAws(vo, region);
+        IaasAccountMgntVO vo =  getAwsAccountInfo(principal,dto.getAccountId());
+        Region region = getAwsRegionInfo(dto.getRegion());
+        awsNatGatewayMgntApiService.allocateNewElasticIpFromAws(vo, region);
    
     
-}
+    }
     
     /***************************************************
      * @project : AWS 인프라 관리 대시보드
