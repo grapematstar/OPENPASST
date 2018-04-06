@@ -164,6 +164,7 @@ public class AwsRouteTableMgntService {
                                awsRTmgntVo.setRouteTableId(apiRouteTable.getAssociations().get(x).getRouteTableId());
                                awsRTmgntVo.setSubnetId (apiAwsSubnetList.get(i).getSubnetId());
                                awsRTmgntVo.setDestinationIpv4CidrBlock(apiAwsSubnetList.get(i).getCidrBlock());
+                               awsRTmgntVo.setAssociationId(apiRouteTable.getAssociations().get(x).getRouteTableAssociationId());
                                int vp6size = apiAwsSubnetList.get(i).getIpv6CidrBlockAssociationSet().size();
                                if(vp6size!=0){
                                    for(int k=0; k<vp6size; k++){
@@ -333,7 +334,7 @@ public class AwsRouteTableMgntService {
           for (int k=0; k<apiAwsNatGWList.size(); k++){
               NatGateway natgw = apiAwsNatGWList.get(k);
               if(natgw !=null ){
-              if(natgw.getState().equals("avaliable") && natgw.getVpcId().equals(vpcId)){
+              if(natgw.getState().equals("available") && natgw.getVpcId().equals(vpcId)){
               targets.add(cnt-1+cntt-1, natgw.getNatGatewayId().toString());
               cntt++;
               }
@@ -409,6 +410,7 @@ public class AwsRouteTableMgntService {
           try{
               awsRouteTableMgntApiService.associateAwsSubnetWithRouteTableFromAws(vo, region.getName(), dto);
           }catch (Exception e) {
+        	  e.printStackTrace();
               throw new CommonException(
                       message.getMessage("common.badRequest.exception.code", null, Locale.KOREA), message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
           }

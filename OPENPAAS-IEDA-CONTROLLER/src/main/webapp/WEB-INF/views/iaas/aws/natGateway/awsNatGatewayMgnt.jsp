@@ -77,8 +77,8 @@ $(function() {
             buttons : $("#registPopupBtnDiv").html(),
             onOpen : function(event){
                 event.onComplete = function(){
-                	setAwsSubnetIdList();
-                	setAwsEipAllocationIdList();
+                    setAwsSubnetIdList();
+                    setAwsEipAllocationIdList();
                 }                   
             },onClose:function(event){
                 initsetting();
@@ -87,8 +87,31 @@ $(function() {
         });
     }); 
     
+    var iTime = 15;   // 새로고침 반복 시간  ex) 2분 = 2 * 60 
+    var h;
+    var m; 
+    setInterval(function() {
+        if(iTime == 0){
+            iTime = 15; // 상단의 새로고침 반복 시간  초기화 
+            //todo
+            refresh();
+        }
+        iTime--;
+        h = parseInt(iTime/60);
+        m = iTime%60;
+        
+        if(m < 10){
+            m = "0"+m;
+        }
+        $("#iTime").text(h+":"+m);
+    },1000);
     
 });
+
+function refresh(){
+	doSearch();
+}
+
 /********************************************************
  * 설명 : NAT Gateway 목록 조회 Function
  * 기능 : doSearch
@@ -119,7 +142,7 @@ $.ajax({
     async : true,
     data : JSON.stringify(natGwInfo),
     success : function(status) {
-    	
+        
         w2popup.unlock();
         w2popup.close();    
         initsetting();
@@ -139,10 +162,10 @@ $.ajax({
  *********************************************************/
 
 function awsElasticIpAllocate(){
-	w2utils.lock($("#layout_layout_panel_main"), "", true);
-	 w2popup.lock( "할당 중 입니다.", true);
+    w2utils.lock($("#layout_layout_panel_main"), "", true);
+     w2popup.lock( "할당 중 입니다.", true);
     awsInfo = { 
-    		accountId : $("select[name='accountId']").val(),
+            accountId : $("select[name='accountId']").val(),
             region :  $("select[name='region']").val()  
             }
 $.ajax({
@@ -152,9 +175,9 @@ $.ajax({
     async : true,
     data : JSON.stringify(awsInfo),
     success : function(status) {
-    	setAwsEipAllocationIdList();
-    	w2utils.unlock($("#layout_layout_panel_main"));
-    	w2popup.unlock();
+        setAwsEipAllocationIdList();
+        w2utils.unlock($("#layout_layout_panel_main"));
+        w2popup.unlock();
     },
     error : function(request, status, error) {
         w2utils.unlock($("#layout_layout_panel_main"));
@@ -170,7 +193,7 @@ $.ajax({
  * 설명 : 기본  Azure Subnet 목록 조회 기능
  *********************************************************/
 function setAwsSubnetIdList(){
-	 w2popup.lock(detail_lock_msg, true);
+     w2popup.lock(detail_lock_msg, true);
     var accountId = $("select[name='accountId']").val();
     var region = $("select[name='region']").val();
     $.ajax({
@@ -209,7 +232,7 @@ function setAwsSubnetIdList(){
  * 설명 : 기본  Azure Subnet 목록 조회 기능
  *********************************************************/
 function setAwsEipAllocationIdList(){
-	 w2popup.lock(detail_lock_msg, true);
+     w2popup.lock(detail_lock_msg, true);
     var accountId = $("select[name='accountId']").val();
     var region = $("select[name='region']").val();
     $.ajax({
@@ -218,11 +241,11 @@ function setAwsEipAllocationIdList(){
            contentType : "application/json",
            dataType : "json",
            success : function(data, status) {
-        	   var result = "";
+               var result = "";
                if(data.length == 0){
-        	       result = "<option value=''>Allocation ID를 가진 EIP가 없습니다. 새로 EIP를 할당 받으세요.</option>";
+                   result = "<option value=''>Allocation ID를 가진 EIP가 없습니다. 새로 EIP를 할당 받으세요.</option>";
                }
-        	   else if(data != null){
+               else if(data != null){
                    for(var i=0; i<data.length; i++){
                        result += "<option value='" + data[i].allocationId + "' >";
                        if(data[i].allocationId !=null){
@@ -362,7 +385,7 @@ td {
            </div>
             <div class="w2ui-field">
                <div id="subnetInfoDiv" style="width:420px;  padding-left: 20px;">
-               	<select id="subnetInfo" style="width:400px;" name="subnetId"><option></option></select>
+                   <select id="subnetInfo" style="width:400px;" name="subnetId"><option></option></select>
                </div>
            </div>
            <div class="w2ui-field">
@@ -370,13 +393,13 @@ td {
            </div>
            <div class="w2ui-field">    
                <div id="eipInfoDiv" style="width:420px;  padding-left: 20px;">
-               	<select id="eipInfo" style="width:400px;" name="allocationId"><option></option></select>
+                   <select id="eipInfo" style="width:400px;" name="allocationId"><option></option></select>
                </div>
            </div>
            
           
-		   
-		   
+           
+           
         </div>
     </div> 
 </form>
@@ -413,11 +436,11 @@ td {
 
 <script>
 $(function() {
-	$("#awsNatGatewayForm").validate({
+    $("#awsNatGatewayForm").validate({
         ignore : "",
         onfocusout: true,
         rules: {
-        	subnetId : {
+            subnetId : {
                 required : function(){
                     return checkEmpty( $(".w2ui-msg-body select[name='subnetId']").val() );
                 },
@@ -427,7 +450,7 @@ $(function() {
                 }
             }
         }, messages: {
-        	subnetId: { 
+            subnetId: { 
                  required:  "Subnet ID" + text_required_msg
             }, allocationId: { 
                 required:  "Allocation ID"+text_required_msg
@@ -442,7 +465,7 @@ $(function() {
                 setInvalidHandlerStyle(errors, validator);
             }
         }, submitHandler: function (form) {
-        	awsNatGatewayCreate();
+            awsNatGatewayCreate();
         }
     });
 });

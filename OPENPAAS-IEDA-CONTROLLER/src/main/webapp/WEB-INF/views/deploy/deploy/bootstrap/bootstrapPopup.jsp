@@ -542,7 +542,6 @@ function getLocalBoshCpiList(type, iaas){
                     if( data[i] == boshInfo.boshCpiRelease ){
                         options += "<option value='"+data[i]+"' selected>"+data[i]+"</option>";
                     }else options += "<option value='"+data[i]+"'>"+data[i]+"</option>";
-                    
                 }
                 $(".w2ui-msg-body select[name='boshCpiRelease']").html(options);
             }

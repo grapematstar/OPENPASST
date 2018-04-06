@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AwsRouteTableMgntController {
-	@Autowired AwsRouteTableMgntService awsRouteTableMgntService;
-	private final static Logger LOG = LoggerFactory.getLogger(AwsVpcMgntController.class);
-	 
-	/****************************************************************
+    @Autowired AwsRouteTableMgntService awsRouteTableMgntService;
+    private final static Logger LOG = LoggerFactory.getLogger(AwsVpcMgntController.class);
+     
+    /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
      * @description : Elastic Ip 화면 이동
      * @title : goAwsElasticIpMgnt
@@ -34,7 +34,7 @@ public class AwsRouteTableMgntController {
     *****************************************************************/
     @RequestMapping(value="/awsMgnt/routeTable", method=RequestMethod.GET)
     public String goAwsElasticIpMgnt(){
-    	 if (LOG.isInfoEnabled()) {
+         if (LOG.isInfoEnabled()) {
              LOG.info("================================================> AWS Route Table 관리 화면 이동");
          }
         return "iaas/aws/routeTable/awsRouteTableMgnt";
@@ -72,13 +72,13 @@ public class AwsRouteTableMgntController {
      @ResponseBody
      public ResponseEntity<HashMap<String, Object>> getAwsRouteList(@PathVariable("accountId") int accountId, @PathVariable("region") String region, Principal principal, @PathVariable("routeTableId") String routeTableId){
          
-     	List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsRouteList(accountId, region, principal, routeTableId);
-     	HashMap<String, Object> map = new HashMap<String, Object>();
+         List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsRouteList(accountId, region, principal, routeTableId);
+         HashMap<String, Object> map = new HashMap<String, Object>();
          if(list != null){
              map.put("total", list.size());
              map.put("records", list);
          }
-     	return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
+         return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
      }     
      
      /***************************************************
@@ -90,15 +90,13 @@ public class AwsRouteTableMgntController {
      @RequestMapping(value="/awsMgnt/routeTable/list/detail/subnet/associated/{accountId}/{region}/{routeTableId}/{vpcId}", method=RequestMethod.GET)
      @ResponseBody
      public ResponseEntity<HashMap<String, Object>> getAwsAssociatedSubnetList(@PathVariable("accountId") int accountId, @PathVariable("region") String region, Principal principal, @PathVariable("routeTableId") String routeTableId, @PathVariable("vpcId") String vpcId){
-
-         //List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsAssociatedSubnetList(accountId, region, principal, routeTableId, vpcId);
-    	 List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsAssociatedWithThisTableSubnetList(accountId, region, principal, routeTableId, vpcId);
-    	 HashMap<String, Object> map = new HashMap<String, Object>();
+         List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsAssociatedWithThisTableSubnetList(accountId, region, principal, routeTableId, vpcId);
+         HashMap<String, Object> map = new HashMap<String, Object>();
           if(list != null){
               map.put("total", list.size());
               map.put("records", list);
           }
-      	return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
+          return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
       }
      
      /***************************************************
@@ -109,15 +107,9 @@ public class AwsRouteTableMgntController {
       ***************************************************/
      @RequestMapping(value="/awsMgnt/routeTable/list/avaliable/subnets/{accountId}/{region}/{routeTableId}/{vpcId}", method=RequestMethod.GET)
      @ResponseBody
-     public ResponseEntity<HashMap<String, Object>> getAwsAvailableSubnetList(@PathVariable("accountId") int accountId, @PathVariable("region") String region, Principal principal, @PathVariable("routeTableId") String routeTableId, @PathVariable("vpcId") String vpcId){
-    	 
-    	 List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsAvailableSubnetList(accountId, region, principal, routeTableId, vpcId);
-    	 HashMap<String, Object> map = new HashMap<String, Object>();
-    	 if(list != null){
-    		 map.put("total", list.size());
-    		 map.put("records", list);
-    	 }
-    	 return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
+     public ResponseEntity<List<AwsRouteTableMgntVO>> getAwsAvailableSubnetList(@PathVariable("accountId") int accountId, @PathVariable("region") String region, Principal principal, @PathVariable("routeTableId") String routeTableId, @PathVariable("vpcId") String vpcId){
+         List<AwsRouteTableMgntVO> list  = awsRouteTableMgntService.getAwsAvailableSubnetList(accountId, region, principal, routeTableId, vpcId);
+         return new ResponseEntity<List<AwsRouteTableMgntVO>>(list, HttpStatus.OK);
      }
  
      /***************************************************
@@ -129,11 +121,11 @@ public class AwsRouteTableMgntController {
      @RequestMapping(value="/awsMgnt/routeTable/vpcIdList/{accountId}/{region}", method=RequestMethod.GET)
      @ResponseBody
      public ResponseEntity<List<AwsRouteTableMgntVO>> getAwsVpcIdList (@PathVariable("accountId") int accountId, @PathVariable("region") String region,  Principal principal){
-    	 if (LOG.isInfoEnabled()) {
+         if (LOG.isInfoEnabled()) {
              LOG.info("================================================> AWS VPC ID 목록 조회");
          }
-    	 List<AwsRouteTableMgntVO> list = awsRouteTableMgntService.getAwsVpcIdList(accountId, region, principal);
-    	 return new ResponseEntity<List<AwsRouteTableMgntVO>>(list,HttpStatus.OK);
+         List<AwsRouteTableMgntVO> list = awsRouteTableMgntService.getAwsVpcIdList(accountId, region, principal);
+         return new ResponseEntity<List<AwsRouteTableMgntVO>>(list,HttpStatus.OK);
      }
      
      /***************************************************
@@ -145,11 +137,11 @@ public class AwsRouteTableMgntController {
      @RequestMapping(value="/awsMgnt/routeTable/route/list/targetList/{accountId}/{region}/{vpcId}", method=RequestMethod.GET)
      @ResponseBody
      public ResponseEntity<ArrayList<String>> getAwsTargetInfoList(@PathVariable("accountId") int accountId, @PathVariable("region") String region,  Principal principal, @PathVariable("vpcId") String vpcId){
-    	 if (LOG.isInfoEnabled()) {
+         if (LOG.isInfoEnabled()) {
              LOG.info("================================================> AWS Target 목록 조회");
          }
-    	 ArrayList<String> list = awsRouteTableMgntService.getAwsTargetInfoList(accountId, region, principal, vpcId);
-    	 return new ResponseEntity<ArrayList<String>>(list,HttpStatus.OK);
+         ArrayList<String> list = awsRouteTableMgntService.getAwsTargetInfoList(accountId, region, principal, vpcId);
+         return new ResponseEntity<ArrayList<String>>(list,HttpStatus.OK);
      }
      /***************************************************
       * @project : AWS 인프라 관리 대시보드
@@ -176,11 +168,11 @@ public class AwsRouteTableMgntController {
      @RequestMapping(value="/awsMgnt/routeTable/delete", method=RequestMethod.DELETE)
      @ResponseBody
      public ResponseEntity<?> deleteRouteTable (@RequestBody AwsRouteTableMgntDTO dto, Principal principal){
-    	 if(LOG.isInfoEnabled()) {
-    		 LOG.info("========================================> AWS Subnet 연결해제");
-    	 }
-    	 awsRouteTableMgntService.deleteRouteTable(dto, principal);
-    	 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+         if(LOG.isInfoEnabled()) {
+             LOG.info("========================================> AWS Subnet 연결해제");
+         }
+         awsRouteTableMgntService.deleteRouteTable(dto, principal);
+         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
      }
      
      /***************************************************
@@ -225,7 +217,7 @@ public class AwsRouteTableMgntController {
      @ResponseBody
      public ResponseEntity<?> associateAwsSubnetWithRouteTable (@RequestBody AwsRouteTableMgntDTO dto, Principal principal){
          if (LOG.isInfoEnabled()) {
-             LOG.info("================================================> AWS Route 추가");
+             LOG.info("================================================> AWS Subnet 연결");
          }  
          awsRouteTableMgntService.associateAwsSubnetWithRouteTable(dto, principal);
          return new ResponseEntity<>(HttpStatus.CREATED);
