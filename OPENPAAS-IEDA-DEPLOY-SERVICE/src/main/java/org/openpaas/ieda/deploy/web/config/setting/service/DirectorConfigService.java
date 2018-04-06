@@ -96,10 +96,6 @@ public class DirectorConfigService  {
         
             ObjectMapper mapper = new ObjectMapper();
             info = mapper.readValue(get.getResponseBodyAsString(), DirectorInfoDTO.class);
-        } catch (RuntimeException e) {
-            if( LOGGER.isErrorEnabled() ){
-                LOGGER.error( e.getMessage() );
-            }
         } catch (Exception e) {
             if( LOGGER.isErrorEnabled() ){
                 LOGGER.error( e.getMessage() );
@@ -158,7 +154,7 @@ public class DirectorConfigService  {
             throw new CommonException("unauthenticated.director.exception",
                     "디렉터에 로그인 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
-        createDirectorInfo(createDto, principal, info, boshConfigFileName);
+        insertDirectorInfo(createDto, principal, info, boshConfigFileName);
     }
     
     /***************************************************
@@ -168,7 +164,7 @@ public class DirectorConfigService  {
     * @title : insertDirectorInfo
     * @return : int
     ***************************************************/
-    public void createDirectorInfo(DirectorConfigDTO.Create createDto, Principal principal, DirectorInfoDTO info, String boshConfigFileName){
+    public void insertDirectorInfo(DirectorConfigDTO.Create createDto, Principal principal, DirectorInfoDTO info, String boshConfigFileName){
         SessionInfoDTO sessionInfo = new SessionInfoDTO(principal);
         DirectorConfigVO director = new DirectorConfigVO();
         director.setUserId(createDto.getUserId());
@@ -201,53 +197,37 @@ public class DirectorConfigService  {
         DirectorConfigVO directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
         director.setDefaultYn((directorConfig == null ) ? "Y":"N");
         if( director.getDefaultYn().equalsIgnoreCase("Y") ) {
-            boshEnvLoginSequence(director);
+            boshEnvAliasSequence(director);
         }
     }
     
     /****************************************************************
      * @project : Paas 플랫폼 설치 자동화
      * @description : 기본 설치관리자 설정
-     * @title : boshEnvLoginSequence
-     * @return : boolean
+     * @title : boshEnvAliasSequence
+     * @return : void
     *****************************************************************/
     @SuppressWarnings("unchecked")
-    public void boshEnvLoginSequence(DirectorConfigVO directorConfig){
-        OutputStreamWriter fileWriter = null;
+    public void boshEnvAliasSequence(DirectorConfigVO directorConfig){
         try{
             String boshCredentialFile = CREDENTIAL_DIR+directorConfig.getCredentialFile();
             InputStream input = new FileInputStream(new File( boshCredentialFile));
             Yaml yaml = new Yaml();
-            //7. 파일을 로드하여 Map<String, Object>에 parse한다.
+            // 파일을 로드하여 Map<String, Object>에 parse한다.
             Map<String, Object> object = (Map<String, Object>)yaml.load(input);
             Map<String, String> certMap = (Map<String,String>)object.get("director_ssl");
-            //8. bosh alias-env를 실행한다.
+            // bosh alias-env를 실행한다.
             ProcessBuilder builder = new ProcessBuilder("bosh", "alias-env", directorConfig.getDirectorName(),
                                                          "-e", directorConfig.getDirectorUrl(), "--ca-cert="+certMap.get("ca"));
             builder.start();
             Thread.sleep(1000);
-            //9. bosh-env에 로그인
-            String boshConfigFile = BASE_DIR+SEPARATOR+".bosh"+SEPARATOR+"config";
-            input = new FileInputStream(new File(boshConfigFile));
-            Map<String, Object> boshEnv = (Map<String, Object>)yaml.load(input);
-            List<Map<String, Object>> envMap = (List<Map<String, Object>>) boshEnv.get("environments");
-            for(int i=0;i<envMap.size();i++){
-                if(envMap.get(i).get("url").equals(directorConfig.getDirectorUrl())){
-                    envMap.get(i).put("username",directorConfig.getUserId());
-                    envMap.get(i).put("password", directorConfig.getUserPassword());
-                }
-            }
-            //10. bosh config 파일을 출력하기 위한  FileWriter 객체 생성
-            fileWriter = new OutputStreamWriter(new FileOutputStream(boshConfigFile),"UTF-8");
-            //11. StringWriter 객체 생성
-            StringWriter stringWriter = new StringWriter();
-            yaml.dump(boshEnv, stringWriter);
-            fileWriter.write(stringWriter.toString());
-            
+            // bosh-env에 로그인
+            boshAliasLoginSequence(directorConfig);
+            // 로그인 판별
             int statusResult = isExistBoshEnvLogin(directorConfig.getDirectorUrl(), 
-                                                   directorConfig.getDirectorPort(), 
-                                                   directorConfig.getUserId(), 
-                                                   directorConfig.getUserPassword());
+                    directorConfig.getDirectorPort(), 
+                    directorConfig.getUserId(), 
+                    directorConfig.getUserPassword());
             String httpStatus = String.valueOf(statusResult);
             // stemcell 조회 > httpStatus > 조건 200 이 아닐경우 Exception >> database update
             if(httpStatus.equals("200")){
@@ -268,19 +248,54 @@ public class DirectorConfigService  {
             e.printStackTrace();
             throw new CommonException("classCastException.directorFile.exception",
                     "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
-        } catch(HttpStatusCodeException e) {
-            e.printStackTrace();
-            throw new CommonException("unAuthorized.director.exception",
-                    "실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } try {
-            if(fileWriter != null) {
-                fileWriter.close();
+        }
+    }
+    /****************************************************************
+     * @project : Paas 플랫폼 설치 자동화
+     * @description :  기본 설치관리자 로그인
+     * @title : boshAliasLoginSequence
+     * @return : void
+    *****************************************************************/
+    @SuppressWarnings("unchecked")
+    public void boshAliasLoginSequence(DirectorConfigVO directorConfig){
+        OutputStreamWriter fileWriter = null;
+        try {
+            String boshConfigFile = BASE_DIR+SEPARATOR+".bosh"+SEPARATOR+"config";
+            InputStream input = new FileInputStream(new File(boshConfigFile));
+            Yaml yaml = new Yaml();
+            Map<String, Object> boshEnv = (Map<String, Object>)yaml.load(input);
+            List<Map<String, Object>> envMap = (List<Map<String, Object>>) boshEnv.get("environments");
+            for(int i=0;i<envMap.size();i++){
+                if(envMap.get(i).get("url").equals(directorConfig.getDirectorUrl())){
+                    envMap.get(i).put("username",directorConfig.getUserId());
+                    envMap.get(i).put("password", directorConfig.getUserPassword());
+                }
             }
+            // bosh config 파일을 출력하기 위한  FileWriter 객체 생성
+            fileWriter = new OutputStreamWriter(new FileOutputStream(boshConfigFile),"UTF-8");
+            // StringWriter 객체 생성
+            StringWriter stringWriter = new StringWriter();
+            yaml.dump(boshEnv, stringWriter);
+            fileWriter.write(stringWriter.toString());
         } catch (IOException e) {
+            e.printStackTrace();
             throw new CommonException("taretDirector.director.exception",
-                    "읽어오는 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+                    "설치관리자 타겟 설정 중 오류 발생하였습니다.", HttpStatus.NOT_FOUND);
+        } catch (NullPointerException e){
+            e.printStackTrace();
+            throw new CommonException("notfound.directorFile.exception",
+                    "설치관리자 관리 파일을 읽어오는 중 오류가 발생했습니다.", HttpStatus.NOT_FOUND);
+        } finally {
+            try {
+                if(fileWriter != null) {
+                    fileWriter.close();
+                }
+            } catch (IOException e) {
+                    throw new CommonException("taretDirector.director.exception",
+                            "읽어오는 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
         }
     }
     
@@ -315,12 +330,7 @@ public class DirectorConfigService  {
             throw new CommonException("notfound.director.exception",
                     "해당하는 디렉터가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
         }
-        try {
-            dao.deleteDirector(seq);
-        } catch (NullPointerException e) {
-            throw new CommonException("unsupportedencoding.director.exception",
-                    "설치관리자 설정 파일에 오류가 발생하였습니다.", HttpStatus.NOT_FOUND);
-        }
+        dao.deleteDirector(seq);
     }
 
     
@@ -390,24 +400,7 @@ public class DirectorConfigService  {
                                                          "-e", directorConfig.getDirectorUrl(), "--ca-cert="+certMap.get("ca"));
             builder.start();
             Thread.sleep(1000);
-            //9. bosh-env에 로그인
-            String boshConfigFile = BASE_DIR+SEPARATOR+".bosh"+SEPARATOR+"config";
-            input = new FileInputStream(new File(getBoshConfigLocation(boshConfigFileName)));
-            Map<String, Object> boshEnv = (Map<String, Object>)yaml.load(input);
-            List<Map<String, Object>> envMap = (List<Map<String, Object>>) boshEnv.get("environments");
-            for(int i=0;i<envMap.size();i++){
-                if(envMap.get(i).get("url").equals(directorConfig.getDirectorUrl())){
-                    envMap.get(i).put("username",directorConfig.getUserId());
-                    envMap.get(i).put("password", directorConfig.getUserPassword());
-                }
-            }
-            //10. bosh config 파일을 출력하기 위한  FileWriter 객체 생성
-            fileWriter = new OutputStreamWriter(new FileOutputStream(boshConfigFile),"UTF-8");
-            //11. StringWriter 객체 생성
-            StringWriter stringWriter = new StringWriter();
-            yaml.dump(boshEnv, stringWriter);
-            fileWriter.write(stringWriter.toString());
-             
+            boshAliasLoginSequence(directorConfig);
             int statusResult = isExistBoshEnvLogin(directorConfig.getDirectorUrl(), 
                                                    directorConfig.getDirectorPort(), 
                                                    directorConfig.getUserId(), 
@@ -454,23 +447,7 @@ public class DirectorConfigService  {
                         "읽어오는중 오류가 발생했습니다!", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        //setBoshConfigFile(directorConfig, boshConfigFileName);
         return directorConfig;
-    }
-    
-    /***************************************************
-     * @param boshConfigFileName 
-     * @project : OpenPaas 플랫폼 설치 자동
-     * @description : .bosh config 파일 설정
-     * @title :  getBoshConfigLocation
-     * @return : String
-     ***************************************************/
-    public String getBoshConfigLocation(String boshConfigFileName) {
-        String homeDir = BASE_DIR; //User's home directory
-        String fileSeperator = SEPARATOR;//File separator ("/" on UNIX)
-        String configDir = ".bosh";
-        String boshConfigFile = homeDir + fileSeperator + configDir + fileSeperator + boshConfigFileName; //
-        return boshConfigFile;
     }
     
     /****************************************************************
@@ -486,11 +463,9 @@ public class DirectorConfigService  {
             GetMethod get = new GetMethod(DirectorRestHelper.getStemcellsURI(directorUrl, port)); 
             get = (GetMethod)DirectorRestHelper.setAuthorization(userId, password, (HttpMethodBase)get); 
             statusResult = client.executeMethod(get);
-        } catch (RuntimeException e) {
-            if( LOGGER.isErrorEnabled() ){ LOGGER.error( e.getMessage() );}
         } catch (Exception e) {
             if( LOGGER.isErrorEnabled() ){ LOGGER.error( e.getMessage() );}
-        }
+        } 
         return statusResult;
     }
     
