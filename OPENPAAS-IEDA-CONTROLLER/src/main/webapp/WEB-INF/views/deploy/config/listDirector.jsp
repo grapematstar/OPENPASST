@@ -256,7 +256,7 @@ function registDefault(seq, target){
     });
 }
 /********************************************************
- * 설명 : 설정관리자 등록
+ * 설명 : 설치관리자 등록
  * 기능 : registDirectorConfig
  *********************************************************/
 function registDirectorConfig(){

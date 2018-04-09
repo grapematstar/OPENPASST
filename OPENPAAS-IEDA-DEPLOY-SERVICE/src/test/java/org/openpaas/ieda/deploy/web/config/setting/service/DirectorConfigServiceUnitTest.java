@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -26,8 +25,6 @@ import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigDAO;
 import org.openpaas.ieda.deploy.web.config.setting.dao.DirectorConfigVO;
 import org.openpaas.ieda.deploy.web.config.setting.dto.DirectorConfigDTO;
 
-import com.amazonaws.services.dynamodbv2.document.Expected;
-
 public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     
     private Principal principal = null;
@@ -35,7 +32,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     final private static String FILESEPARATOR = System.getProperty("file.separator");//File separator ("/" on UNIX)
     final private static String BOSHCONFIGTESTFILEPATH = HOMEDIR+FILESEPARATOR+".bosh_config_test";
     final private static String BOSHCONFIGTESTFILE = ".bosh_config_test";
-    final private static String BOSHCREDENTIALFILEPATH = BOSHCONFIGTESTFILEPATH+FILESEPARATOR+"credential_test";
     @InjectMocks DirectorConfigService mockDirectorConfigService;
     @Mock DirectorConfigDAO mockDirectorConfigDAO;
 
@@ -154,7 +150,6 @@ public class DirectorConfigServiceUnitTest extends BaseDeployControllerUnitTest{
     @Test(expected=CommonException.class)
     public void testBoshEnvLoginSequenceCredenstialFileIsNull(){
         DirectorConfigVO dvo = setDirectorInfo();
-        dvo.setCredentialFile(null);
         mockDirectorConfigService.boshEnvAliasSequence(dvo);
     }
     
