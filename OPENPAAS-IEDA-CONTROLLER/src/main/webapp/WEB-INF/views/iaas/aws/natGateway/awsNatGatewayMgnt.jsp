@@ -35,7 +35,7 @@ $(function() {
         style: 'text-align: center',
         columns    : [
                     {field: 'recid',     caption: 'recid', hidden: true}
-                   ,{field: 'natGatewayId', caption: 'NAT GW ID', size: '20%', style: 'text-align:center'}
+                   ,{field: 'natGatewayId', caption: 'NAT GW ID', size: '30%', style: 'text-align:center'}
                    ,{field: 'state', caption: 'Status', size: '20%', style: 'text-align:center'}
                    ,{field: 'publicIp', caption: 'Elastic IP', size: '30%', style: 'text-align:center'} 
                    ,{field: 'privateIp', caption: 'Private IP', size: '30%', style: 'text-align:center'}
@@ -43,7 +43,7 @@ $(function() {
                    ,{field: 'vpcId', caption: 'VPC', size: '20%', style: 'text-align:center'}
                    ,{field: 'subnetId', caption: 'Subnet ID', size: '20%', style: 'text-align:center'}
                    ,{field: 'allocationId', caption: 'Allocation ID', size: '20%', style: 'text-align:center'}
-                   ,{field: 'createdTime', caption: 'Created Date', size: '20%', style: 'text-align:center'}
+                   ,{field: 'createdTime', caption: 'Created Date', size: '30%', style: 'text-align:center'}
                    ],
         onSelect: function(event) {
             event.onComplete = function() {
@@ -87,13 +87,12 @@ $(function() {
         });
     }); 
     
-    var iTime = 15;   // 새로고침 반복 시간  ex) 2분 = 2 * 60 
+    var iTime = 15;
     var h;
     var m; 
     setInterval(function() {
         if(iTime == 0){
-            iTime = 15; // 상단의 새로고침 반복 시간  초기화 
-            //todo
+            iTime = 15; 
             refresh();
         }
         iTime--;
@@ -109,7 +108,10 @@ $(function() {
 });
 
 function refresh(){
-	doSearch();
+    region = $("select[name='region']").val();
+    if(region == null) region = "us-west-2";
+	if(w2ui['aws_natGatewayGrid'] != undefined)
+    w2ui['aws_natGatewayGrid'].load("<c:url value='/awsMgnt/natGateway/list/"+accountId+"/"+region+"'/>","",function(event){});
 }
 
 /********************************************************

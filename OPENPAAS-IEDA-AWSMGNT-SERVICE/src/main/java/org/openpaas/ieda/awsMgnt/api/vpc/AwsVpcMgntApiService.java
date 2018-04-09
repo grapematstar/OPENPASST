@@ -162,12 +162,10 @@ public class AwsVpcMgntApiService {
             createTagsRequest.withResources(result.getVpc().getVpcId());
             ec2.createTags(createTagsRequest);
         }
-        
     }
     
     /***************************************************
-    * @param string 
-     * @project : AWS 인프라 관리 대시보드
+    * @project : AWS 인프라 관리 대시보드
     * @description : AWS VPC 실제 메소드 호출
     * @title : deleteAwsVpcInfoApiFromAws
     * @return : void

@@ -45,7 +45,7 @@ $(function() {
         columns    : [
                     {field: 'recid',     caption: 'recid', hidden: true}
                    ,{field: 'accountId',     caption: 'accountId', hidden: true}
-                   ,{field: 'nameTag', caption: 'Name', size: '20%', style: 'text-align:center'}
+                   ,{field: 'nameTag', caption: 'Name', size: '20%', style: 'text-align:center', info: true}
                    ,{field: 'routeTableId', caption: 'Route Table ID', size: '20%', style: 'text-align:center'}
                    ,{field: 'associationCnt', caption: 'Explicitly Associated With', size: '20%', style: 'text-align:center'}
                    ,{field: 'mainYN', caption: 'Main', size: '30%', style: 'text-align:center'} 
