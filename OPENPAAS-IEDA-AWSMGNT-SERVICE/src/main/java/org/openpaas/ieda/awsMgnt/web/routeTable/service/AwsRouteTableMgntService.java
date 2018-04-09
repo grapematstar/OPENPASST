@@ -335,6 +335,9 @@ public class AwsRouteTableMgntService {
               NatGateway natgw = apiAwsNatGWList.get(k);
               if(natgw !=null ){
               if(natgw.getState().equals("available") && natgw.getVpcId().equals(vpcId)){
+                if(!natgw.getClass().getSimpleName().isEmpty()){
+                     targets.add(cnt-1+cntt-1, natgw.getNatGatewayId().toString()+" | "+natgw.getClass().getSimpleName());
+                }
               targets.add(cnt-1+cntt-1, natgw.getNatGatewayId().toString());
               cntt++;
               }
@@ -376,6 +379,7 @@ public class AwsRouteTableMgntService {
           try{
               awsRouteTableMgntApiService.createAwsRouteFromAws(vo, region.getName(), dto);
           }catch (Exception e) {
+        	  e.printStackTrace();
               throw new CommonException(
                       message.getMessage("common.badRequest.exception.code", null, Locale.KOREA), message.getMessage("common.badRequest.message", null, Locale.KOREA), HttpStatus.BAD_REQUEST);
           }

@@ -40,6 +40,14 @@ public class AwsSubnetMgntService {
             Subnet subnet = awsSubnetList.get(i);
             AwsSubnetMgntVO awsSubnetVo = new AwsSubnetMgntVO();
             awsSubnetVo.setSubnetId(subnet.getSubnetId());
+            String result = "";
+            int tSize = subnet.getTags().size();
+            if( tSize!=0 ){
+            	for(int k=0; k< tSize; k++){
+            	result += subnet.getTags().get(k).getValue().toString();
+            	}
+            	awsSubnetVo.setNameTag(result);
+            }
             awsSubnetVo.setState(subnet.getState());
             awsSubnetVo.setVpcId(subnet.getVpcId());
             awsSubnetVo.setCidrBlock(subnet.getCidrBlock());

@@ -58,8 +58,25 @@ public class AzureNetworkMgntApiService {
               .authenticate(azureClient)
               .withSubscription(vo.getAzureSubscriptionId());
       List<Network> networkList = azure.networks().list();
+      //networkList.get(0).manager().resourceManager().genericResources().list().contains("resorceType");
       HashMap<String, Object> map = new HashMap<String, Object>();
       map.put("networkList", networkList);
       return map;
-  }   
+  }  
+  
+  /***************************************************
+   * @project : 인프라 관리 대시보드
+   * @description :Azure API를 통해 MS Azure 계정 Subscription ID 가져오기 
+   * @title : getSubscriptionInfoFromAzure
+   * @return : Subscription
+  ***************************************************/ 
+  public String getSubscriptionInfoFromAzure (IaasAccountMgntVO vo, String subscriptionId ){
+	   AzureTokenCredentials azureClient = getAzureClient(vo);
+      Azure azure  = Azure.configure()
+              .withLogLevel(LogLevel.BASIC)
+              .authenticate(azureClient)
+              .withSubscription(subscriptionId);
+      String subscription = azure.subscriptions().getById(subscriptionId).displayName().toString();
+  	return subscription;
+  }
 }

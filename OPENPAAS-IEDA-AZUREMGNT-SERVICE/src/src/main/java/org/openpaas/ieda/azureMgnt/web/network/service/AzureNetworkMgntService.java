@@ -34,13 +34,14 @@ public class AzureNetworkMgntService {
      
      /***************************************************
       * @project : Azure 관리 대시보드
-      * @description : Resource Group 목록 조회
-      * @title : getAzureResourceGroupInfoList
+      * @description : NETWORK 목록 조회
+      * @title : getAzureNetworkInfoList
       * @return : List<AzureResourceGroupMgntVO>
       ***************************************************/
       public List<AzureNetworkMgntVO> getAzureNetworkInfoList(Principal principal, int accountId) {
         
           IaasAccountMgntVO vo = getAzureAccountInfo(principal, accountId);
+          String subName = getAzureSubscriptionNameInfo(principal, accountId, vo.getAzureSubscriptionId());
           List<Network> azureNetworkList = azureNetworkMgntApiService.getAzureNetworkInfoListApiFromAzure(vo);
           List<AzureNetworkMgntVO> list = new ArrayList<AzureNetworkMgntVO>();
           for (int i=0; i<azureNetworkList.size(); i++ ){
@@ -49,12 +50,31 @@ public class AzureNetworkMgntService {
               azureRgVo.setNetworkName(network.name());
               azureRgVo.setLocation(network.regionName());
               azureRgVo.setResourceGroupName(network.resourceGroupName());
-              azureRgVo.setRecid(i);
+              if(network.addressSpaces().size() != 0){
+            	  azureRgVo.setNetworkAddressRangeCidr(network.addressSpaces().get(0).toString());
+              }
+              if(network.dnsServerIPs().size() != 0){
+            	  azureRgVo.setDnsServer(network.dnsServerIps().get(0).toString());
+              }
+              azureRgVo.setSubscriptionName(subName);
               azureRgVo.setAzureSubscriptionId(vo.getAzureSubscriptionId());
               azureRgVo.setAccountId(vo.getId());
+              azureRgVo.setRecid(i);
               list.add(azureRgVo);
           }
           return list;
+      }
+      
+      /***************************************************
+       * @project : 인프라 관리 대시보드
+       * @description : Azure 구독 명 조회
+       * @title : getAzureSubNameInfo
+       * @return : String
+       ***************************************************/
+      public String getAzureSubscriptionNameInfo(Principal principal, int accountId, String subscriptionId){
+          IaasAccountMgntVO vo =  getAzureAccountInfo(principal, accountId);
+          String subName = azureResourceGroupMgntApiService.getSubscriptionInfoFromAzure(vo, subscriptionId);
+          return  subName;
       }
     
 }

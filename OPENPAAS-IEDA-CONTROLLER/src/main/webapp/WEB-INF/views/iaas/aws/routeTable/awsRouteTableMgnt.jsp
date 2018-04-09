@@ -572,7 +572,9 @@ function setAwsTargetList(){
                var result = "";
                if(data != null && data.length != 0){
                    for(var i=0; i<data.length; i++){
-                       result += "<option value='" + data[i] + "' >";
+                	   
+                	   var splited =  data[i].split(" |");
+                	   result += "<option value='"+ splited[0] +"' >";
                        result += data[i];
                        result += "</option>"; 
                    }

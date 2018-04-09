@@ -127,10 +127,10 @@
 #openstackMgnt .dropdown a.iaas-dropdown { width: 210px; text-align:left; border: 1px solid #e1e1e1; padding: 5px 10px; display:block;background-color:#fff; }
 #openstackMgnt ul.alert-dropdown { width:210px; }
 
-#azurekMgnt {  padding: 20px 5px; height: 80px; background-color: #ececec; border:1px dashed #d4d4d4; border-radius:3px; text-align: center;  }
-#azurekMgnt > ul > li { display:inline-block; margin:0 10px; }
-#azurekMgnt .dropdown a.iaas-dropdown { width: 210px; text-align:left; border: 1px solid #e1e1e1; padding: 5px 10px; display:block;background-color:#fff; }
-#azurekMgnt ul.alert-dropdown { width:210px; }
+#azureMgnt {  padding: 20px 5px; height: 80px; background-color: #ececec; border:1px dashed #d4d4d4; border-radius:3px; text-align: center;  }
+#azureMgnt > ul > li { display:inline-block; margin:0 10px; float:left; }
+#azureMgnt .dropdown a.iaas-dropdown { width: 210px; text-align:left; border: 1px solid #e1e1e1; padding: 5px 10px; display:block;background-color:#fff; }
+#azureMgnt ul.alert-dropdown { width:210px; }
 
 #azureMgntWrap { display: block;float: left; width:100%; margin-top: 10px;}
 #azureMgntWrap .azureMgntDiv {width: 260px;float:left;border-radius: 10px;height: 280px;background:#fff; border: 1px solid #dcdcdc; margin: 0 130px 30px 0px; cursor:pointer;}    

@@ -42,7 +42,7 @@ public class AzureNetworkMgntController {
 	     * @title : getAzureNetworkInfoList
 	     * @return : ResponseEntity<?>
 	     ***************************************************/
-	    @RequestMapping(value="/azureMgnt/resourceGroup/network/list/{accountId}", method=RequestMethod.GET)
+	    @RequestMapping(value="/azureMgnt/network/list/{accountId}", method=RequestMethod.GET)
 	    public ResponseEntity<HashMap<String, Object>> getAzureNetworkInfoList(Principal principal, @PathVariable int accountId){
 	        List<AzureNetworkMgntVO> list = azureNetworkMgntService.getAzureNetworkInfoList(principal,accountId);
 	        HashMap<String, Object> map = new HashMap<String, Object>();

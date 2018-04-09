@@ -40,26 +40,29 @@ $(function() {
         columns    : [
                      {field: 'recid',     caption: 'recid', hidden: true}
                    , {field: 'accountId',     caption: 'accountId', hidden: true}
-                   , {field: 'name', caption: 'Network Name', size: '50%', style: 'text-align:center', render : function(record){
+                   , {field: 'networkName', caption: 'Network Name', size: '50%', style: 'text-align:center', render : function(record){
                        if(record.name == null || record.name == ""){
                            return "-"
                        }else{
                            return record.name;
                        }}
                    }
+                   , {field: 'subscriptionName', caption: 'Subscription', size: '50%', style: 'text-align:center'}
                    , {field: 'azureSubscriptionId', caption: 'Subscription ID', size: '50%', style: 'text-align:center'}
+                   , {field: 'resourceType', caption: 'Type', size: '50%', style: 'text-align:center'}
                    , {field: 'location', caption: 'Location', size: '50%', style: 'text-align:center'}
-                   , {field: 'resourceGroupId', caption: 'Network Id', size: '50%', style: 'text-align:center'}
-                   , {field: 'status', caption: 'Status', size: '50%', style: 'text-align:center'}
+                   , {field: 'resourceGroupName', caption: 'Resource Group', size: '50%', style: 'text-align:center'}
+                   , {field: 'dnsServer', caption: 'DNS Servers', size: '50%', style: 'text-align:center'}
+                   , {field: 'networkAddressSpaceCidr', caption: 'Address Space', size: '50%', style: 'text-align:center'}
                    ],
         onSelect: function(event) {
             event.onComplete = function() {
                 $('#deleteBtn').attr('disabled', false);
                 var accountId =  w2ui.azure_vnetGrid.get(event.recid).accountId;
-                var networkName = w2ui.azure_vnetGrid.get(event.recid).name;
-                var rglocation = w2ui.azure_vnetGrid.get(event.recid).location;
-                doSearchRgDetailInfo(accountId, networkName); 
-                doSearchRgResourceInfo(accountId, networkName); 
+                var networkName = w2ui.azure_vnetGrid.get(event.recid).networkName;
+                var location = w2ui.azure_vnetGrid.get(event.recid).location;
+                //doSearchRgDetailInfo(accountId, networkName); 
+                //doSearchRgResourceInfo(accountId, networkName); 
             }
         },
         onUnselect: function(event) {
@@ -120,7 +123,7 @@ $(function() {
        w2popup.open({
            title   : "<b>Azure Network 생성</b>",
            width   : 580,
-           height  : 370,
+           height  : 470,
            modal   : true,
            body    : $("#registPopupDiv").html(),
            buttons : $("#registPopupBtnDiv").html(),
@@ -178,7 +181,7 @@ $(function() {
  * 기능 : doSearch
  *********************************************************/
 function doSearch() {
-	w2ui['azure_vnetGrid'].load("<c:url value='/azureMgnt/resourceGroup/network/list/'/>"+accountId);
+	w2ui['azure_vnetGrid'].load("<c:url value='/azureMgnt/network/list/'/>"+accountId);
     doButtonStyle();
     accountId = "";
 }
@@ -216,7 +219,7 @@ function doSearchRgDetailInfo(accountId, networkName){
  *********************************************************/
 function doSearchRgResourceInfo(accountId, networkName){
 	w2utils.lock($("#layout_layout_panel_main"), detail_rg_lock_msg, true);
-    w2ui['azure_deviceGrid'].load("<c:url value='/azureMgnt/resourceGroup/save/detail/resource/'/>"+accountId+"/"+networkName);
+    w2ui['azure_deviceGrid'].load("<c:url value='/azureMgnt/network/save/detail/resource/'/>"+accountId+"/"+networkName);
     
 }
 
@@ -230,17 +233,16 @@ function saveAzureRGInfo(){
         accountId : $("select[name='accountId']").val(),
         rglocation : $(".w2ui-msg-body select[name='rglocation']").val(),	
         name : $(".w2ui-msg-body input[name='nameTag']").val(),
-        azureSubscriptionId : $(".w2ui-msg-body select[name='azureSubscriptionId']").val(),
+        networkAddressSpace : $(".w2ui-msg-body input[name='networkAddressSpace']").val(),
+        azureSubscriptionId : $(".w2ui-msg-body input[name='azureSubscriptionId']").val(),
+        resourceGroupName : $(".w2ui-msg-body select[name='resourceGroupName']").val(),
+        subnetName : $(".w2ui-msg-body input[name='subnetName']").val(),
+        subnetAddressRange : $(".w2ui-msg-body input[name='subnetAddressRange']").val(),
     }
-    accountId = $("select[name='accountId']").val();
-    rglocation = $(".w2ui-msg-body select[name='rglocation']").val();	
-    name = $(".w2ui-msg-body input[name='nameTag']").val();
-    azureSubscriptionId = $(".w2ui-msg-body select[name='azureSubscriptionId']").val();
-    
     
     $.ajax({
         type : "POST",
-        url : "/azureMgnt/network/save/"+accountId+"/"+rglocation+"/"+name+"/"+azureSubscriptionId+"",
+        url : "/azureMgnt/network/save/",
         contentType : "application/json",
         async : true,
         data : JSON.stringify(rgInfo),
@@ -438,24 +440,23 @@ td {
                         &nbsp;&nbsp;Network 관리<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu alert-dropdown">
-                        
-                        <sec:authorize access="hasAuthority('AZURE_NETWORK_MENU')">
-                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/resourceGroup"/>', 'Azure ResourceGroup');">ResourceGroup 관리</a></li>
+                        <sec:authorize access="hasAuthority('AZURE_RESOURCE_GROUP_MENU')">
+                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/resourceGroup"/>', 'Azure Resource Group');">Resource Group 관리</a></li>
                         </sec:authorize>
                         <sec:authorize access="hasAuthority('AZURE_SUBNET_MENU')">
-                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/subnet"/>', 'Azure SUBNET');">Subnet 관리</a></li>
+                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/subnet"/>', 'Azure Subnet');">Subnet 관리</a></li>
                         </sec:authorize>
                         <sec:authorize access="hasAuthority('AZURE_GATEWAY_SUBNET_MENU')">
                             <li><a href="javascript:goPage('<c:url value="/azureMgnt/gatewaySubnet"/>', 'Azure Gateway Subnet');"> Gateway Subnet 관리</a></li>
                         </sec:authorize>
-                        <sec:authorize access="hasAuthority('AWS_SECURITY_GROUP_MENU')">
-                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/securityGroup"/>', 'Azure SECURITY GROUP');">Security Group 관리</a></li>
+                        <sec:authorize access="hasAuthority('AZURE_SECURITY_GROUP_MENU')">
+                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/securityGroup"/>', 'Azure Security Group');">Security Group 관리</a></li>
                         </sec:authorize>
                         <sec:authorize access="hasAuthority('AZURE_SECURITY_RULE_MENU')">
-                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/securityRule"/>', 'Azure SECURITY RULE');">Security Rule 관리</a></li>
+                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/securityRule"/>', 'Azure Security Rule');">Security Rule 관리</a></li>
                         </sec:authorize>
                         <sec:authorize access="hasAuthority('AZURE_PUBILIC_IP_MENU')">
-                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/publicIp"/>', 'Azure Public Ip');">Public Ip 관리</a></li>
+                            <li><a href="javascript:goPage('<c:url value="/azureMgnt/publicIp"/>', 'Azure Public IP');">Public IP 관리</a></li>
                         </sec:authorize>
                         <sec:authorize access="hasAuthority('AZURE_STORAGE_ACCOUNT_MENU')">
                             <li><a href="javascript:goPage('<c:url value="/azureMgnt/storageAccount"/>', 'Azure Storage Account');"> Storage Account 관리</a></li>
@@ -479,9 +480,11 @@ td {
     <div class="pdt20">
         <div class="title fl">Azure Network 목록</div>
         <div class="fr"> 
+        <%--  <sec:authorize access="hasAuthority('AZURE_NETWORK_CREATE')"> --%>
             <sec:authorize access="hasAuthority('AWS_VPC_CREATE')">
             <span id="addBtn" class="btn btn-primary" style="width:120px">생성</span>
             </sec:authorize>
+        <%--  <sec:authorize access="hasAuthority('AZURE_NETWORK_DELETE')"> --%>
             <sec:authorize access="hasAuthority('AWS_VPC_DELETE')">
             <span id="deleteBtn" class="btn btn-danger" style="width:120px">삭제</span>
             </sec:authorize>
@@ -492,9 +495,9 @@ td {
 <!-- Network 생성 팝업 -->
 <div id="registPopupDiv" hidden="true">
     <form id="azureRGForm" action="POST" style="padding:5px 0 5px 0;margin:0;">
-        <div class="panel panel-info" style="height: 260px; margin-top: 7px;"> 
-            <div class="panel-heading"><b>azure Network 정보</b></div>
-            <div class="panel-body" style="padding:20px 10px; height:220px; overflow-y:auto;">
+        <div class="panel panel-info" style="height: 350px; margin-top: 7px;"> 
+            <div class="panel-heading"><b>Azure Network 생성 정보</b></div>
+            <div class="panel-body" style="padding:20px 10px; height:340px; overflow-y:auto;">
                 <input type="hidden" name="accountId"/>
                 <div class="w2ui-field">
                     <label style="width:36%;text-align: left; padding-left: 20px;">Network Name</label>
@@ -503,16 +506,39 @@ td {
                     </div>
                 </div>
                 <div class="w2ui-field">
-                    <label style="width:36%;text-align: left; padding-left: 20px;">Subscription</label>
+                    <label style="width:36%;text-align: left; padding-left: 20px;">Network 주소 공간</label>
                     <div>
-                        <!-- <div class="azureSubscription" style="width:300px; font-size: 15px; height: 32px;"></div> -->
-                        <select name="azureSubscriptionId" onClick = "azureSubscriptionOnchange()" id="subscriptionList" class="select" style="width:300px; font-size: 15px; height: 32px;"></select>
+                        <input name="addressSpaceCidr" type="text"   maxlength="100" style="width: 300px; margin-top: 1px;" placeholder="Network  Address Space를 입력하세요."/>
                     </div>
                 </div>
                 <div class="w2ui-field">
-                    <label style="width:36%;text-align: left; padding-left: 20px;">RG Location</label>
+                    <label style="width:36%;text-align: left; padding-left: 20px;">Subscription</label>
+                    <div>
+                        <div class="azureSubscription" style="width:300px; font-size: 15px; height: 32px;"></div> 
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="width:36%;text-align: left; padding-left: 20px;">Resource Group</label>
+                    <div>
+                        <select name="resourceGroup" onClick = "azureResourceGroupOnchange()" id="resourceGroupList" class="select" style="width:300px; font-size: 15px; height: 32px;"></select>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="width:36%;text-align: left; padding-left: 20px;">Location</label>
                     <div>
                         <select name="vnetLocation" onClick = "azureRegionOnchange()" id="locationList" class="select" style="width:300px; font-size: 15px; height: 32px;"></select>
+                    </div>
+                </div>
+                <div class="w2ui-field">
+                    <label style="width:36%;text-align: left; padding-left: 20px;">Subnet Name</label>
+                    <div>
+                        <input name="subnet" type="text"   maxlength="100" style="width: 300px; margin-top: 1px;" placeholder="Subnet Address 범위를 입력하세요."/>
+                    </div>
+                </div>
+                 <div class="w2ui-field">
+                    <label style="width:36%;text-align: left; padding-left: 20px;">Subnet Address Range 주소 범위</label>
+                    <div>
+                        <input name="addressRangeCidr" type="text"   maxlength="100" style="width: 300px; margin-top: 1px;" placeholder="Subnet Address 범위를 입력하세요."/>
                     </div>
                 </div>
             </div>

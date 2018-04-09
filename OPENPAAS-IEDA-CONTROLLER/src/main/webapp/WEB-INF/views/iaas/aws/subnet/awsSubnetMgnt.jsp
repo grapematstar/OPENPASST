@@ -41,6 +41,7 @@ var region = "";
             },
             style : 'text-align: center',
             columns : [ {field : 'recid', caption : 'recid', hidden : true}
+                      , {field : 'nameTag', caption : 'Name', size : '20%', style : 'text-align:center'}
                       , {field : 'subnetId', caption : 'Subnet ID', size : '20%', style : 'text-align:center'}
                       , {field : 'state', caption : 'State', size : '20%', style : 'text-align:center'}
                       , {field : 'vpcId',caption : 'VPC',size : '20%',style : 'text-align:center'}
@@ -266,7 +267,7 @@ function showVpcDetails(vpcId){
           options +="<option value=''>존재하지 않습니다.</option>";
       }else{
           for (var i=0; i<data.length; i++){
-              options +="<option value='"+data[i].vpcId+"'>" + data[i].vpcId + "</option>"; 
+              options +="<option value='"+data[i].vpcId+"'>" + data[i].vpcId+" | "+ data[i].nameTag + "</option>"; 
           } 
       }
       vpcsInfo=data;

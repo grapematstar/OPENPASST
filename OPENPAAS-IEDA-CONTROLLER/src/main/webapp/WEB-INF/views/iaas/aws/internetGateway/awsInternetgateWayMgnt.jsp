@@ -41,7 +41,6 @@ $(function() {
         columns    : [
                      {field: 'recid',     caption: 'recid', hidden: true}
                    , {field: 'accountId',     caption: 'accountId', hidden: true}
-                   , {field: 'internetGatewayId', size: '50%', caption: 'InternetGateWay Id'}
                    , {field: 'internetGatewayName', caption: 'InternetGateWay Name', size: '50%', style: 'text-align:center', render : function(record){
                        if(record.internetGatewayName == null || record.internetGatewayName == ""){
                            return "-"
@@ -49,6 +48,7 @@ $(function() {
                            return record.internetGatewayName;
                        }}
                    }
+                   , {field: 'internetGatewayId', size: '50%', caption: 'InternetGateWay Id'}
                    , {field: 'status', size: '50%', caption: 'InternetGateWay Status', render : function(record){
                        if(record.status == null || record.status == ""){
                            return "detached"
@@ -274,7 +274,11 @@ function getAwsVpcListInfo(){
             var result = "";
             if(data.length != 0){
                 for(var i=0;i<data.length;i++){
-                    result+="<option value="+data[i].vpcId+">"+data[i].vpcId+"</option>";
+                    result+="<option value="+data[i].vpcId+">"+data[i].vpcId;
+                    if(data[i].nameTag != null){
+                      result+=" | "+data[i].nameTag;
+                    }
+                    result+="</option>";
             }
             }else{
                 result+="<option value='noAttachVpc'>연결 할 VPC가 존재 하지 않습니다.</option>"

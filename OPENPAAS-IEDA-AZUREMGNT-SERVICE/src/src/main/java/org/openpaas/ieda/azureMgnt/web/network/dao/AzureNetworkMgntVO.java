@@ -16,7 +16,8 @@ public class AzureNetworkMgntVO {
     private String location;//그룹 명
     private String resourceGroupId;//리소스 그룹 id
     private String resourceGroupName;//리소스 그룹 명
-    private String networkAddressRangeCidr; //network address range
+    private String resourceType;
+    private String networkAddressSpaceCidr; //network address range
     private String subnetName;//Subnet 명
     private String subnetAddressRangeCidr; //Subnet address range
     private String dnsServer; //dns server
@@ -71,14 +72,20 @@ public class AzureNetworkMgntVO {
 	public String getResourceGroupName() {
 		return resourceGroupName;
 	}
+	public String getResourceType() {
+		return resourceType;
+	}
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
+	}
 	public void setResourceGroupName(String resourceGroupName) {
 		this.resourceGroupName = resourceGroupName;
 	}
-	public String getNetworkAddressRangeCidr() {
-		return networkAddressRangeCidr;
+	public String getNetworkAddressSpaceCidr() {
+		return networkAddressSpaceCidr;
 	}
-	public void setNetworkAddressRangeCidr(String networkAddressRangeCidr) {
-		this.networkAddressRangeCidr = networkAddressRangeCidr;
+	public void setNetworkAddressSpaceCidr(String networkAddressSpaceCidr) {
+		this.networkAddressSpaceCidr = networkAddressSpaceCidr;
 	}
 	public String getSubnetName() {
 		return subnetName;
