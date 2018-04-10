@@ -1,5 +1,6 @@
 package org.openpaas.ieda.deploy.web.config.setting.service;
 
+import java.io.BufferedOutputStream;
 import java.io.File
 ;
 import java.io.FileInputStream;
@@ -8,9 +9,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -26,10 +34,13 @@ import org.openpaas.ieda.deploy.web.config.setting.dto.DirectorConfigDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DirectorConfigService  {
     
     @Autowired private DirectorConfigDAO dao;
+    @Autowired MessageSource message;
     
     final private static String BASE_DIR = System.getProperty("user.home");
     final private static String SEPARATOR = System.getProperty("file.separator");
@@ -64,7 +76,7 @@ public class DirectorConfigService  {
     /***************************************************
      * @project : Paas 플랫폼 설치 자동화
      * @description : 설치 관리자 정보 목록을 DefaultYn를 기준으로 역 정렬하여 전체 조회한 값을 응답
-     * @title : listDirector
+     * @title : getDirectorlist
      * @return : List<DirectorConfigVO>
     ***************************************************/
     public List<DirectorConfigVO> getDirectorList() {
@@ -177,22 +189,13 @@ public class DirectorConfigService  {
         director.setCreateUserId(sessionInfo.getUserId());
         director.setUpdateUserId(sessionInfo.getUserId());
         
-        //입력된 설치관리자 정보를 데이터베이스에 저장한다.
-        if(!director.equals(null)){
-            dao.insertDirector(director);
-            List<DirectorConfigVO> resultList = dao.selectDirectorConfigByDirectorUrl(createDto.getDirectorUrl());
-            try {
-                director.setIedaDirectorConfigSeq(resultList.get(0).getIedaDirectorConfigSeq());
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-                throw new CommonException("outbound.directorFile.exception", "설치관리자가 제대로 설정되지 않았습니다.", HttpStatus.BAD_REQUEST);
-            }
-        }
         //기존에 기본 설치관리자가 존재한다면 N/ 존재하지않는다면 기본 설치관리자로 설정
         DirectorConfigVO directorConfig = dao.selectDirectorConfigByDefaultYn("Y");
         director.setDefaultYn((directorConfig == null ) ? "Y":"N");
         if( director.getDefaultYn().equalsIgnoreCase("Y") ) {
             boshEnvAliasSequence(director);
+        }else{
+            dao.insertDirector(director);
         }
     }
     
@@ -215,7 +218,7 @@ public class DirectorConfigService  {
             String httpStatus = String.valueOf(statusResult);
             // stemcell 조회 > httpStatus > 조건 200 이 아닐경우 Exception >> database update
             if(httpStatus.equals("200")){
-                dao.updateDirector(directorConfig);
+                dao.insertDirector(directorConfig);
             }else{
                 throw new CommonException("unAuthorized.director.exception",
                         "실행 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
@@ -347,7 +350,7 @@ public class DirectorConfigService  {
             throw new CommonException("unauthenticated.director.exception",
                     "해당 디렉터에 로그인 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
-        return setDefaultDirectorInfo(directorConfig, info, principal, boshConfigFileName);
+        return changeDefaultDirectorInfo(directorConfig, info, principal, boshConfigFileName);
     }
     
     /***************************************************
@@ -359,7 +362,7 @@ public class DirectorConfigService  {
     * @return : DirectorConfigVO
     ***************************************************/
     @SuppressWarnings("unchecked")
-    public DirectorConfigVO setDefaultDirectorInfo(DirectorConfigVO directorConfig, DirectorInfoDTO info, Principal principal, String boshConfigFileName){
+    public DirectorConfigVO changeDefaultDirectorInfo(DirectorConfigVO directorConfig, DirectorInfoDTO info, Principal principal, String boshConfigFileName){
         // 기존 기본관리자의 정보를 불러온다.
         DirectorConfigVO oldDefaultDiretor = dao.selectDirectorConfigByDefaultYn("Y");
         // 세션 정보를 가져온다.
@@ -440,6 +443,56 @@ public class DirectorConfigService  {
             if( LOGGER.isErrorEnabled() ){ LOGGER.error( e.getMessage() );}
         } 
         return statusResult;
+    }
+    
+    /****************************************************************
+     * @project : Paas 플랫폼 설치 자동화
+     * @description :  
+     * @title : uploadCredentialKeyFile
+     * @return : void
+    *****************************************************************/
+    public void uploadCredentialKeyFile(MultipartHttpServletRequest request) {
+        Iterator<String> itr =  request.getFileNames();
+        File keyPathFile = new File(CREDENTIAL_DIR);
+        if (!keyPathFile.isDirectory()){
+            boolean result = keyPathFile.mkdir();
+            LOGGER.debug("Credential key path file directory create :: " + result);
+        }
+        if(itr.hasNext()) {
+            BufferedOutputStream stream = null;
+            MultipartFile mpf = request.getFile(itr.next());
+            try {
+                String keyFilePath = CREDENTIAL_DIR + mpf.getOriginalFilename();
+                byte[] bytes = mpf.getBytes();
+                File isKeyFile = new File(keyFilePath);
+                stream = new BufferedOutputStream(new FileOutputStream(isKeyFile));
+                stream.write(bytes);
+                
+//                boolean result = isKeyFile.setWritable(false, false);
+//                if(LOGGER.isDebugEnabled()){
+//                    LOGGER.debug("isKeyFile.setWritable : " + result);
+//                }
+//                isKeyFile.setExecutable(true, false);
+//                isKeyFile.setReadable(true, false);
+//                Set<PosixFilePermission> pfp = new HashSet<PosixFilePermission>();
+//                pfp.add(PosixFilePermission.OWNER_READ);
+//                Files.setPosixFilePermissions(Paths.get(keyFilePath), pfp);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new CommonException(message.getMessage("common.internalServerError.exception.code", null, Locale.KOREA),
+                        message.getMessage("common.internalServerError.message", null, Locale.KOREA), HttpStatus.INTERNAL_SERVER_ERROR);
+            } finally {
+                try {
+                    if( stream != null ) {
+                        stream.close();
+                    }
+                } catch (IOException e) {
+                    throw new CommonException(message.getMessage("common.internalServerError.exception.code", null, Locale.KOREA),
+                            message.getMessage("common.internalServerError.message", null, Locale.KOREA), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
     }
     
 }

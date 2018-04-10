@@ -400,6 +400,10 @@ function setCredentialKeyPath(fileInput){
     $(".w2ui-msg-body input[name=credsKeyPath]").val(file[0].name);
 }
 
+/******************************************************************
+ * 기능 : setCredentialKeyPathList
+ * 설명: 공통 File upload Input
+ ***************************************************************** */
 function setCredentialKeyPathList(fileList){
     $(".w2ui-msg-body input[name=credsKeyPath]").val(fileList.value);
 }
@@ -456,6 +460,36 @@ function credsChangeKeyPathStyle( showDiv, hideDiv ){
      $(".w2ui-msg-body "+ hideDiv +" p").remove();
      $(".w2ui-msg-body "+ showDiv).show();
 }
+/****************************************************
+ * 기능 : uploadCredentialKey
+ * 설명 : CredentialKey 업로드
+*****************************************************/
+function uploadCredentialKey(){
+    var form = $(".w2ui-msg-body #settingForm")[0];
+    var formData = new FormData(form);
+    
+    var files = document.getElementsByName('keyPathFile')[0].files;
+    console.log(files);
+    formData.append("file", files[0]);
+    
+    $.ajax({
+        type : "POST",
+        url : "/config/director/credskey/upload",
+        enctype : 'multipart/form-data',
+        dataType: "text",
+        async : true,
+        processData: false, 
+        contentType:false,
+        data : formData,  
+        success : function(data, status) {
+            registDirectorConfig();
+        },
+        error : function( e, status ) {
+            w2alert( "Credential Key 업로드에 실패 하였습니다.", "설치관리자 설정");
+        }
+    });
+    
+}
 </script>
 
 <div id="main">
@@ -490,7 +524,7 @@ function credsChangeKeyPathStyle( showDiv, hideDiv ){
 </div>
 <!-- 설치관리자 정보추가/수정 팝업 -->
 <div id="regPopupDiv" hidden="true">
-    <form id="settingForm">
+    <form id="settingForm" action="POST">
         <input name="seq" type="hidden"/>
         <div class="w2ui-page page-0">
             <div class="panel panel-info" style="margin-top:5px;">
@@ -651,7 +685,7 @@ $(function() {
             }
         }, submitHandler: function (form) {
             if(checkEmpty( $(".w2ui-msg-body input[name='seq']").val() )){
-                registDirectorConfig();
+                uploadCredentialKey();
             }else{
                 updateDirectorConfig();
             }
